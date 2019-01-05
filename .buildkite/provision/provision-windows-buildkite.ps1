@@ -8,6 +8,8 @@
 # We recommend machine type n1-highcpu-16 (16 vCPUs, 14.4 GB memory).
 # Use a windows boot disk with container support such as
 # "Windows Server version 1803 Datacenter Core for Containers".
+# Give it push access to the Container Registry by clicking "Set access for each API" and
+# setting "Storage" to "Read Write".
 # Give it a name, then click "Create".
 
 # VM setup:
@@ -55,6 +57,15 @@ Invoke-WebRequest -Uri https://github.com/git-for-windows/git/releases/download/
 .\git.exe /VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh" /DIR="C:\git"
 Add-Path "C:\git\bin"
 Remove-Item git.exe
+
+# Install Docker Compose 1.23.2
+# https://docs.docker.com/compose/install/#install-compose
+Invoke-WebRequest "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Windows-x86_64.exe" -UseBasicParsing -OutFile $Env:ProgramFiles\docker\docker-compose.exe
+
+# Add the gcloud Docker credential helper to the local system account (used by NSSM)
+# https://cloud.google.com/container-registry/docs/advanced-authentication
+gcloud auth configure-docker --quiet
+Copy-Item C:\Users\angular\.docker -Destination C:\Windows\System32\config\systemprofile\ -Recurse
 
 # Download NSSM (https://nssm.cc/) to run the BuildKite agent as a service.
 Write-Host "Downloading NSSM."
