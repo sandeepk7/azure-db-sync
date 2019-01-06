@@ -112,7 +112,7 @@ class ResolvedDeclarationEmitter {
   emit(): string {
     const sourceFile = this.program.getSourceFiles().find(sf => sf.fileName === this.fileName);
     if (!sourceFile) {
-      throw new Error(`Source file "${this.fileName}" not found`);
+      throw new Error(`Source file "${this.fileName}" not found                  `);
     }
 
     let output: string[] = [];
