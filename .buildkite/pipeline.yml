@@ -8,12 +8,29 @@ steps:
             - target=gcr.io/internal-200822/angular-windows:master
     agents:
       windows: true
-  - wait
-  - label: windows-update-image
-    branches: master
+  - label: linux-test
     plugins:
       - docker-compose#v2.6.0:
-          push: windows-test:gcr.io/internal-200822/angular-windows:master
+          build: linux-test
           config: .buildkite/dockerfiles/docker-compose.yml
+          # args:
+          #   - target=gcr.io/internal-200822/angular-linux:master
     agents:
-      windows: true
+      linux: true
+  - wait
+  # - label: windows-update-image
+  #   branches: master
+  #   plugins:
+  #     - docker-compose#v2.6.0:
+  #         push: windows-test:gcr.io/internal-200822/angular-windows:master
+  #         config: .buildkite/dockerfiles/docker-compose.yml
+  #   agents:
+  #     windows: true
+  # - label: linux-update-image
+  #   # branches: master
+  #   plugins:
+  #     - docker-compose#v2.6.0:
+  #         push: linux-test:gcr.io/internal-200822/angular-linux:master
+  #         config: .buildkite/dockerfiles/docker-compose.yml
+  #   agents:
+  #     linux: true

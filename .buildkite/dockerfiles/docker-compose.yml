@@ -8,3 +8,7 @@ services:
     build:
       context: ../../
       dockerfile: ./.buildkite/dockerfiles/windows-test.Dockerfile
+  linux-test:
+    build:
+      context: ../../
+      dockerfile: ./.buildkite/dockerfiles/linux-test.Dockerfile
