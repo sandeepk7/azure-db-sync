@@ -5,9 +5,8 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {ElementId, CirNode, CirList} from "../../../../src/render3/view/pipeline/api";
-import {createCirList, appendCirList} from "../../../../src/render3/view/pipeline/list";
-import {createElementStart, createElementEnd} from "../../../../src/render3/view/pipeline/element";
+import {ElementId, CirNode, CirList, CirTransform} from "../../../../src/render3/view/pipeline/api";
+import {createElementStart, createElementEnd, createElement} from "../../../../src/render3/view/pipeline/element";
 import {createText} from "../../../../src/render3/view/pipeline/text";
 import {IdGenerator} from "@angular/compiler/src/render3/view/pipeline/id_gen";
 
@@ -20,36 +19,36 @@ export interface TestAstGen {
 
 export class TemplateAstGen implements TestAstGen {
   private _gen = new IdGenerator();
-  private _list = createCirList();
+  private _list = new CirList();
 
   elementStart(tag: string): ElementId {
     const instruction = createElementStart(this._gen.next(), tag);
-    appendCirList(this._list, instruction);
+    this._list.append(instruction);
+    return instruction.id;
+  }
+
+  element(tag: string): ElementId {
+    const instruction = createElement(this._gen.next(), tag);
+    this._list.append(instruction);
     return instruction.id;
   }
 
   elementEnd(id: ElementId): void {
     const instruction = createElementEnd(id);
-    appendCirList(this._list, instruction);
+    this._list.append(instruction);
   }
 
   text(value: string|null): ElementId {
     const instruction = createText(this._gen.next(), value);
-    appendCirList(this._list, instruction);
+    this._list.append(instruction);
     return instruction.id;
   }
 
-  build() {
-    return listToArr(this._list);
+  transform(transform: CirTransform): void {
+    this._list.applyTransform(transform);
   }
-}
 
-export function listToArr(list: CirList) {
-  const arr: CirNode[] = [];
-  let node = list.head;
-  while (node !== null) {
-    arr.push(node);
-    node = node.next;
+  build(): CirNode[] {
+    return this._list.toArray();
   }
-  return arr;
 }

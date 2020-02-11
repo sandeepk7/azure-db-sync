@@ -6,27 +6,26 @@
 * found in the LICENSE file at https://angular.io/license
 */
 import {TemplateAstGen} from './util';
-import {CreateIRKind, CirElementStart} from '@angular/compiler/src/render3/view/pipeline/api';
+import {CirKind, CirElementStart} from '@angular/compiler/src/render3/view/pipeline/api';
 
-describe('', () => {
+fdescribe('', () => {
   describe('elements', () => {
-    fit('should produce a series of element start/end instructions', () => {
+    it('should produce a series of element start/end instructions', () => {
       const list = new TemplateAstGen();
       const section = list.elementStart('section');
       const div = list.elementStart('div');
       list.elementEnd(div);
       list.elementEnd(section);
 
-      debugger;
       const result = list.build();
-      expect(result[0].kind).toEqual(CreateIRKind.ElementStart);
+      expect(result[0].kind).toEqual(CirKind.ElementStart);
       expect((result[0] as CirElementStart).tag).toEqual('section');
 
-      expect(result[1].kind).toEqual(CreateIRKind.ElementStart);
+      expect(result[1].kind).toEqual(CirKind.ElementStart);
       expect((result[1] as CirElementStart).tag).toEqual('div');
 
-      expect(result[2].kind).toEqual(CreateIRKind.ElementEnd);
-      expect(result[3].kind).toEqual(CreateIRKind.ElementEnd);
+      expect(result[2].kind).toEqual(CirKind.ElementEnd);
+      expect(result[3].kind).toEqual(CirKind.ElementEnd);
     });
   });
 });
