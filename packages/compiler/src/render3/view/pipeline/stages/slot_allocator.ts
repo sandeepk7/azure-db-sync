@@ -5,19 +5,20 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {CirTransform, CirDataSlot, CirNode, CirKind, CirList} from '../api';
+import {DataSlot, Kind, List, Node, Transform} from '../api/cir';
+
 
 /**
  */
-export class SlotAllocatorTransform implements CirTransform {
+export class SlotAllocatorTransform implements Transform {
   private _slot = 0;
 
-  visit(node: CirNode, list: CirList): CirNode {
+  visit(node: Node, list: List): Node {
     switch (node.kind) {
-      case CirKind.ElementStart:
-      case CirKind.Element:
-      case CirKind.Text:
-        node.slot = (this._slot++) as CirDataSlot;
+      case Kind.ElementStart:
+      case Kind.Element:
+      case Kind.Text:
+        node.slot = (this._slot++) as DataSlot;
         break;
     }
     return node;

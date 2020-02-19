@@ -5,8 +5,8 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {TemplateAstGen} from '../util';
 import {SlotAllocatorTransform} from '../../../../../src/render3/view/pipeline/stages/slot_allocator';
+import {TemplateAstGen} from '../util';
 
 fdescribe('stages slotAllocator transformation', () => {
   it('should populate all elementStart, element and text instructions with slot values', () => {

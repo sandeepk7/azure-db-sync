@@ -5,50 +5,52 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {ElementId, CirNode, CirList, CirTransform} from "../../../../src/render3/view/pipeline/api";
-import {createElementStart, createElementEnd, createElement} from "../../../../src/render3/view/pipeline/element";
-import {createText} from "../../../../src/render3/view/pipeline/text";
-import {IdGenerator} from "@angular/compiler/src/render3/view/pipeline/id_gen";
+import {IdGenerator} from '@angular/compiler/src/render3/view/pipeline/id_gen';
+
+import {Id, Node, Transform} from '../../../../src/render3/view/pipeline/api/cir';
+import {createElement, createElementEnd, createElementStart} from '../../../../src/render3/view/pipeline/element';
+import {LinkedList} from '../../../../src/render3/view/pipeline/linked_list';
+import {createText} from '../../../../src/render3/view/pipeline/text';
 
 export interface TestAstGen {
-  elementStart(tag: string): ElementId;
-  elementEnd(id: ElementId): void;
-  text(value: string): ElementId;
-  build(): CirNode[];
+  node(node: Node): void;
+  element(tag: string): Id;
+  elementStart(tag: string): Id;
+  elementEnd(id: Id): void;
+  text(value: string): Id;
+  build(): Node[];
 }
 
 export class TemplateAstGen implements TestAstGen {
   private _gen = new IdGenerator();
-  private _list = new CirList();
+  private _list = new LinkedList<Node>();
 
-  elementStart(tag: string): ElementId {
-    const instruction = createElementStart(this._gen.next(), tag);
+  node(node: Node) { this._list.append(node); }
+
+  elementStart(tag: string, attrs?: any[]|null): Id {
+    const instruction = createElementStart(this._gen.next(), tag, attrs);
     this._list.append(instruction);
     return instruction.id;
   }
 
-  element(tag: string): ElementId {
-    const instruction = createElement(this._gen.next(), tag);
+  element(tag: string, attrs?: any[]|null): Id {
+    const instruction = createElement(this._gen.next(), tag, attrs);
     this._list.append(instruction);
     return instruction.id;
   }
 
-  elementEnd(id: ElementId): void {
+  elementEnd(id: Id): void {
     const instruction = createElementEnd(id);
     this._list.append(instruction);
   }
 
-  text(value: string|null): ElementId {
+  text(value: string|null): Id {
     const instruction = createText(this._gen.next(), value);
     this._list.append(instruction);
     return instruction.id;
   }
 
-  transform(transform: CirTransform): void {
-    this._list.applyTransform(transform);
-  }
+  transform(transform: Transform): void { this._list.applyTransform(transform); }
 
-  build(): CirNode[] {
-    return this._list.toArray();
-  }
+  build(): Node[] { return this._list.toArray(); }
 }

@@ -5,35 +5,33 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {CirElementStart, CirElementEnd, ElementId, CirKind, CirElement} from './api';
+import {Element, ElementEnd, ElementStart, Id, Kind} from './api/cir';
 
-export function createElementStart(id: ElementId, tag: string): CirElementStart {
+export function createElementStart(
+    id: Id, tag: string, attrs: any[] | null | undefined): ElementStart {
   return {
     next: null,
     prev: null,
-    kind: CirKind.ElementStart,
-    tag,
-    id,
+    attrs: attrs || null,
+    kind: Kind.ElementStart, tag, id,
     slot: null,
   };
 }
 
-export function createElementEnd(id: ElementId): CirElementEnd {
+export function createElementEnd(id: Id): ElementEnd {
   return {
     next: null,
     prev: null,
-    kind: CirKind.ElementEnd,
-    id,
+    kind: Kind.ElementEnd, id,
   };
 }
 
-export function createElement(id: ElementId, tag: string): CirElement {
+export function createElement(id: Id, tag: string, attrs: any[] | null | undefined): Element {
   return {
     next: null,
     prev: null,
-    kind: CirKind.Element,
-    tag,
-    id,
+    attrs: attrs || null,
+    kind: Kind.Element, tag, id,
     slot: null,
   };
 }

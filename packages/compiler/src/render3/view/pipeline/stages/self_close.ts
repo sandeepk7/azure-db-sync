@@ -5,31 +5,32 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {CirTransform, CirNode, CirKind, CirList, CirElement, CirElementStart} from '../api';
+import {Element, ElementStart, Kind, List, Node, Transform} from '../api/cir';
+
 
 /**
  * Converts empty elementStart/elementEnd instructions into element instruction
  */
-export class SelfClosingElementTransform implements CirTransform {
-  visit(node: CirNode, list: CirList): CirNode {
-    if (node.kind !== CirKind.ElementStart) {
-        // Only interested in ElementStart nodes.
+export class SelfClosingElementTransform implements Transform {
+  visit(node: Node, list: List): Node {
+    if (node.kind !== Kind.ElementStart) {
+      // Only interested in ElementStart nodes.
       return node;
     }
 
-    if (node.next === null || node.next.kind !== CirKind.ElementEnd) {
+    if (node.next === null || node.next.kind !== Kind.ElementEnd) {
       // Only interested if followed by an ElementEnd.
       return node;
     }
 
-      // Removing the next node is always safe.
+    // Removing the next node is always safe.
     list.remove(node.next);
     return convertElementStartToSelfClosing(node);
   }
 }
 
-function convertElementStartToSelfClosing(node: CirElementStart): CirElement {
-  const convertedNode: CirElement = node as unknown as CirElement;
-  convertedNode.kind = CirKind.Element;
+function convertElementStartToSelfClosing(node: ElementStart): Element {
+  const convertedNode: Element = node as unknown as Element;
+  convertedNode.kind = Kind.Element;
   return convertedNode;
 }
