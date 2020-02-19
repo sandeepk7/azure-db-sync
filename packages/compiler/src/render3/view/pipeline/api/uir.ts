@@ -4,7 +4,7 @@ import * as list from '../linked_list';
 export type List = list.LinkedList<Node>;
 export type Transform = list.Transform<Node>;
 
-export type Node = TextInterpolate|Property|Attribute|QueryRefresh;
+export type Node = TextInterpolate | Property | Attribute | QueryRefresh;
 export enum NodeKind {
   TextInterpolate,
   Property,
@@ -18,17 +18,11 @@ export interface TextInterpolate extends list.LinkedListNode<Node> {
   expression: o.Expression[];
 }
 
-export interface Property extends list.LinkedListNode<Node> {
-  kind: NodeKind.Property;
-}
+export interface Property extends list.LinkedListNode<Node> { kind: NodeKind.Property; }
 
-export interface Attribute extends list.LinkedListNode<Node> {
-  kind: NodeKind.Attribute;
-}
+export interface Attribute extends list.LinkedListNode<Node> { kind: NodeKind.Attribute; }
 
-export interface QueryRefresh extends list.LinkedListNode<Node> {
-  kind: NodeKind.QueryRefresh;
-}
+export interface QueryRefresh extends list.LinkedListNode<Node> { kind: NodeKind.QueryRefresh; }
 
 export type Expression = PureFunctionExpr | PipeBindExpr;
 export enum ExpressionKind {

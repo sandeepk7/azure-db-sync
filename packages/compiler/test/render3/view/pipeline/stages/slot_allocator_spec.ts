@@ -8,7 +8,7 @@
 import {SlotAllocatorTransform} from '../../../../../src/render3/view/pipeline/stages/slot_allocator';
 import {TemplateAstGen} from '../util';
 
-fdescribe('stages slotAllocator transformation', () => {
+describe('stages slotAllocator transformation', () => {
   it('should populate all elementStart, element and text instructions with slot values', () => {
     const builder = new TemplateAstGen();
     const start = builder.elementStart('div');

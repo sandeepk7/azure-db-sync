@@ -9,7 +9,7 @@ import {Chain, Element, ElementStart, Kind, Text} from '../../../../../src/rende
 import {ChainingTransform} from '../../../../../src/render3/view/pipeline/stages/chaining';
 import {TemplateAstGen} from '../util';
 
-fdescribe('stages chaining transformation', () => {
+describe('stages chaining transformation', () => {
   it('should chain together multiple repeated instances of an instruction', () => {
     const builder = new TemplateAstGen();
     builder.text('one');

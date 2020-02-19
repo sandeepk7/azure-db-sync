@@ -6,13 +6,13 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import * as o from '../../../../src/output/output_ast';
-import {emitTemplateFunction} from '../../../../src/render3/view/pipeline/output_emitter';
+import {emitTemplateFunction} from '../../../../src/render3/view/pipeline/output/template_function';
 
 import {TemplateAstGen} from './util';
 
 describe('output instructions', () => {
   describe('elements', () => {
-    fit('should emit various element instructions', () => {
+    fit('should emit various element instructions in the creation block', () => {
       const builder = new TemplateAstGen();
       const e1 = builder.elementStart('div');
       const e2 = builder.elementStart('div');
@@ -21,9 +21,13 @@ describe('output instructions', () => {
       builder.elementEnd(e1);
 
       const result = builder.build();
-      const output = emitTemplateFunction(result);
+      const output = emitTemplateFunction(result, []);
 
-      const statements = output.statements as o.ExpressionStatement[];
+      const ifStmts = output.statements as o.IfStmt[];
+      expect(ifStmts.length).toEqual(1);  // if (CREATE)
+
+      const statements = ifStmts[0].trueCase as o.ExpressionStatement[];
+      expect(statements.length).toEqual(5);
       expect(statements.length).toEqual(5);
 
       const [s1, s2, s3, s4, s5] = statements;
@@ -46,7 +50,7 @@ describe('output instructions', () => {
       builder.text('baz');
 
       const result = builder.build();
-      const output = emitTemplateFunction(result);
+      const output = emitTemplateFunction(result, []);
 
       const statements = output.statements as o.ExpressionStatement[];
       expect(statements.length).toEqual(3);

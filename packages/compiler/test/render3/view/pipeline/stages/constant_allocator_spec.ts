@@ -9,7 +9,7 @@ import {Element, ElementStart} from '../../../../../src/render3/view/pipeline/ap
 import {ConstantAllocatorTransform} from '../../../../../src/render3/view/pipeline/stages/constant_allocator';
 import {TemplateAstGen} from '../util';
 
-fdescribe('stages constant allocator transformation', () => {
+describe('stages constant allocator transformation', () => {
   it('should chain together multiple repeated instances of an instruction', () => {
     const builder = new TemplateAstGen();
     const id = builder.elementStart('div', ['id', 'bar']);

@@ -9,7 +9,7 @@ import {Kind} from '../../../../../src/render3/view/pipeline/api/cir';
 import {SelfClosingElementTransform} from '../../../../../src/render3/view/pipeline/stages/self_close';
 import {TemplateAstGen} from '../util';
 
-fdescribe('stages selfClose transformation', () => {
+describe('stages selfClose transformation', () => {
   it('should convert an pair of elementStart/elementEnd to an elementSelfClose instruction', () => {
     const builder = new TemplateAstGen();
     const start = builder.elementStart('div');
