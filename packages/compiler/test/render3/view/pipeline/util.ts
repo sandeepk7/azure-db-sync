@@ -7,7 +7,8 @@
 */
 import {IdGenerator} from '@angular/compiler/src/render3/view/pipeline/id_gen';
 
-import {Id, Node, Transform} from '../../../../src/render3/view/pipeline/api/cir';
+import {Transform} from '../../../../src/render3/view/pipeline/linked_list';
+import {Id, Node} from '../../../../src/render3/view/pipeline/api/cir';
 import {createElement, createElementEnd, createElementStart} from '../../../../src/render3/view/pipeline/element';
 import {LinkedList} from '../../../../src/render3/view/pipeline/linked_list';
 import {createText} from '../../../../src/render3/view/pipeline/text';
@@ -50,7 +51,7 @@ export class TemplateAstGen implements TestAstGen {
     return instruction.id;
   }
 
-  transform(transform: Transform): void { this._list.applyTransform(transform); }
+  transform(transform: Transform<any>): void { this._list.applyTransform(transform); }
 
   build(): Node[] { return this._list.toArray(); }
 }

@@ -20,15 +20,19 @@ export const enum Kind {
   Chain,
 }
 
+export interface ElementAttrs extends Array<string|number|null|(string|number)[]> {}
+
 export interface ElementStart extends list.LinkedListNode<Node> {
   kind: Kind.ElementStart;
   tag: string;
-  attrs: unknown[]|number|null;
+  attrs: ElementAttrs|number|null;
   id: Id;
   slot: DataSlot|null;
 }
 
-export interface Element extends Omit<ElementStart, 'kind'> { kind: Kind.Element; }
+export interface Element extends Omit<ElementStart, 'kind'> {
+  kind: Kind.Element;
+}
 
 export interface ElementEnd extends list.LinkedListNode<Node> {
   kind: Kind.ElementEnd;

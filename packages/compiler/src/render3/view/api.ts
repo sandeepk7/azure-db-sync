@@ -291,3 +291,5 @@ export interface R3HostMetadata {
 
   specialAttributes: {styleAttr?: string; classAttr?: string;};
 }
+
+export interface AttributeBuilder { build(): (o.LiteralExpr|o.LiteralArrayExpr)[]; }
