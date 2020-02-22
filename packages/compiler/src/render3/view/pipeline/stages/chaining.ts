@@ -5,14 +5,15 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import * as cir from '../api/cir';
+import * as cir from '../ir/create';
 import {LinkedList} from '../linked_list';
+import {CreateOnlyTemplateStage} from './base';
 
 
 /**
  * Transforms multiple repeated instances of a CirNode into a CirChain
  */
-export class ChainingTransform implements cir.Transform {
+export class ChainingStage extends CreateOnlyTemplateStage implements cir.Transform {
   visit(node: cir.Node, list: cir.List): cir.Node {
     const chainHead = node;
     let chainTail = node;

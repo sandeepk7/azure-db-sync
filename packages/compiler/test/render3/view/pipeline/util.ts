@@ -7,9 +7,8 @@
 */
 import {IdGenerator} from '@angular/compiler/src/render3/view/pipeline/id_gen';
 
-import {Transform} from '../../../../src/render3/view/pipeline/linked_list';
-import {Id, Node} from '../../../../src/render3/view/pipeline/api/cir';
 import {createElement, createElementEnd, createElementStart} from '../../../../src/render3/view/pipeline/element';
+import {Id, Node, Transform} from '../../../../src/render3/view/pipeline/ir/create';
 import {LinkedList} from '../../../../src/render3/view/pipeline/linked_list';
 import {createText} from '../../../../src/render3/view/pipeline/text';
 

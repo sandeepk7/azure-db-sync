@@ -1,10 +1,13 @@
-import * as o from '../../../../output/output_ast';
-import * as list from '../linked_list';
+import * as o from '../../../../../output/output_ast';
+import * as list from '../../linked_list';
+import {CirId} from '../create/id';
 
 export type List = list.LinkedList<Node>;
+export const List: {new (): List} = list.LinkedList;
 export type Transform = list.Transform<Node>;
 
-export type Node = TextInterpolate | Property | Attribute | QueryRefresh | StyleMap | StyleProp;
+export type Node =
+    TextInterpolate | Property | Attribute | QueryRefresh | StyleMap | StyleProp | Var;
 export enum NodeKind {
   TextInterpolate,
   Property,
@@ -14,10 +17,12 @@ export enum NodeKind {
   ClassProp,
   Attribute,
   QueryRefresh,
+  Var,
 }
 
 export interface TextInterpolate extends list.LinkedListNode<Node> {
   kind: NodeKind.TextInterpolate;
+  id: CirId;
   text: string[];
   expression: o.Expression[];
 }
@@ -43,20 +48,13 @@ export interface Attribute extends list.LinkedListNode<Node> { kind: NodeKind.At
 
 export interface QueryRefresh extends list.LinkedListNode<Node> { kind: NodeKind.QueryRefresh; }
 
-export type Expression = PureFunctionExpr | PipeBindExpr;
-export enum ExpressionKind {
-  PureFunction,
-  PipeBind,
+export type VarId = number & {__brand: 'uir.VarId'};
+export enum VarIdentity {
+  TemplateContext,
 }
-
-export type EmbeddedExpression = o.WrappedNodeExpr<Expression>;
-
-export interface PureFunctionExpr {
-  kind: ExpressionKind.PureFunction;
-  inputs: o.Expression[];
-}
-
-export interface PipeBindExpr {
-  kind: ExpressionKind.PipeBind;
-  args: o.Expression[]|null;
+export interface Var extends list.LinkedListNode<Node> {
+  kind: NodeKind.Var;
+  id: VarId;
+  name: string|null;
+  value: o.Expression;
 }

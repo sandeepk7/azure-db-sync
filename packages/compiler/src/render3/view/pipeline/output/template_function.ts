@@ -5,12 +5,13 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
+import * as core from '../../../../core';
 import * as o from '../../../../output/output_ast';
 import {CONTEXT_NAME, RENDER_FLAGS} from '../../util';
-import * as cir from '../api/cir';
-import * as uir from '../api/uir';
-import * as core from '../../../../core';
-import {CreateEmitter, UpdateEmitter, Emitter} from '../api/output';
+import * as cir from '../ir/create';
+import * as uir from '../ir/update';
+import {CreateEmitter, Emitter, UpdateEmitter} from '../output/api';
+
 import {ElementEmitter} from './emitters/element_output_driver';
 import {TextOutputEmitter} from './emitters/text_output_driver';
 import {UnsupportedCreateEmitter} from './emitters/unsupported_output_driver';
@@ -22,25 +23,21 @@ const CREATE_EMITTERS: CreateEmitter[] = [
   new UnsupportedCreateEmitter(),
 ];
 
-const UPDATE_EMITTERS: UpdateEmitter[] = [
-];
+const UPDATE_EMITTERS: UpdateEmitter[] = [];
 
 export function emitTemplateFunction(
-  createList: cir.List | cir.Node[],
-  updateList: uir.List | uir.Node[]) {
-
+    createList: cir.List | cir.Node[], updateList: uir.List | uir.Node[]) {
   const create = Array.isArray(createList) ? createList : createList.toArray();
   const update = Array.isArray(updateList) ? updateList : updateList.toArray();
 
   return o.fn(
-    produceTemplateFunctionParams(),
-    produceBodyStatements(create, CREATE_EMITTERS, update, UPDATE_EMITTERS));
+      produceTemplateFunctionParams(),
+      produceBodyStatements(create, CREATE_EMITTERS, update, UPDATE_EMITTERS));
 }
 
-export function produceBodyStatements(createList: cir.Node[],
-                     createEmitters: CreateEmitter[],
-                     updateList: uir.Node[],
-                     updateEmitters: UpdateEmitter[]): o.Statement[] {
+export function produceBodyStatements(
+    createList: cir.Node[], createEmitters: CreateEmitter[], updateList: uir.Node[],
+    updateEmitters: UpdateEmitter[]): o.Statement[] {
   const stmts: o.Statement[] = [];
   const creationStmts = produceInstructions<cir.Node>(createList, createEmitters);
   if (creationStmts.length) {

@@ -5,7 +5,7 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {Element, ElementStart} from '../../../../../src/render3/view/pipeline/api/cir';
+import {Element, ElementStart} from '../../../../../src/render3/view/pipeline/ir/create';
 import {ConstantAllocatorTransform} from '../../../../../src/render3/view/pipeline/stages/constant_allocator';
 import {TemplateAstGen} from '../util';
 

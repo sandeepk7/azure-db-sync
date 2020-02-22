@@ -15,7 +15,7 @@ describe('stages slotAllocator transformation', () => {
     builder.text('Middle');
     builder.element('span');
     builder.elementEnd(start);
-    builder.transform(new SlotAllocatorTransform());
+    builder.transform(SlotAllocatorTransform.forTemplateRoot());
 
     const instructions = builder.build();
     expect(instructions.length).toBe(4);

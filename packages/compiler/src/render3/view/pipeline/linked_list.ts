@@ -6,7 +6,8 @@
 * found in the LICENSE file at https://angular.io/license
 */
 export interface Transform<T extends LinkedListNode<any>> {
-  visit(node: T, list: LinkedList<T>): T;
+  visitList?(list: LinkedList<T>): void;
+  visit?(node: T, list: LinkedList<T>): T;
 }
 
 export interface LinkedListNode<T extends LinkedListNode<any>> {
@@ -19,11 +20,30 @@ export class LinkedList<T extends LinkedListNode<any>> {
   tail: T|null = null;
 
   applyTransform(transform: Transform<T>): void {
-    let node = this.head;
-    while (node !== null) {
-      node = transform.visit(node, this) as T;
-      node = node.next as T;
+    if (transform.visitList !== undefined) {
+      transform.visitList(this);
     }
+    if (transform.visit !== undefined) {
+      let node = this.head;
+      while (node !== null) {
+        node = transform.visit(node, this) as T;
+        node = node.next as T;
+      }
+    }
+  }
+
+  prependList(list: LinkedList<T>): void {
+    if (list.tail === null || list.head === null) {
+      return;
+    } else if (this.head === null) {
+      this.head = list.head;
+      this.tail = list.tail;
+      return;
+    }
+
+    this.head.prev = list.tail;
+    list.tail.next = this.head;
+    this.head = list.head;
   }
 
   append(node: T): void {
@@ -76,5 +96,13 @@ export class LinkedList<T extends LinkedListNode<any>> {
       cb(node);
       node = node.next as T;
     }
+  }
+
+  toString(printer: (node: T) => string): string {
+    const strings: string[] = [];
+    for (let node = this.head; node !== null; node = node.next) {
+      strings.push(printer(node));
+    }
+    return strings.join('\n');
   }
 }

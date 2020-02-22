@@ -5,7 +5,7 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {Element, ElementStart, Kind, List, Node, Transform} from '../api/cir';
+import {Element, ElementStart, Kind, List, Node, Transform} from '../ir/create';
 
 
 /**
@@ -13,6 +13,9 @@ import {Element, ElementStart, Kind, List, Node, Transform} from '../api/cir';
  */
 export class SelfClosingElementTransform implements Transform {
   visit(node: Node, list: List): Node {
+    if (node.kind === Kind.Template) {
+      node.create.applyTransform(this);
+    }
     if (node.kind !== Kind.ElementStart) {
       // Only interested in ElementStart nodes.
       return node;

@@ -5,7 +5,7 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {Element, ElementEnd, ElementStart, Id, Kind} from './api/cir';
+import {Element, ElementEnd, ElementStart, Id, Kind} from './ir/create';
 
 export function createElementStart(
     id: Id, tag: string, attrs: any[] | null | undefined): ElementStart {

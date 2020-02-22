@@ -7,8 +7,8 @@
 */
 import * as o from '../../../../output/output_ast';
 
-import * as cir from './cir';
-import * as uir from './uir';
+import * as cir from '../ir/create';
+import * as uir from '../ir/update';
 
 export interface Emitter<T> {
   emit(node: T): o.Statement|null;

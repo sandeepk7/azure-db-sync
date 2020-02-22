@@ -5,8 +5,8 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {Chain, Element, ElementStart, Kind, Text} from '../../../../../src/render3/view/pipeline/api/cir';
-import {ChainingTransform} from '../../../../../src/render3/view/pipeline/stages/chaining';
+import {Chain, Element, ElementStart, Kind, Text} from '../../../../../src/render3/view/pipeline/ir/create';
+import {ChainingStage} from '../../../../../src/render3/view/pipeline/stages/chaining';
 import {TemplateAstGen} from '../util';
 
 describe('stages chaining transformation', () => {
@@ -16,7 +16,7 @@ describe('stages chaining transformation', () => {
     builder.text('two');
     builder.text('three');
 
-    builder.transform(new ChainingTransform());
+    builder.transform(new ChainingStage());
 
     const instructions = builder.build();
     expect(instructions.length).toBe(1);
@@ -48,7 +48,7 @@ describe('stages chaining transformation', () => {
     builder.text('six');
     builder.text('seven');
 
-    builder.transform(new ChainingTransform());
+    builder.transform(new ChainingStage());
 
     const instructions = builder.build();
     expect(instructions.length).toBe(5);

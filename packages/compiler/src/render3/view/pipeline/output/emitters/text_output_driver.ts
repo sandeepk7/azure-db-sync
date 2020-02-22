@@ -5,11 +5,11 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import * as cir from '../../api/cir';
-import * as uir from '../../api/uir';
 import * as o from '../../../../../output/output_ast';
 import {Identifiers as R3} from '../../../../r3_identifiers';
-import {CreateEmitter} from '../../api/output';
+import * as cir from '../../ir/create';
+import * as uir from '../../ir/update';
+import {CreateEmitter} from '../../output/api';
 
 export class TextOutputEmitter implements CreateEmitter {
   emit(node: cir.Node): o.Statement|null {
@@ -27,9 +27,7 @@ export class TextOutputEmitter implements CreateEmitter {
     return null;
   }
 
-  emitUpdateInstruction(node: uir.Node): o.Statement|null {
-    return null;
-  }
+  emitUpdateInstruction(node: uir.Node): o.Statement|null { return null; }
 }
 
 function slot(index: number) {

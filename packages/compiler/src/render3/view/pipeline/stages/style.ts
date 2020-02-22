@@ -5,8 +5,10 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {Node, Transform, NodeKind, List, Property, StyleMap, StyleProp} from '../api/uir';
+import {List, Node, NodeKind, Property, StyleMap, StyleProp, Transform} from '../ir/update';
+
 import {replaceNode} from './util';
+
 
 
 /**
@@ -15,20 +17,18 @@ import {replaceNode} from './util';
 export class StyleTransform implements Transform {
   visit(node: Node, list: List): Node {
     if (node.kind === NodeKind.Property && isStyleProp(node.name)) {
-       node = convertStyleProperty(node);
+      node = convertStyleProperty(node);
     }
     return node;
   }
 }
 
 function isStyleProp(name: string) {
-  return name.substring(0,5) === 'style';
+  return name.substring(0, 5) === 'style';
 }
 
 function convertStyleProperty(node: Property): StyleMap|StyleProp {
-  return node.name === 'style'
-    ? convertStyleMapProperty(node)
-    : convertStylePropProperty(node);
+  return node.name === 'style' ? convertStyleMapProperty(node) : convertStylePropProperty(node);
 }
 
 function convertStyleMapProperty(node: Property): StyleMap {
@@ -43,5 +43,5 @@ function convertStylePropProperty(node: Property): StyleProp {
 }
 
 function extractStylePropName(name: string): string {
-  return name.match(/style.(\w+)/)![1];
+  return name.match(/style.(\w+)/) ![1];
 }

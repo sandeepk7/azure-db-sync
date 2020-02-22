@@ -6,7 +6,7 @@
 * found in the LICENSE file at https://angular.io/license
 */
 import * as o from '../../../../output/output_ast';
-import {Emitter} from '../api/output';
+import {Emitter} from '../output/api';
 
 export function emitNode<T>(node: T, emitters: Emitter<T>[]): o.Statement|null {
   for (let i = 0; i < emitters.length; i++) {
