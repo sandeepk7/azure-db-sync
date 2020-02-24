@@ -10,35 +10,45 @@ import {CONTEXT_NAME, RENDER_FLAGS} from '../../util';
 import * as cir from '../api/cir';
 import * as uir from '../api/uir';
 import * as core from '../../../../core';
-import {Driver} from '../api/output';
-import {ElementDriver} from '../output/drivers/element_output_driver';
-import {TextOutputDriver} from '../output/drivers/text_output_driver';
-import {UnsupportedOutputDriver} from '../output/drivers/unsupported_output_driver';
-import {emitCreationNode, emitUpdateNode} from './util';
+import {CreateEmitter, UpdateEmitter, Emitter} from '../api/output';
+import {ElementEmitter} from './emitters/element_output_driver';
+import {TextOutputEmitter} from './emitters/text_output_driver';
+import {UnsupportedCreateEmitter} from './emitters/unsupported_output_driver';
+import {emitNode} from './util';
 
+const CREATE_EMITTERS: CreateEmitter[] = [
+  new ElementEmitter(),
+  new TextOutputEmitter(),
+  new UnsupportedCreateEmitter(),
+];
 
-const DRIVERS: Driver[] = [
-  new ElementDriver(),
-  new TextOutputDriver(),
-  new UnsupportedOutputDriver(),
+const UPDATE_EMITTERS: UpdateEmitter[] = [
 ];
 
 export function emitTemplateFunction(
-  creationList: cir.List | cir.Node[],
+  createList: cir.List | cir.Node[],
   updateList: uir.List | uir.Node[]) {
 
-  return o.fn(produceTemplateFunctionParams(), produceBody(creationList, updateList, DRIVERS));
+  const create = Array.isArray(createList) ? createList : createList.toArray();
+  const update = Array.isArray(updateList) ? updateList : updateList.toArray();
+
+  return o.fn(
+    produceTemplateFunctionParams(),
+    produceBodyStatements(create, CREATE_EMITTERS, update, UPDATE_EMITTERS));
 }
 
-function produceBody(creationList: cir.List | cir.Node[], updateList: uir.List | uir.Node[], drivers: Driver[]): o.Statement[] {
+export function produceBodyStatements(createList: cir.Node[],
+                     createEmitters: CreateEmitter[],
+                     updateList: uir.Node[],
+                     updateEmitters: UpdateEmitter[]): o.Statement[] {
   const stmts: o.Statement[] = [];
-  const creationStmts = produceCreationInstructions(creationList, drivers);
+  const creationStmts = produceInstructions<cir.Node>(createList, createEmitters);
   if (creationStmts.length) {
     // if (rf & CREATE) { ... }
     stmts.push(ifRenderStmt(true, creationStmts));
   }
 
-  const updateStmts = produceUpdateInstructions(updateList, drivers);
+  const updateStmts = produceInstructions<uir.Node>(updateList, updateEmitters);
   if (updateStmts.length) {
     // if (rf & UPDATE) { ... }
     stmts.push(ifRenderStmt(false, updateStmts));
@@ -47,16 +57,16 @@ function produceBody(creationList: cir.List | cir.Node[], updateList: uir.List |
   return stmts;
 }
 
-function ifRenderStmt(creationMode: boolean, thenStmts: o.Statement[]) {
+export function ifRenderStmt(creationMode: boolean, thenStmts: o.Statement[]) {
   const renderFlag = creationMode ? core.RenderFlags.Create : core.RenderFlags.Update;
   const precondition = o.variable(RENDER_FLAGS).and(o.literal(renderFlag));
   return o.ifStmt(precondition, thenStmts);
 }
 
-function produceCreationInstructions(list: cir.List | cir.Node[], drivers: Driver[]) {
+export function produceInstructions<T>(list: T[], emitters: Emitter<T>[]) {
   const stmts: o.Statement[] = [];
   list.forEach(node => {
-    const result = emitCreationNode(node, drivers);
+    const result = emitNode(node, emitters);
     if (result) {
       stmts.push(result);
     }
@@ -64,18 +74,7 @@ function produceCreationInstructions(list: cir.List | cir.Node[], drivers: Drive
   return stmts;
 }
 
-function produceUpdateInstructions(list: uir.List | uir.Node[], drivers: Driver[]) {
-  const stmts: o.Statement[] = [];
-  list.forEach(node => {
-    const result = emitUpdateNode(node, drivers);
-    if (result) {
-      stmts.push(result);
-    }
-  });
-  return stmts;
-}
-
-function produceTemplateFunctionParams(): o.FnParam[] {
+export function produceTemplateFunctionParams(): o.FnParam[] {
   return [
     // i.e. (rf: RenderFlags, ctx: any)
     new o.FnParam(RENDER_FLAGS, o.NUMBER_TYPE),

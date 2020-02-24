@@ -9,10 +9,10 @@ import * as cir from '../../api/cir';
 import * as uir from '../../api/uir';
 import * as o from '../../../../../output/output_ast';
 import {Identifiers as R3} from '../../../../r3_identifiers';
-import {Driver} from '../../api/output';
+import {CreateEmitter} from '../../api/output';
 
-export class TextOutputDriver implements Driver {
-  emitCreationInstruction(node: cir.Node): o.Statement|null {
+export class TextOutputEmitter implements CreateEmitter {
+  emit(node: cir.Node): o.Statement|null {
     switch (node.kind) {
       // ɵɵtext()
       case cir.Kind.Text:

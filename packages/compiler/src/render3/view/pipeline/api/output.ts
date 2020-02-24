@@ -10,7 +10,9 @@ import * as o from '../../../../output/output_ast';
 import * as cir from './cir';
 import * as uir from './uir';
 
-export interface Driver {
-  emitCreationInstruction(node: cir.Node): o.Statement|null;
-  emitUpdateInstruction(node: uir.Node): o.Statement|null;
+export interface Emitter<T> {
+  emit(node: T): o.Statement|null;
 }
+
+export interface CreateEmitter extends Emitter<cir.Node> {}
+export interface UpdateEmitter extends Emitter<uir.Node> {}
