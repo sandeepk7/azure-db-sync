@@ -1014,7 +1014,7 @@ runInEachFileSystem(os => {
               'static ɵcmp: i0.ɵɵComponentDefWithMeta<TestCmp, "test-cmp", never, {}, {}, never, never>');
       expect(dtsContents)
           .toContain(
-              'static ɵmod: i0.ɵɵNgModuleDefWithMeta<TestModule, [typeof TestCmp], never, never>');
+              'static ɵmod: i0.ɵ��NgModuleDefWithMeta<TestModule, [typeof TestCmp], never, never>');
       expect(dtsContents).not.toContain('__decorate');
     });
 

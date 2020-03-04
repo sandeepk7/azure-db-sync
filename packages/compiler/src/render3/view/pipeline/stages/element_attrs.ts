@@ -5,10 +5,11 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
-import {ElementAttrs, Kind, List, Node, Transform} from '../api/cir';
 import {AttributeMarker, SelectorFlags} from '../../../../core';
 import {splitNsName} from '../../../../ml_parser/tags';
 import {parse as parseStyle} from '../../style_parser';
+import {ElementAttrs, Kind, List, Node, Transform} from '../api/cir';
+
 
 /**
  * Converts empty elementStart/elementEnd instructions into element instruction
@@ -46,7 +47,7 @@ function transformAttrs(attrs: ElementAttrs) {
         break;
       default:
         if (value !== null) {
-          builder.setAttribute(prop, value as string|null);
+          builder.setAttribute(prop, value as string | null);
         }
         break;
     }

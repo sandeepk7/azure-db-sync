@@ -8,8 +8,7 @@
 import * as o from '../../../../../output/output_ast';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as cir from '../../ir/create';
-import * as uir from '../../ir/update';
-import {CreateEmitter} from '../../output/api';
+import {CreateEmitter} from '../api';
 
 export class ElementEmitter implements CreateEmitter {
   emit(node: cir.Node): o.Statement|null {
@@ -29,8 +28,6 @@ export class ElementEmitter implements CreateEmitter {
 
     return null;
   }
-
-  emitUpdateInstruction(node: uir.Node): o.Statement|null { return null; }
 }
 
 function slot(index: number) {

@@ -30,7 +30,8 @@ describe('template parsing', () => {
         </ng-template>`,
         'ng://test');
     const tmpl = parse(nodes);
-    new ResolverStage(tmpl.scope).transform(tmpl);
+    tmpl.transform(new ResolverStage());
+    new ResolverStage().transform(tmpl);
     new VariableOptimizerStage().transform(tmpl);
 
     // tmpl.create.applyTransform(new SelfClosingElementTransform());

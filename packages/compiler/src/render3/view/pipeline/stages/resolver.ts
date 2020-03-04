@@ -1,21 +1,21 @@
 import * as o from '../../../../output/output_ast';
-import {Scope, Target, TargetKind} from '../input/scope';
+import {RootTemplate, Scope, Target, TargetKind} from '../ir/api';
 import * as cir from '../ir/create';
 import * as uir from '../ir/update';
 import {ExpressionTransformer} from '../util/expression_transformer';
+
 import {BaseTemplateStage} from './base';
 
 export class ResolverStage extends BaseTemplateStage<never, UpdateResolver> {
-  constructor(private scope: Scope) { super(); }
-
   protected makeCreateTransform(): null { return null; }
 
-  protected makeUpdateTransform(prev: UpdateResolver|null, tmplId: cir.CirId|null): UpdateResolver {
+  protected makeUpdateTransform(
+      root: RootTemplate, prev: UpdateResolver|null, tmplId: cir.CirId|null): UpdateResolver {
     let scope: Scope;
     if (prev !== null && tmplId !== null) {
       scope = prev.scope.getChild(tmplId);
     } else {
-      scope = this.scope;
+      scope = root.scope;
     }
     return new UpdateResolver(scope);
   }

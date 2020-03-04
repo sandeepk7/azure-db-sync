@@ -9,6 +9,7 @@
 import * as ast from '../../../../expression_parser/ast';
 import * as o from '../../../../output/output_ast';
 import * as tmpl from '../../../r3_ast';
+import {RootTemplate} from '../ir/api';
 import * as cir from '../ir/create';
 import * as uir from '../ir/update';
 
@@ -21,7 +22,7 @@ export interface IrTemplate {
   scope: Scope;
 }
 
-export function parse(input: tmpl.Node[]): IrTemplate {
+export function parse(input: tmpl.Node[]): RootTemplate {
   return TemplateToIrConverter.parseRoot(input);
 }
 
@@ -36,7 +37,7 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, Value
   /**
    * Parse a template beginning from its top-level, including all sub-templates.
    */
-  static parseRoot(input: tmpl.Node[]): IrTemplate {
+  static parseRoot(input: tmpl.Node[]): RootTemplate {
     const parser = new TemplateToIrConverter(Scope.root());
     for (const node of input) {
       node.visit(parser);

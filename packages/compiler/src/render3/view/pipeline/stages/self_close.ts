@@ -6,12 +6,13 @@
 * found in the LICENSE file at https://angular.io/license
 */
 import {Element, ElementStart, Kind, List, Node, Transform} from '../ir/create';
+import {CreateOnlyTemplateStage} from './base';
 
 
 /**
  * Converts empty elementStart/elementEnd instructions into element instruction
  */
-export class SelfClosingElementTransform implements Transform {
+export class SelfClosingElementTransform extends CreateOnlyTemplateStage implements Transform {
   visit(node: Node, list: List): Node {
     if (node.kind === Kind.Template) {
       node.create.applyTransform(this);

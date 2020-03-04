@@ -14,7 +14,6 @@ import * as cir from './pipeline/ir/create';
 import * as uir from './pipeline/ir/update';
 import {LinkedList} from './pipeline/linked_list';
 import {CreateEmitter, UpdateEmitter} from './pipeline/output/api';
-import {produceBodyStatements, produceTemplateFunctionParams} from './pipeline/output/template_function';
 import {StyleTransform} from './pipeline/stages/style';
 
 const UPDATE_TRANSFORMS: uir.Transform[] = [
@@ -42,7 +41,5 @@ export function emitHostBindingsFunction(
   const create = Array.isArray(createList) ? createList : createList.toArray();
   const update = Array.isArray(updateList) ? updateList : updateList.toArray();
 
-  return o.fn(
-      produceTemplateFunctionParams(),
-      produceBodyStatements(create, createEmitters, update, updateEmitters));
+  return o.NULL_EXPR;
 }

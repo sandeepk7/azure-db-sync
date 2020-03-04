@@ -15,7 +15,7 @@ describe('stages StyleTransform transformation', () => {
     builder.transform(new StyleTransform());
 
     const instructions = builder.build();
-    //expect(instructions.length).toBe(1);
-    //expect(instructions[0].kind).toBe(Kind.Element);
+    // expect(instructions.length).toBe(1);
+    // expect(instructions[0].kind).toBe(Kind.Element);
   });
 });
