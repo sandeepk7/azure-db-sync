@@ -14,6 +14,9 @@ export interface RootTemplate {
   create: cir.List;
   update: uir.List;
   scope: Scope;
+
+  name: string|null;
+  attrs: o.Expression[]|null;
 }
 
 export enum TargetKind {

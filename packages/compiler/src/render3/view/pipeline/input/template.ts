@@ -22,8 +22,10 @@ export interface IrTemplate {
   scope: Scope;
 }
 
-export function parse(input: tmpl.Node[]): RootTemplate {
-  return TemplateToIrConverter.parseRoot(input);
+export function parse(input: tmpl.Node[], name: string): RootTemplate {
+  const root = TemplateToIrConverter.parseRoot(input);
+  root.name = name;
+  return root;
 }
 
 class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, ValueProcessorHost {
@@ -42,7 +44,11 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, Value
     for (const node of input) {
       node.visit(parser);
     }
-    return parser.finalize();
+    return {
+      ...parser.finalize(),
+      attrs: null,
+      name: null,
+    };
   }
 
   /**
@@ -67,16 +73,31 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, Value
     // Allocate an id.
     const id = this.scope.allocateId();
 
-    this.create.append({
+    const elementStart: cir.ElementStart = {
       ...FRESH_NODE,
       kind: cir.Kind.ElementStart, id,
       slot: null,
       tag: element.name,
-      attrs: 0,
-    });
+      attrs: null,
+    };
+
+    this.create.append(elementStart);
 
     for (const ref of element.references) {
       this.scope.recordReference(ref.name, id, ref.value);
+    }
+
+    if (element.attributes.length > 0 || element.inputs.length > 0) {
+      elementStart.attrs = [];
+      for (const attr of element.attributes) {
+        elementStart.attrs.push(attr.name);
+        elementStart.attrs.push(attr.value);
+      }
+
+      for (const input of element.inputs) {
+        elementStart.attrs.push(input.name);
+        elementStart.attrs.push('');
+      }
     }
 
     tmpl.visitAll(this, element.children);

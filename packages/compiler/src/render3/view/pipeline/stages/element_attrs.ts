@@ -8,17 +8,18 @@
 import {AttributeMarker, SelectorFlags} from '../../../../core';
 import {splitNsName} from '../../../../ml_parser/tags';
 import {parse as parseStyle} from '../../style_parser';
-import {ElementAttrs, Kind, List, Node, Transform} from '../api/cir';
+import * as cir from '../ir/create';
+import {CreateOnlyTemplateStage} from './base';
 
 
 /**
  * Converts empty elementStart/elementEnd instructions into element instruction
  */
-export class ElementAttrsTransform implements Transform {
-  visit(node: Node, list: List): Node {
+export class ElementAttrsTransform extends CreateOnlyTemplateStage {
+  visit(node: cir.Node, list: cir.List): cir.Node {
     switch (node.kind) {
-      case Kind.Element:
-      case Kind.ElementStart:
+      case cir.Kind.Element:
+      case cir.Kind.ElementStart:
         if (node.attrs !== null && typeof node.attrs !== 'number') {
           node.attrs = transformAttrs(node.attrs);
         }
@@ -28,7 +29,7 @@ export class ElementAttrsTransform implements Transform {
   }
 }
 
-function transformAttrs(attrs: ElementAttrs) {
+function transformAttrs(attrs: cir.ElementAttrs) {
   const builder = new StaticAttributesBuilder();
 
   for (let i = 0; i < attrs.length; i += 2) {
@@ -36,18 +37,18 @@ function transformAttrs(attrs: ElementAttrs) {
     const value = attrs[i + 1];
     switch (prop) {
       case 'class':
-        if (value !== null) {
-          builder.setClassAttribute(value as string);
+        if (value !== null && typeof value === 'string') {
+          builder.setClassAttribute(value);
         }
         break;
       case 'style':
-        if (value !== null) {
-          builder.setStyleAttribute(value as string);
+        if (value !== null && typeof value === 'string') {
+          builder.setStyleAttribute(value);
         }
         break;
       default:
-        if (value !== null) {
-          builder.setAttribute(prop, value as string | null);
+        if (value !== null && typeof value === 'string') {
+          builder.setAttribute(prop, value);
         }
         break;
     }
@@ -69,7 +70,7 @@ export class StaticAttributesBuilder {
   private _projectAsSelectors: (string|number)[]|null = null;
   private _i18nNameAttrs: string[]|null = null;
 
-  setAttribute(attrName: string, value: string|null) {
+  setAttribute(attrName: string, value: string) {
     if (this._keyValueAttrs === null) {
       this._keyValueAttrs = [];
     }
@@ -137,8 +138,8 @@ export class StaticAttributesBuilder {
    * ]
    * ```
    */
-  build(): ElementAttrs {
-    let attrs: ElementAttrs = [];
+  build(): cir.ElementAttrs {
+    let attrs: cir.ElementAttrs = [];
 
     // ... 'prop', 'value', 'prop', NAMESPACE_URI, 'ns', 'prop', 'value' ...
     if (this._keyValueAttrs !== null) {
@@ -193,7 +194,7 @@ interface NamespacedPropEntry {
  */
 interface KeyValueEntry {
   prop: string|NamespacedPropEntry;
-  value: string|null;
+  value: string;
 }
 
 function generateClassesArray(classAttr: string): string[] {
@@ -204,7 +205,7 @@ function generateStylePropAndValuesArray(stylesAttr: string): string[] {
   return parseStyle(stylesAttr);
 }
 
-function populateStyleAttributeEntries(attrs: ElementAttrs, stylesAttr: string): void {
+function populateStyleAttributeEntries(attrs: cir.ElementAttrs, stylesAttr: string): void {
   attrs.push(AttributeMarker.Styles);
   const styles = generateStylePropAndValuesArray(stylesAttr);
   for (let i = 0; i < styles.length; i += 2) {
@@ -214,7 +215,7 @@ function populateStyleAttributeEntries(attrs: ElementAttrs, stylesAttr: string):
   }
 }
 
-function populateClassAttributeEntries(attrs: ElementAttrs, classAttr: string): void {
+function populateClassAttributeEntries(attrs: cir.ElementAttrs, classAttr: string): void {
   attrs.push(AttributeMarker.Classes);
   const classes = generateClassesArray(classAttr);
   for (let i = 0; i < classes.length; i++) {
@@ -223,7 +224,7 @@ function populateClassAttributeEntries(attrs: ElementAttrs, classAttr: string): 
   }
 }
 
-function populateKeyValueEntries(attrs: ElementAttrs, entries: KeyValueEntry[]): void {
+function populateKeyValueEntries(attrs: cir.ElementAttrs, entries: KeyValueEntry[]): void {
   for (let i = 0; i < entries.length; i++) {
     let {prop, value} = entries[i];
     if (typeof prop === 'string') {  // case 1: prop is not namespaced
@@ -241,21 +242,21 @@ function populateKeyValueEntries(attrs: ElementAttrs, entries: KeyValueEntry[]):
 }
 
 export function populateProjectAsSelectors(
-    attrs: ElementAttrs, selectors: (string | SelectorFlags)[]): void {
+    attrs: cir.ElementAttrs, selectors: (string | SelectorFlags)[]): void {
   attrs.push(AttributeMarker.ProjectAs, selectors);
 }
 
-function populateI18nNameEntries(attrs: ElementAttrs, names: string[]): void {
+function populateI18nNameEntries(attrs: cir.ElementAttrs, names: string[]): void {
   attrs.push(AttributeMarker.I18n);
   attrs.push(...names);
 }
 
-function populateTemplateNameEntries(attrs: ElementAttrs, names: string[]): void {
+function populateTemplateNameEntries(attrs: cir.ElementAttrs, names: string[]): void {
   attrs.push(AttributeMarker.Template);
   attrs.push(...names);
 }
 
-function populateBindingNameEntries(attrs: ElementAttrs, names: string[]): void {
+function populateBindingNameEntries(attrs: cir.ElementAttrs, names: string[]): void {
   attrs.push(AttributeMarker.Bindings);
   attrs.push(...names);
 }

@@ -9,11 +9,21 @@ import * as cir from '../ir/create';
 import * as uir from '../ir/update';
 import {visitAllExpressions} from '../ir/update';
 import {ExpressionTransformer} from '../util/expression_transformer';
+import {BaseTemplateStage} from './base';
+
+export class SlotAllocatorStage extends
+    BaseTemplateStage<SlotAllocatorTransform, ExpressionSlotTransform> {
+  private slotMap = new Map<cir.Id, cir.DataSlot>();
+
+  protected makeCreateTransform() { return new SlotAllocatorTransform(this.slotMap); }
+
+  protected makeUpdateTransform() { return new ExpressionSlotTransform(this.slotMap); }
+}
 
 export class SlotAllocatorTransform implements cir.Transform {
   private slot = 0;
 
-  private constructor(private slotMap: Map<cir.Id, cir.DataSlot>) {}
+  constructor(private slotMap: Map<cir.Id, cir.DataSlot>) {}
 
   private allocateSlotFor(id: cir.Id): cir.DataSlot {
     if (this.slotMap.has(id)) {
@@ -33,13 +43,10 @@ export class SlotAllocatorTransform implements cir.Transform {
         break;
       case cir.Kind.Template:
         node.slot = this.allocateSlotFor(node.id);
-        node.create.applyTransform(new SlotAllocatorTransform(this.slotMap));
         break;
     }
     return node;
   }
-
-  get expressionTransform(): uir.Transform { return new ExpressionSlotTransform(this.slotMap); }
 
   static forTemplateRoot(): SlotAllocatorTransform {
     return new SlotAllocatorTransform(new Map<cir.Id, cir.DataSlot>());

@@ -121,7 +121,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, template, 'Incorrect template');
     });
 
-    it('should translate DOM structure', () => {
+    fit('should translate DOM structure', () => {
       const files = {
         app: {
           'spec.ts': `

@@ -26,5 +26,6 @@ export function emitTemplateFunction(tpl: RootTemplate) {
       new TemplateEmitter(createEmitters, updateEmitters), new UnsupportedCreateEmitter(), );
 
   return o.fn(
-      produceTemplateFunctionParams(), produceBodyStatements(tpl, createEmitters, updateEmitters));
+      produceTemplateFunctionParams(), produceBodyStatements(tpl, createEmitters, updateEmitters),
+      undefined, undefined, tpl.name);
 }

@@ -6,6 +6,7 @@
 * found in the LICENSE file at https://angular.io/license
 */
 
+import * as o from '../../../../../output/output_ast';
 import * as list from '../../linked_list';
 import * as uir from '../update';
 
@@ -16,6 +17,9 @@ export type Id = CirId;
 export type DataSlot = number & {__brand: 'DataSlot'};
 
 export type Node = ElementStart | ElementEnd | Text | Element | Chain | Template;
+
+export type Selector = string | Array<string|number>;
+export type ElementAttrs = Array<string|number|Selector>;
 
 export enum Kind {
   ElementStart,
@@ -29,7 +33,7 @@ export enum Kind {
 export interface ElementStart extends list.LinkedListNode<Node> {
   kind: Kind.ElementStart;
   tag: string;
-  attrs: unknown[]|number|null;
+  attrs: ElementAttrs|number|null;
   id: Id;
   slot: DataSlot|null;
 }

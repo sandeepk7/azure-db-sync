@@ -46,7 +46,7 @@ export function produceBodyStatements(
 
 export function ifRenderStmt(creationMode: boolean, thenStmts: o.Statement[]) {
   const renderFlag = creationMode ? core.RenderFlags.Create : core.RenderFlags.Update;
-  const precondition = o.variable(RENDER_FLAGS).and(o.literal(renderFlag));
+  const precondition = o.variable(RENDER_FLAGS).bitwiseAnd(o.literal(renderFlag));
   return o.ifStmt(precondition, thenStmts);
 }
 
