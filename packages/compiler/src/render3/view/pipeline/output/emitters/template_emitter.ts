@@ -5,6 +5,8 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
+import {ConstantPool} from '@angular/compiler/src/constant_pool';
+
 import * as o from '../../../../../output/output_ast';
 import {Identifiers as R3Identifiers} from '../../../../r3_identifiers';
 import * as cir from '../../ir/create';
@@ -12,7 +14,10 @@ import {CreateEmitter, UpdateEmitter} from '../api';
 import {produceBodyStatements, produceTemplateFunctionParams} from '../util';
 
 export class TemplateEmitter implements CreateEmitter {
-  constructor(private _createEmitters: CreateEmitter[], private _updateEmitters: UpdateEmitter[]) {}
+  private id = 0;
+  constructor(
+      private _createEmitters: CreateEmitter[], private _updateEmitters: UpdateEmitter[],
+      private constantPool: ConstantPool) {}
 
   emit(node: cir.Node): o.Statement|null {
     if (node.kind !== cir.Kind.Template) {
@@ -24,6 +29,9 @@ export class TemplateEmitter implements CreateEmitter {
         produceTemplateFunctionParams(),
         produceBodyStatements(node, this._createEmitters, this._updateEmitters));
 
-    return o.importExpr(R3Identifiers.templateCreate).callFn([templateFn]).toStmt();
+    const name = `Template_${this.id++}`;
+    this.constantPool.statements.push(templateFn.toDeclStmt(name));
+
+    return o.importExpr(R3Identifiers.templateCreate).callFn([o.variable(name)]).toStmt();
   }
 }

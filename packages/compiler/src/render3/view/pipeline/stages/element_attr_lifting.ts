@@ -26,10 +26,22 @@ export class ElementAttrLiftingTransform implements cir.Transform {
     }
 
     if (node.attrs !== null && Array.isArray(node.attrs)) {
-      const idx = this.root.attrs !.length;
       // Convert node.attrs to o.Expression.
-      const attrs = toExpressions(node.attrs);
-      this.root.attrs !.push(new o.LiteralArrayExpr(attrs));
+      const attrs = new o.LiteralArrayExpr(toExpressions(node.attrs));
+
+      for (let idx = 0; idx < this.root.attrs !.length; idx++) {
+        const existingAttrs = this.root.attrs ![idx];
+        if (existingAttrs.isEquivalent(attrs)) {
+          // Another element shares these same attributes, so reuse its index within the top-level
+          // consts array instead of duplicating the attributes.
+          node.attrs = idx;
+          return node;
+        }
+      }
+
+      // These attributes are unique, so they get their own index in the top-level array.
+      const idx = this.root.attrs !.length;
+      this.root.attrs !.push(attrs);
       node.attrs = idx;
     }
 

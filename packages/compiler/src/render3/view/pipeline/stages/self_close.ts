@@ -12,7 +12,7 @@ import {CreateOnlyTemplateStage} from './base';
 /**
  * Converts empty elementStart/elementEnd instructions into element instruction
  */
-export class SelfClosingElementTransform extends CreateOnlyTemplateStage implements Transform {
+export class SelfClosingElementStage extends CreateOnlyTemplateStage implements Transform {
   visit(node: Node, list: List): Node {
     if (node.kind === Kind.Template) {
       node.create.applyTransform(this);

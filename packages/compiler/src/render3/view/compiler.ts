@@ -30,10 +30,13 @@ import {prepareSyntheticListenerFunctionName, prepareSyntheticPropertyName, type
 import {R3ComponentDef, R3ComponentMetadata, R3DirectiveDef, R3DirectiveMetadata, R3HostMetadata, R3QueryMetadata} from './api';
 import {parse} from './pipeline/input/template';
 import {emitTemplateFunction} from './pipeline/output/template_function';
-import {ElementAttrLiftingStage, ElementAttrLiftingTransform} from './pipeline/stages/element_attr_lifting';
+import {ElementAttrLiftingStage} from './pipeline/stages/element_attr_lifting';
 import {ElementAttrsTransform} from './pipeline/stages/element_attrs';
+import {ExpressionTranslatorStage} from './pipeline/stages/expressions';
 import {ResolverStage} from './pipeline/stages/resolver';
-import {SlotAllocatorStage, SlotAllocatorTransform} from './pipeline/stages/slot_allocator';
+import {SelfClosingElementStage} from './pipeline/stages/self_close';
+import {SlotAllocatorStage} from './pipeline/stages/slot_allocator';
+import {VarNamesStage} from './pipeline/stages/var_names';
 import {MIN_STYLING_BINDING_SLOTS_REQUIRED, StylingBuilder, StylingInstructionCall} from './styling_builder';
 import {BindingScope, makeBindingParser, prepareEventListenerParameters, renderFlagCheckIfStmt, resolveSanitizationFn, TemplateDefinitionBuilder, ValueConverter} from './template';
 import {asLiteral, chainedInstruction, conditionallyCreateMapObjectLiteral, CONTEXT_NAME, DefinitionMap, getQueryPredicate, RENDER_FLAGS, TEMPORARY_NAME, temporaryAllocator} from './util';
@@ -185,10 +188,17 @@ export function compileComponentFromMetadata(
 
   const root = parse(template.nodes, `${meta.name}_Template`);
 
-  new ResolverStage().transform(root);
-  new SlotAllocatorStage().transform(root);
-  new ElementAttrsTransform().transform(root);
-  new ElementAttrLiftingStage().transform(root);
+  // clang-format off
+  root.transform(
+    new ResolverStage(),
+    new SlotAllocatorStage(),
+    new ElementAttrsTransform(),
+    new ElementAttrLiftingStage(),
+    new SelfClosingElementStage(),
+    new VarNamesStage(),
+    new ExpressionTranslatorStage(),
+  );
+  // clang-format on
 
   // const templateBuilder = new TemplateDefinitionBuilder(
   //     constantPool, BindingScope.ROOT_SCOPE, 0, templateTypeName, null, null, templateName,
@@ -218,7 +228,7 @@ export function compileComponentFromMetadata(
 
 
 
-  definitionMap.set('template', emitTemplateFunction(root));
+  definitionMap.set('template', emitTemplateFunction(root, constantPool));
 
   // e.g. `directives: [MyDirective]`
   if (directivesUsed.size) {

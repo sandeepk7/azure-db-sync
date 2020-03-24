@@ -44,11 +44,9 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, Value
     for (const node of input) {
       node.visit(parser);
     }
-    return {
-      ...parser.finalize(),
-      attrs: null,
-      name: null,
-    };
+
+    const {create, update, scope} = parser.finalize();
+    return new RootTemplate(create, update, scope);
   }
 
   /**

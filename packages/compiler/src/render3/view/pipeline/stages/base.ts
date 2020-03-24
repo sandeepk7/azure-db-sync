@@ -1,9 +1,7 @@
-import {RootTemplate} from '../ir/api';
+import {RootTemplate, TemplateStage} from '../ir/api';
 import * as cir from '../ir/create';
 import * as uir from '../ir/update';
 import {ExpressionTransformer} from '../util/expression_transformer';
-
-export interface TemplateStage { transform(tmpl: RootTemplate): void; }
 
 export abstract class BaseTemplateStage<CT extends cir.Transform, UT extends uir.Transform>
     implements TemplateStage {

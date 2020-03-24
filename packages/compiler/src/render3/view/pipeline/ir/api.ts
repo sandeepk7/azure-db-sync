@@ -10,14 +10,28 @@ import {Identifiers as R3} from '../../../r3_identifiers';
 import * as cir from '../ir/create';
 import * as uir from '../ir/update';
 
-export interface RootTemplate {
+export class RootTemplate {
   create: cir.List;
   update: uir.List;
   scope: Scope;
 
-  name: string|null;
-  attrs: o.Expression[]|null;
+  constructor(create: cir.List, update: uir.List, scope: Scope) {
+    this.create = create;
+    this.update = update;
+    this.scope = scope;
+  }
+
+  name: string|null = null;
+  attrs: o.Expression[]|null = null;
+
+  transform(...stages: TemplateStage[]): void {
+    for (const stage of stages) {
+      stage.transform(this);
+    }
+  }
 }
+
+export interface TemplateStage { transform(tmpl: RootTemplate): void; }
 
 export enum TargetKind {
   Reference,

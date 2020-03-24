@@ -4,7 +4,7 @@ import * as uir from '../ir/update';
 
 import {ExpressionOnlyTemplateStage} from './base';
 
-export class ExpressionTranslator extends ExpressionOnlyTemplateStage {
+export class ExpressionTranslatorStage extends ExpressionOnlyTemplateStage {
   visitEmbeddedExpression(expr: uir.EmbeddedExpression): o.Expression {
     switch (expr.value.kind) {
       case uir.ExpressionKind.NextContext:

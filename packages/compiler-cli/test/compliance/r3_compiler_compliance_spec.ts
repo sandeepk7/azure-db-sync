@@ -498,7 +498,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, template, 'Incorrect template');
     });
 
-    it('should de-duplicate attribute arrays', () => {
+    fit('should de-duplicate attribute arrays', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -788,7 +788,7 @@ describe('compiler compliance', () => {
          expectEmit(source, MyComponentFactory, 'Incorrect MyComponent.ɵfac');
        });
 
-    it('should support structural directives', () => {
+    fit('should support structural directives', () => {
       const files = {
         app: {
           'spec.ts': `

@@ -1,8 +1,9 @@
 import * as o from '../../../../output/output_ast';
 import * as uir from '../ir/update';
 import {ExpressionTransformer} from '../util/expression_transformer';
+import {UpdateOnlyTemplateStage} from './base';
 
-export class VarNamesStage implements uir.Transform {
+export class VarNamesStage extends UpdateOnlyTemplateStage implements uir.Transform {
   private nextId = 0;
   private nameMap = new Map<uir.VarId, string>();
   private visitor = new VarNamesVisitor(this.nameMap);
