@@ -36,6 +36,7 @@ import {ExpressionTranslatorStage} from './pipeline/stages/expressions';
 import {ResolverStage} from './pipeline/stages/resolver';
 import {SelfClosingElementStage} from './pipeline/stages/self_close';
 import {SlotAllocatorStage} from './pipeline/stages/slot_allocator';
+import {TemplateNameStage} from './pipeline/stages/template_names';
 import {VarNamesStage} from './pipeline/stages/var_names';
 import {MIN_STYLING_BINDING_SLOTS_REQUIRED, StylingBuilder, StylingInstructionCall} from './styling_builder';
 import {BindingScope, makeBindingParser, prepareEventListenerParameters, renderFlagCheckIfStmt, resolveSanitizationFn, TemplateDefinitionBuilder, ValueConverter} from './template';
@@ -186,7 +187,7 @@ export function compileComponentFromMetadata(
 
   const template = meta.template;
 
-  const root = parse(template.nodes, `${meta.name}_Template`);
+  const root = parse(template.nodes, meta.name);
 
   // clang-format off
   root.transform(
@@ -196,6 +197,7 @@ export function compileComponentFromMetadata(
     new ElementAttrLiftingStage(),
     new SelfClosingElementStage(),
     new VarNamesStage(),
+    new TemplateNameStage(),
     new ExpressionTranslatorStage(),
   );
   // clang-format on

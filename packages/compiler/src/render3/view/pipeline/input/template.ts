@@ -157,6 +157,8 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, Value
       create: parsed.create,
       update: parsed.update,
       slot: null,
+      functionName: null,
+      tagName: template.tagName !== '' ? template.tagName : 'ng-template',
     });
   }
 

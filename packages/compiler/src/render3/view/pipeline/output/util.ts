@@ -51,7 +51,7 @@ export function ifRenderStmt(creationMode: boolean, thenStmts: o.Statement[]) {
 }
 
 export function produceInstructions<T extends LinkedListNode<T>>(
-    list: LinkedList<T>, emitters: Emitter<T>[]) {
+    list: LinkedList<T>, emitters: Emitter<T>[]): o.Statement[] {
   const stmts: o.Statement[] = [];
   list.forEach(node => {
     const result = emitNode(node, emitters);

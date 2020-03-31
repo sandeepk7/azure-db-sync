@@ -5,16 +5,17 @@ import {ExpressionTransformer} from '../util/expression_transformer';
 
 export abstract class BaseTemplateStage<CT extends cir.Transform, UT extends uir.Transform>
     implements TemplateStage {
-  protected abstract makeCreateTransform(root: RootTemplate, prev: CT|null, tmplId: cir.Id|null): CT
-      |null;
-  protected abstract makeUpdateTransform(root: RootTemplate, prev: UT|null, tmplId: cir.Id|null): UT
-      |null;
+  protected abstract makeCreateTransform(
+      root: RootTemplate, prev: CT|null, tmpl: cir.Template|null): CT|null;
+  protected abstract makeUpdateTransform(
+      root: RootTemplate, prev: UT|null, tmpl: cir.Template|null): UT|null;
 
   private transformImpl(
-      root: RootTemplate, tmpl: RootTemplate|cir.Template, id: cir.Id|null, prevCreate: CT|null,
+      root: RootTemplate, tmpl: cir.Template|RootTemplate, prevCreate: CT|null,
       prevUpdate: UT|null): void {
-    const currCreate = this.makeCreateTransform(root, prevCreate, id);
-    const currUpdate = this.makeUpdateTransform(root, prevUpdate, id);
+    const childNode = tmpl instanceof RootTemplate ? null : tmpl;
+    const currCreate = this.makeCreateTransform(root, prevCreate, childNode);
+    const currUpdate = this.makeUpdateTransform(root, prevUpdate, childNode);
 
     if (currCreate !== null) {
       tmpl.create.applyTransform(currCreate);
@@ -25,12 +26,12 @@ export abstract class BaseTemplateStage<CT extends cir.Transform, UT extends uir
 
     for (let node = tmpl.create.head; node !== null; node = node.next) {
       if (node.kind === cir.Kind.Template) {
-        this.transformImpl(root, node, node.id, currCreate, currUpdate);
+        this.transformImpl(root, node, currCreate, currUpdate);
       }
     }
   }
 
-  transform(tmpl: RootTemplate): void { this.transformImpl(tmpl, tmpl, null, null, null); }
+  transform(tmpl: RootTemplate): void { this.transformImpl(tmpl, tmpl, null, null); }
 }
 
 export class CreateOnlyTemplateStage extends BaseTemplateStage<cir.Transform, never> {

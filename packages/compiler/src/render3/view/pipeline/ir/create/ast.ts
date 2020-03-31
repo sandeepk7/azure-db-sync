@@ -56,6 +56,9 @@ export interface Template extends list.LinkedListNode<Node> {
   kind: Kind.Template;
   id: Id;
 
+  tagName: string|null;
+  functionName: string|null;
+
   create: List;
   update: uir.List;
 

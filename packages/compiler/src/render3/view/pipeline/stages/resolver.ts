@@ -10,10 +10,10 @@ export class ResolverStage extends BaseTemplateStage<never, UpdateResolver> {
   protected makeCreateTransform(): null { return null; }
 
   protected makeUpdateTransform(
-      root: RootTemplate, prev: UpdateResolver|null, tmplId: cir.CirId|null): UpdateResolver {
+      root: RootTemplate, prev: UpdateResolver|null, template: cir.Template): UpdateResolver {
     let scope: Scope;
-    if (prev !== null && tmplId !== null) {
-      scope = prev.scope.getChild(tmplId);
+    if (prev !== null && template !== null) {
+      scope = prev.scope.getChild(template.id);
     } else {
       scope = root.scope;
     }

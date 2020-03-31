@@ -10,9 +10,9 @@ import {SlotAllocatorTransform} from '@angular/compiler/src/render3/view/pipelin
 import {parse} from '../../../../../src/render3/view/pipeline/input/template';
 import * as cir from '../../../../../src/render3/view/pipeline/ir/create';
 import * as uir from '../../../../../src/render3/view/pipeline/ir/update';
-import {ExpressionTranslator} from '../../../../../src/render3/view/pipeline/stages/expressions';
+import {ExpressionTranslatorStage} from '../../../../../src/render3/view/pipeline/stages/expressions';
 import {ResolverStage} from '../../../../../src/render3/view/pipeline/stages/resolver';
-import {SelfClosingElementTransform} from '../../../../../src/render3/view/pipeline/stages/self_close';
+import {SelfClosingElementStage} from '../../../../../src/render3/view/pipeline/stages/self_close';
 import {VarNamesStage} from '../../../../../src/render3/view/pipeline/stages/var_names';
 import {VariableOptimizerStage} from '../../../../../src/render3/view/pipeline/stages/var_optimizer';
 import {NestedUpdateTransform} from '../../../../../src/render3/view/pipeline/util/nested';
@@ -40,7 +40,7 @@ describe('template parsing', () => {
     const slotter = SlotAllocatorTransform.forTemplateRoot();
     tmpl.create.applyTransform(slotter);
     NestedUpdateTransform.apply(tmpl, slotter.expressionTransform);
-    new ExpressionTranslator().transform(tmpl);
+    new ExpressionTranslatorStage().transform(tmpl);
 
     console.error('create:');
     console.error(tmpl.create.toString(cir.nodeToString));

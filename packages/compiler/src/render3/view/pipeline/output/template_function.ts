@@ -32,5 +32,5 @@ export function emitTemplateFunction(tpl: RootTemplate, constantPool: ConstantPo
 
   return o.fn(
       produceTemplateFunctionParams(), produceBodyStatements(tpl, createEmitters, updateEmitters),
-      undefined, undefined, tpl.name);
+      undefined, undefined, `${tpl.name}_Template`);
 }

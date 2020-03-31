@@ -6,7 +6,7 @@
 * found in the LICENSE file at https://angular.io/license
 */
 import {Kind} from '../../../../../src/render3/view/pipeline/ir/create';
-import {SelfClosingElementTransform} from '../../../../../src/render3/view/pipeline/stages/self_close';
+import {SelfClosingElementStage} from '../../../../../src/render3/view/pipeline/stages/self_close';
 import {TemplateAstGen} from '../util';
 
 describe('stages selfClose transformation', () => {
@@ -14,7 +14,7 @@ describe('stages selfClose transformation', () => {
     const builder = new TemplateAstGen();
     const start = builder.elementStart('div');
     builder.elementEnd(start);
-    builder.transform(new SelfClosingElementTransform());
+    builder.transform(new SelfClosingElementStage());
 
     const instructions = builder.build();
     expect(instructions.length).toBe(1);

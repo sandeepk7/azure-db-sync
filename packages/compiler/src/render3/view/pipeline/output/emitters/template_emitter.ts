@@ -29,7 +29,12 @@ export class TemplateEmitter implements CreateEmitter {
         produceTemplateFunctionParams(),
         produceBodyStatements(node, this._createEmitters, this._updateEmitters));
 
-    const name = `Template_${this.id++}`;
+    if (node.functionName === null) {
+      throw new Error(`AssertionError: expected function name to be set`);
+    }
+
+    const name = `${node.functionName}_Template`;
+
     this.constantPool.statements.push(templateFn.toDeclStmt(name));
 
     return o.importExpr(R3Identifiers.templateCreate).callFn([o.variable(name)]).toStmt();
