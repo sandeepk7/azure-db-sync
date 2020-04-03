@@ -30,7 +30,9 @@ import {prepareSyntheticListenerFunctionName, prepareSyntheticPropertyName, type
 import {R3ComponentDef, R3ComponentMetadata, R3DirectiveDef, R3DirectiveMetadata, R3HostMetadata, R3QueryMetadata} from './api';
 import {parse} from './pipeline/input/template';
 import {emitTemplateFunction} from './pipeline/output/template_function';
-import {ElementAttrLiftingStage} from './pipeline/stages/element_attr_lifting';
+import {AdvanceStage} from './pipeline/stages/advance';
+import {BindingCountingStage} from './pipeline/stages/binding_counting';
+import {ElementConstsLiftingStage} from './pipeline/stages/consts_lifting';
 import {ElementAttrsTransform} from './pipeline/stages/element_attrs';
 import {ExpressionTranslatorStage} from './pipeline/stages/expressions';
 import {ResolverStage} from './pipeline/stages/resolver';
@@ -194,11 +196,13 @@ export function compileComponentFromMetadata(
     new ResolverStage(),
     new SlotAllocatorStage(),
     new ElementAttrsTransform(),
-    new ElementAttrLiftingStage(),
+    new ElementConstsLiftingStage(),
     new SelfClosingElementStage(),
     new VarNamesStage(),
     new TemplateNameStage(),
+    new BindingCountingStage(),
     new ExpressionTranslatorStage(),
+    new AdvanceStage(),
   );
   // clang-format on
 
@@ -217,18 +221,16 @@ export function compileComponentFromMetadata(
   // }
 
   // e.g. `decls: 2`
-  // definitionMap.set('decls', o.literal(templateBuilder.getConstCount()));
+  definitionMap.set('decls', o.literal(root.decls !));
 
   // // e.g. `vars: 2`
-  // definitionMap.set('vars', o.literal(templateBuilder.getVarCount()));
+  definitionMap.set('vars', o.literal(root.vars !));
 
   // e.g. `consts: [['one', 'two'], ['three', 'four']]
   // const consts = templateBuilder.getConsts();
-  if (root.attrs !== null && root.attrs.length > 0) {
-    definitionMap.set('consts', o.literalArr(root.attrs));
+  if (root.consts !== null && root.consts.length > 0) {
+    definitionMap.set('consts', o.literalArr(root.consts));
   }
-
-
 
   definitionMap.set('template', emitTemplateFunction(root, constantPool));
 

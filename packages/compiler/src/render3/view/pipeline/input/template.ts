@@ -71,19 +71,23 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, Value
     // Allocate an id.
     const id = this.scope.allocateId();
 
+    let refs: cir.Reference[]|null = null;
+    if (element.references.length > 0) {
+      refs = [];
+      for (const ref of element.references) {
+        refs.push(this.scope.recordReference(ref.name, id, ref.value));
+      }
+    }
+
     const elementStart: cir.ElementStart = {
       ...FRESH_NODE,
       kind: cir.Kind.ElementStart, id,
       slot: null,
       tag: element.name,
-      attrs: null,
+      attrs: null, refs,
     };
 
     this.create.append(elementStart);
-
-    for (const ref of element.references) {
-      this.scope.recordReference(ref.name, id, ref.value);
-    }
 
     if (element.attributes.length > 0 || element.inputs.length > 0) {
       elementStart.attrs = [];
@@ -147,8 +151,12 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, Value
     const id = this.scope.allocateId();
     const parsed = this.parseChild(id, template);
 
-    for (const ref of template.references) {
-      this.scope.recordReference(ref.name, id, ref.value);
+    let refs: cir.Reference[]|null = null;
+    if (template.references.length > 0) {
+      refs = [];
+      for (const ref of template.references) {
+        refs.push(this.scope.recordReference(ref.name, id, ref.value));
+      }
     }
 
     this.create.append({
@@ -157,7 +165,9 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, Value
       create: parsed.create,
       update: parsed.update,
       slot: null,
-      functionName: null,
+      functionName: null, refs,
+      decls: null,
+      vars: null,
       tagName: template.tagName !== '' ? template.tagName : 'ng-template',
     });
   }

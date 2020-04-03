@@ -10,11 +10,10 @@ import * as o from '../../../../../output/output_ast';
 import * as list from '../../linked_list';
 import * as uir from '../update';
 
-import {CirId} from './id';
+import {CirId, DataSlot} from './id';
+import {Reference} from './ref';
 
 export type Id = CirId;
-
-export type DataSlot = number & {__brand: 'DataSlot'};
 
 export type Node = ElementStart | ElementEnd | Text | Element | Chain | Template;
 
@@ -34,6 +33,7 @@ export interface ElementStart extends list.LinkedListNode<Node> {
   kind: Kind.ElementStart;
   tag: string;
   attrs: ElementAttrs|number|null;
+  refs: Reference[]|number|null;
   id: Id;
   slot: DataSlot|null;
 }
@@ -59,8 +59,13 @@ export interface Template extends list.LinkedListNode<Node> {
   tagName: string|null;
   functionName: string|null;
 
+  refs: Reference[]|null;
+
   create: List;
   update: uir.List;
+
+  decls: number|null;
+  vars: number|null;
 
   slot: DataSlot|null;
 }

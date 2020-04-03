@@ -57,7 +57,7 @@ export function expressionToString(node: Expression): string {
     case ExpressionKind.NextContext:
       return `NextContext(${node.jump})`;
     case ExpressionKind.Reference:
-      return `Reference(${node.id}, '${node.value}')`;
+      return `Reference(${node.ref.value})`;
     default:
       throw new Error(`Not handled: ${ExpressionKind[node.kind]}`);
   }

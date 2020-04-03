@@ -8,14 +8,14 @@ export abstract class BaseTemplateStage<CT extends cir.Transform, UT extends uir
   protected abstract makeCreateTransform(
       root: RootTemplate, prev: CT|null, tmpl: cir.Template|null): CT|null;
   protected abstract makeUpdateTransform(
-      root: RootTemplate, prev: UT|null, tmpl: cir.Template|null): UT|null;
+      root: RootTemplate, prev: UT|null, tmpl: cir.Template|null, create: CT|null): UT|null;
 
   private transformImpl(
       root: RootTemplate, tmpl: cir.Template|RootTemplate, prevCreate: CT|null,
       prevUpdate: UT|null): void {
     const childNode = tmpl instanceof RootTemplate ? null : tmpl;
     const currCreate = this.makeCreateTransform(root, prevCreate, childNode);
-    const currUpdate = this.makeUpdateTransform(root, prevUpdate, childNode);
+    const currUpdate = this.makeUpdateTransform(root, prevUpdate, childNode, currCreate);
 
     if (currCreate !== null) {
       tmpl.create.applyTransform(currCreate);

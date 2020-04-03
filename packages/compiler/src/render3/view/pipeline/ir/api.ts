@@ -22,7 +22,10 @@ export class RootTemplate {
   }
 
   name: string|null = null;
-  attrs: o.Expression[]|null = null;
+  consts: o.Expression[]|null = null;
+
+  decls: number|null = null;
+  vars: number|null = null;
 
   transform(...stages: TemplateStage[]): void {
     for (const stage of stages) {
@@ -39,11 +42,7 @@ export enum TargetKind {
   RootContext,
 }
 
-export interface Reference {
-  kind: TargetKind.Reference;
-  element: cir.Id;
-  value: string;
-}
+export interface Reference extends cir.Reference { kind: TargetKind.Reference; }
 
 export interface Variable {
   kind: TargetKind.Variable;

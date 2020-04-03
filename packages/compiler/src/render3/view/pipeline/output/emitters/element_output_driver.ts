@@ -35,12 +35,22 @@ function slot(index: number) {
 }
 
 function produceElementParams(node: cir.Element | cir.ElementStart): o.Expression[] {
-  const params = [
-    slot(node.slot !),
-    o.literal(node.tag),
-  ];
+  const p0 = slot(node.slot !);
+  const p1 = o.literal(node.tag);
+  let p2: o.Expression = o.NULL_EXPR;
+  let p3: o.Expression = o.NULL_EXPR;
   if (node.attrs !== null && typeof node.attrs === 'number') {
-    params.push(o.literal(node.attrs));
+    p2 = o.literal(node.attrs);
   }
-  return params;
+  if (node.refs !== null && typeof node.refs === 'number') {
+    p3 = o.literal(node.refs);
+  }
+
+  if (p3 !== o.NULL_EXPR) {
+    return [p0, p1, p2, p3];
+  } else if (p2 !== o.NULL_EXPR) {
+    return [p0, p1, p2];
+  } else {
+    return [p0, p1];
+  }
 }

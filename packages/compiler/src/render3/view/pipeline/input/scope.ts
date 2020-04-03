@@ -14,10 +14,9 @@ export enum TargetKind {
   RootContext,
 }
 
-export interface Reference {
+export interface Reference extends cir.Reference {
   kind: TargetKind.Reference;
   element: cir.Id;
-  value: string;
 }
 
 export interface Variable {
@@ -33,6 +32,7 @@ const ROOT_CONTEXT: RootContext = {
 
 export type Target = Reference | Variable | RootContext;
 
+
 export class Scope {
   private _targets = new Map<string, Target>();
   private children = new Map<cir.Id, Scope>();
@@ -41,11 +41,15 @@ export class Scope {
 
   allocateId(): cir.Id { return this.idGen.next(); }
 
-  recordReference(name: string, toElementId: cir.Id, value: string): void {
-    this._targets.set(name, {
+  recordReference(name: string, toElementId: cir.Id, value: string): Reference {
+    const ref: Reference = {
       kind: TargetKind.Reference,
-      element: toElementId, value,
-    });
+      slot: null,
+      element: toElementId, name, value,
+    };
+
+    this._targets.set(name, ref);
+    return ref;
   }
 
   recordVariable(name: string, templateId: cir.Id, value: string): void {

@@ -8,6 +8,7 @@
 export interface Transform<T extends LinkedListNode<any>> {
   visitList?(list: LinkedList<T>): void;
   visit?(node: T, list: LinkedList<T>): T;
+  finalize?(): void;
 }
 
 export interface LinkedListNode<T extends LinkedListNode<any>> {
@@ -30,6 +31,9 @@ export class LinkedList<T extends LinkedListNode<any>> {
         node = node.next as T;
       }
     }
+    if (transform.finalize !== undefined) {
+      transform.finalize();
+    }
   }
 
   prependList(list: LinkedList<T>): void {
@@ -44,6 +48,20 @@ export class LinkedList<T extends LinkedListNode<any>> {
     this.head.prev = list.tail;
     list.tail.next = this.head;
     this.head = list.head;
+  }
+
+  insertBefore(before: T, insert: T): void {
+    if (this.head === before) {
+      this.head = insert;
+    }
+
+    insert.prev = before.prev;
+    insert.next = before;
+
+    if (before.prev !== null) {
+      before.prev.next = insert;
+    }
+    before.prev = insert;
   }
 
   append(node: T): void {

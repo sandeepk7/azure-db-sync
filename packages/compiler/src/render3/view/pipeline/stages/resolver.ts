@@ -75,9 +75,7 @@ class UpdateResolver implements uir.Transform {
         case TargetKind.Reference:
           value = new uir.EmbeddedExpression({
             kind: uir.ExpressionKind.Reference,
-            id: target.element,
-            value: target.value,
-            slot: null,
+            ref: target,
           });
           break;
         case TargetKind.Variable:

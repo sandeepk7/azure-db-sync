@@ -15,10 +15,10 @@ export class ExpressionTranslatorStage extends ExpressionOnlyTemplateStage {
           return nextContext.callFn([o.literal(expr.value.jump)]);
         }
       case uir.ExpressionKind.Reference:
-        if (expr.value.slot === null) {
+        if (expr.value.ref.slot === null) {
           throw new Error('AssertionError: slot should have been allocated');
         }
-        return new o.ExternalExpr(R3Identifiers.reference).callFn([o.literal(expr.value.slot)]);
+        return new o.ExternalExpr(R3Identifiers.reference).callFn([o.literal(expr.value.ref.slot)]);
       default:
         throw new Error(`Unexpected EmbeddedExpression: ${uir.expressionToString(expr.value)}`);
     }

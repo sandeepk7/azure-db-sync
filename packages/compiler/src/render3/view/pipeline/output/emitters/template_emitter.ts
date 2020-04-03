@@ -37,6 +37,10 @@ export class TemplateEmitter implements CreateEmitter {
 
     this.constantPool.statements.push(templateFn.toDeclStmt(name));
 
-    return o.importExpr(R3Identifiers.templateCreate).callFn([o.variable(name)]).toStmt();
+    return o.importExpr(R3Identifiers.templateCreate)
+        .callFn([
+          o.literal(node.slot !), o.variable(name), o.literal(node.decls !), o.literal(node.vars !)
+        ])
+        .toStmt();
   }
 }

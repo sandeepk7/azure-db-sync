@@ -15,6 +15,7 @@ export function createElementStart(
     attrs: attrs || null,
     kind: Kind.ElementStart, tag, id,
     slot: null,
+    refs: null,
   };
 }
 
@@ -33,5 +34,6 @@ export function createElement(id: Id, tag: string, attrs: any[] | null | undefin
     attrs: attrs || null,
     kind: Kind.Element, tag, id,
     slot: null,
+    refs: null,
   };
 }

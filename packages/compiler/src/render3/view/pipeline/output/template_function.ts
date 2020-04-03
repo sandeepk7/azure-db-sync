@@ -11,6 +11,7 @@ import * as o from '../../../../output/output_ast';
 import {RootTemplate} from '../ir/api';
 import {CreateEmitter, UpdateEmitter} from '../output/api';
 
+import {AdvanceEmitter} from './emitters/advance_emitter';
 import {ElementEmitter} from './emitters/element_output_driver';
 import {TemplateEmitter} from './emitters/template_emitter';
 import {TextInterpolateEmitter, TextOutputEmitter} from './emitters/text_output_driver';
@@ -23,7 +24,8 @@ export function emitTemplateFunction(tpl: RootTemplate, constantPool: ConstantPo
   const updateEmitters: UpdateEmitter[] = [];
 
   updateEmitters.push(
-      new VarEmitter(), new TextInterpolateEmitter(), new UnsupportedUpdateEmitter());
+      new VarEmitter(), new TextInterpolateEmitter(), new AdvanceEmitter(),
+      new UnsupportedUpdateEmitter());
 
   createEmitters.push(
       new ElementEmitter(), new TextOutputEmitter(),

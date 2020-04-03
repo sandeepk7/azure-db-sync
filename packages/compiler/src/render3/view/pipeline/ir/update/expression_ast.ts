@@ -1,5 +1,5 @@
 import * as o from '../../../../../output/output_ast';
-import {CirId} from '../create/id';
+import {Reference as CirReference} from '../create/ref';
 import {Node, NodeKind, VarId} from './node_ast';
 
 export type Expression =
@@ -62,9 +62,7 @@ export interface VarExpr {
 
 export interface ReferenceExpr {
   kind: ExpressionKind.Reference;
-  id: CirId;
-  value: string;
-  slot: number|null;
+  ref: CirReference,
 }
 
 export function visitAllExpressions<C = unknown>(
