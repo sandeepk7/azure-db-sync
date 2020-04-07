@@ -15,7 +15,7 @@ import {Reference} from './ref';
 
 export type Id = CirId;
 
-export type Node = ElementStart | ElementEnd | Text | Element | Chain | Template;
+export type Node = ElementStart | ElementEnd | Text | Element | Chain | Template | Listener;
 
 export type Selector = string | Array<string|number>;
 export type ElementAttrs = Array<string|number|Selector>;
@@ -27,6 +27,7 @@ export enum Kind {
   Text,
   Chain,
   Template,
+  Listener,
 }
 
 export interface ElementStart extends list.LinkedListNode<Node> {
@@ -77,6 +78,12 @@ export interface Chain<T extends Node = Node> extends list.LinkedListNode<Node> 
   list: List<T>;
 }
 
+export interface Listener extends list.LinkedListNode<Node> {
+  kind: Kind.Listener;
+  eventName: string;
+  handler: o.Expression;
+}
+
 export type List<T extends Node = Node> = list.LinkedList<T>;
 export const List: {new<T extends Node = Node>(): List<T>} = list.LinkedList;
 export type Transform<T extends Node = Node> = list.Transform<T>;
@@ -100,6 +107,8 @@ export function nodeToString(node: Node): string {
       const update =
           node.update.toString(uir.nodeToString).split('\n').map(line => '   ' + line).join('\n');
       return `Template(${identifierOfNode(node)}, [\n${create}\n], [\n${update}\n])`;
+    case Kind.Listener:
+      return `Listener()`;
   }
 }
 
@@ -108,5 +117,13 @@ function identifierOfNode(node: {id: Id, slot: DataSlot | null}): string {
     return `Slot(${node.slot})`;
   } else {
     return `Id(${node.id})`;
+  }
+}
+
+export function visitAllCreateExpressions<C = unknown>(
+    node: Node, visitor: uir.EmbeddedExpressionVisitor<C>, context?: C): void {
+  switch (node.kind) {
+    case Kind.Listener:
+      node.handler = node.handler.visitExpression(visitor, context);
   }
 }

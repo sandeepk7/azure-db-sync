@@ -1,10 +1,14 @@
 import * as o from '../../../../output/output_ast';
-import {RootTemplate, Scope, Target, TargetKind} from '../ir/api';
+import {Host, HostStage, RootTemplate, Scope, Target, TargetKind} from '../ir/api';
 import * as cir from '../ir/create';
 import * as uir from '../ir/update';
 import {ExpressionTransformer} from '../util/expression_transformer';
 
 import {BaseTemplateStage} from './base';
+
+interface LookupHost {
+  lookup(name: string): Target;
+}
 
 export class ResolverStage extends BaseTemplateStage<never, UpdateResolver> {
   protected makeCreateTransform(): null { return null; }
@@ -19,6 +23,10 @@ export class ResolverStage extends BaseTemplateStage<never, UpdateResolver> {
     }
     return new UpdateResolver(scope);
   }
+}
+
+export class ResolverHostStage implements HostStage {
+  transform(host: Host): void { host.create.applyTransform(new CreateHostResolver()); }
 }
 
 class UpdateResolver implements uir.Transform {
@@ -97,9 +105,29 @@ class UpdateResolver implements uir.Transform {
   }
 }
 
+class HostLookupScope implements LookupHost {
+  lookup(name: string): Target {
+    if (name === '$event') {
+      return {kind: TargetKind.Event};
+    } else {
+      return {kind: TargetKind.RootContext};
+    }
+  }
+}
+
+class CreateHostResolver implements cir.Transform {
+  private visitor = new ExpressionResolver(
+      new HostLookupScope(), o.variable('ctx'), new Map<Target, uir.VarId>());
+
+  visit(node: cir.Node): cir.Node {
+    cir.visitAllCreateExpressions(node, this.visitor);
+    return node;
+  }
+}
+
 export class ExpressionResolver extends ExpressionTransformer {
   constructor(
-      private scope: Scope, private rootContext: o.Expression,
+      private scope: LookupHost, private rootContext: o.Expression,
       private targetVars: Map<Target, uir.VarId>) {
     super();
   }
@@ -120,6 +148,8 @@ export class ExpressionResolver extends ExpressionTransformer {
             kind: uir.ExpressionKind.Var,
             id: refVar,
           });
+        case TargetKind.Event:
+          return o.variable('$event');
         default:
           throw new Error('unsupported');
       }

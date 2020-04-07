@@ -14,7 +14,7 @@ import * as cir from '../ir/create';
 import * as uir from '../ir/update';
 
 import {Scope} from './scope';
-import {ReadResult, ReadResultKind, ValuePreprocessor, ValueProcessorHost} from './value';
+import {ReadResult, ReadResultKind, ValuePreprocessor} from './value';
 
 export interface IrTemplate {
   create: cir.List;
@@ -28,11 +28,11 @@ export function parse(input: tmpl.Node[], name: string): RootTemplate {
   return root;
 }
 
-class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor, ValueProcessorHost {
+class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
   private create = new cir.List();
   private update = new uir.List();
 
-  private preprocessor = new ValuePreprocessor(this);
+  private preprocessor = new ValuePreprocessor();
 
   constructor(private scope: Scope) {}
 

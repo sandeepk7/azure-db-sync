@@ -8,7 +8,7 @@
 import * as core from '../../../../core';
 import * as o from '../../../../output/output_ast';
 import {CONTEXT_NAME, RENDER_FLAGS} from '../../util';
-import {RootTemplate} from '../ir/api';
+import {Host, RootTemplate} from '../ir/api';
 import * as cir from '../ir/create';
 import * as uir from '../ir/update';
 import {LinkedList, LinkedListNode} from '../linked_list';
@@ -26,7 +26,7 @@ export function emitNode<T extends LinkedListNode<T>>(node: T, emitters: Emitter
 }
 
 export function produceBodyStatements(
-    tpl: RootTemplate | cir.Template, createEmitters: CreateEmitter[],
+    tpl: RootTemplate | cir.Template | Host, createEmitters: CreateEmitter[],
     updateEmitters: UpdateEmitter[]): o.Statement[] {
   const stmts: o.Statement[] = [];
   const creationStmts = produceInstructions<cir.Node>(tpl.create, createEmitters);

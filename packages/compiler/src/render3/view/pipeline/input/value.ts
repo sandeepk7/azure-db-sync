@@ -17,13 +17,9 @@ export enum ReadResultKind {
 
 export interface ReadResult { kind: ReadResultKind, expression: o.Expression; }
 
-export interface ValueProcessorHost {}
-
 export interface Context {}
 
 export class ValuePreprocessor implements ast.AstVisitor {
-  constructor(private host: ValueProcessorHost) { let x: ast.AST; }
-
   process(value: ast.AST): o.Expression { return value.visit(this); }
 
   visitASTWithSource(node: ast.ASTWithSource): o.Expression { return node.ast.visit(this); }
@@ -46,14 +42,27 @@ export class ValuePreprocessor implements ast.AstVisitor {
   visitChain(node: ast.Chain) { throw new Error('Method not implemented.'); }
   visitConditional(node: ast.Conditional) { throw new Error('Method not implemented.'); }
   visitFunctionCall(node: ast.FunctionCall) { throw new Error('Method not implemented.'); }
-  visitImplicitReceiver(node: ast.ImplicitReceiver) { throw new Error('Method not implemented.'); }
+  visitImplicitReceiver(node: ast.ImplicitReceiver) {
+    throw new Error('Should have been handled before this point.');
+  }
   visitInterpolation(node: ast.Interpolation) { throw new Error('Method not implemented.'); }
   visitKeyedRead(node: ast.KeyedRead) { throw new Error('Method not implemented.'); }
   visitKeyedWrite(node: ast.KeyedWrite) { throw new Error('Method not implemented.'); }
   visitLiteralArray(node: ast.LiteralArray) { throw new Error('Method not implemented.'); }
   visitLiteralMap(node: ast.LiteralMap) { throw new Error('Method not implemented.'); }
   visitLiteralPrimitive(node: ast.LiteralPrimitive) { throw new Error('Method not implemented.'); }
-  visitMethodCall(node: ast.MethodCall) { throw new Error('Method not implemented.'); }
+  visitMethodCall(node: ast.MethodCall): o.Expression {
+    const args = node.args.map(arg => arg.visit(this));
+    if (node.receiver instanceof ast.ImplicitReceiver) {
+      const target = new uir.EmbeddedExpression({
+        kind: uir.ExpressionKind.Unresolved,
+        name: node.name,
+      });
+      return new o.InvokeFunctionExpr(target, args);
+    } else {
+      return new o.InvokeMethodExpr(node.receiver.visit(this), node.name, args);
+    }
+  }
   visitPipe(node: ast.BindingPipe) { throw new Error('Method not implemented.'); }
   visitPrefixNot(node: ast.PrefixNot) { throw new Error('Method not implemented.'); }
   visitNonNullAssert(node: ast.NonNullAssert) { throw new Error('Method not implemented.'); }

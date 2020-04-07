@@ -12,7 +12,7 @@ import {TemplateAstGen} from './util';
 
 describe('output instructions', () => {
   describe('elements', () => {
-    fit('should emit various element instructions in the creation block', () => {
+    it('should emit various element instructions in the creation block', () => {
       const builder = new TemplateAstGen();
       const e1 = builder.elementStart('div');
       const e2 = builder.elementStart('div');

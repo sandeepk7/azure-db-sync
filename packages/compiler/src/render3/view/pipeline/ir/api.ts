@@ -34,12 +34,31 @@ export class RootTemplate {
   }
 }
 
+export class Host {
+  create = new cir.List();
+  update = new uir.List();
+  attrs: o.Expression[]|null = null;
+
+  decls: number|null = null;
+  vars: number|null = null;
+
+  constructor(public name: string) {}
+
+  transform(...stages: HostStage[]): void {
+    for (const stage of stages) {
+      stage.transform(this);
+    }
+  }
+}
+
 export interface TemplateStage { transform(tmpl: RootTemplate): void; }
+export interface HostStage { transform(host: Host): void; }
 
 export enum TargetKind {
   Reference,
   Variable,
   RootContext,
+  Event,
 }
 
 export interface Reference extends cir.Reference { kind: TargetKind.Reference; }
@@ -52,7 +71,9 @@ export interface Variable {
 
 export interface RootContext { kind: TargetKind.RootContext; }
 
-export type Target = Reference | Variable | RootContext;
+export interface Event { kind: TargetKind.Event; }
+
+export type Target = Reference | Variable | RootContext | Event;
 
 export interface Scope {
   readonly targets: IterableIterator<[string, Target]>;

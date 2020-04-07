@@ -11,7 +11,7 @@ import {ElementAttrsTransform} from '../../../../../src/render3/view/pipeline/st
 import {TemplateAstGen} from '../util';
 
 describe('stages elementAttrs transformation', () => {
-  fit('should balance a series of key/value attributes into an ElementAttrs array', () => {
+  it('should balance a series of key/value attributes into an ElementAttrs array', () => {
     const attrs = ['title', 'foo', 'class', 'one two three', 'style', 'width:200px; height:600px;'];
 
     const builder = new TemplateAstGen();

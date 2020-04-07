@@ -28,14 +28,16 @@ import {Render3ParseResult} from '../r3_template_transform';
 import {prepareSyntheticListenerFunctionName, prepareSyntheticPropertyName, typeWithParameters} from '../util';
 
 import {R3ComponentDef, R3ComponentMetadata, R3DirectiveDef, R3DirectiveMetadata, R3HostMetadata, R3QueryMetadata} from './api';
+import {fromHostDef} from './pipeline/input/host';
 import {parse} from './pipeline/input/template';
+import {emitHostBindingsFunction} from './pipeline/output/host_bindings_function';
 import {emitTemplateFunction} from './pipeline/output/template_function';
 import {AdvanceStage} from './pipeline/stages/advance';
 import {BindingCountingStage} from './pipeline/stages/binding_counting';
 import {ElementConstsLiftingStage} from './pipeline/stages/consts_lifting';
 import {ElementAttrsTransform} from './pipeline/stages/element_attrs';
 import {ExpressionTranslatorStage} from './pipeline/stages/expressions';
-import {ResolverStage} from './pipeline/stages/resolver';
+import {ResolverHostStage, ResolverStage} from './pipeline/stages/resolver';
 import {SelfClosingElementStage} from './pipeline/stages/self_close';
 import {SlotAllocatorStage} from './pipeline/stages/slot_allocator';
 import {TemplateNameStage} from './pipeline/stages/template_names';
@@ -75,12 +77,9 @@ function baseDirectiveFields(
         'viewQuery', createViewQueriesFunction(meta.viewQueries, constantPool, meta.name));
   }
 
-  // e.g. `hostBindings: (rf, ctx) => { ... }
-  definitionMap.set(
-      'hostBindings',
-      createHostBindingsFunction(
-          meta.host, meta.typeSourceSpan, bindingParser, constantPool, meta.selector || '',
-          meta.name, definitionMap));
+  const host = fromHostDef(meta.name, meta.host, bindingParser, meta.typeSourceSpan);
+  host.transform(new ResolverHostStage(), )
+  definitionMap.set('hostBindings', emitHostBindingsFunction(host, constantPool));
 
   // e.g 'inputs: {a: 'a'}`
   definitionMap.set('inputs', conditionallyCreateMapObjectLiteral(meta.inputs, true));
