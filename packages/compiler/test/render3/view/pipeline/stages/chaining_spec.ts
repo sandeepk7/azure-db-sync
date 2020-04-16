@@ -7,11 +7,11 @@
 */
 import {Chain, Element, ElementStart, Kind, Text} from '../../../../../src/render3/view/pipeline/ir/create';
 import {ChainingStage} from '../../../../../src/render3/view/pipeline/stages/chaining';
-import {TemplateAstGen} from '../util';
+import {TemplateCreateAstGen} from '../util';
 
 describe('stages chaining transformation', () => {
   it('should chain together multiple repeated instances of an instruction', () => {
-    const builder = new TemplateAstGen();
+    const builder = new TemplateCreateAstGen();
     builder.text('one');
     builder.text('two');
     builder.text('three');
@@ -36,7 +36,7 @@ describe('stages chaining transformation', () => {
   });
 
   it('should chain together instructions adjacent to other instructions', () => {
-    const builder = new TemplateAstGen();
+    const builder = new TemplateCreateAstGen();
     builder.text('one');
     builder.text('two');
     builder.element('div');

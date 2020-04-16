@@ -3657,7 +3657,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, expectedOutput, 'Invalid directive definition');
     });
 
-    fit('should add an abstract directive if a host listener is present', () => {
+    it('should add an abstract directive if a host listener is present', () => {
       const files = {
         app: {
           'spec.ts': `

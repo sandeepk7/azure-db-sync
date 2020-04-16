@@ -7,11 +7,11 @@
 */
 import {Element, ElementStart} from '../../../../../src/render3/view/pipeline/ir/create';
 import {ConstantAllocatorTransform} from '../../../../../src/render3/view/pipeline/stages/constant_allocator';
-import {TemplateAstGen} from '../util';
+import {TemplateCreateAstGen} from '../util';
 
 describe('stages constant allocator transformation', () => {
   it('should chain together multiple repeated instances of an instruction', () => {
-    const builder = new TemplateAstGen();
+    const builder = new TemplateCreateAstGen();
     const id = builder.elementStart('div', ['id', 'bar']);
     builder.element('div', ['title', 'foo']);
     builder.elementEnd(id);

@@ -27,7 +27,7 @@ export class EmbeddedExpression extends o.Expression {
     if (visitor.visitEmbeddedExpression !== undefined) {
       return visitor.visitEmbeddedExpression(this, ctx);
     } else {
-      throw new Error('EmbeddedExpression cannot be used in this context');
+      throw new Error('EmbeddedExpression cannot be used in this context: ' + ExpressionKind[this.value.kind]);
     }
   }
 
@@ -68,6 +68,13 @@ export interface ReferenceExpr {
 export function visitAllExpressions<C = unknown>(
     node: Node, visitor: EmbeddedExpressionVisitor<C>, context?: C): void {
   switch (node.kind) {
+    case NodeKind.Property:
+    case NodeKind.ClassMap:
+    case NodeKind.ClassProp:
+    case NodeKind.StyleMap:
+    case NodeKind.StyleProp:
+      node.expression = node.expression.visitExpression(visitor, context);
+      break;
     case NodeKind.TextInterpolate:
       for (let i = 0; i < node.expression.length; i++) {
         node.expression[i] = node.expression[i].visitExpression(visitor, context);

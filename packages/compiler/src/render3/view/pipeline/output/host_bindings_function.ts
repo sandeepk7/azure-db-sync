@@ -14,6 +14,8 @@ import {CreateEmitter, UpdateEmitter} from '../output/api';
 import {ListenerOutputEmitter} from './emitters/listener_output_emitter';
 import {UnsupportedCreateEmitter, UnsupportedUpdateEmitter} from './emitters/unsupported_output_driver';
 import {produceBodyStatements, produceTemplateFunctionParams} from './util';
+import {StyleBindingsEmitter} from './emitters/style_bindings_emitter';
+import {ClassBindingsEmitter} from './emitters/class_bindings_emitter';
 
 export function emitHostBindingsFunction(host: Host, constantPool: ConstantPool) {
   const createEmitters: CreateEmitter[] = [
@@ -21,6 +23,8 @@ export function emitHostBindingsFunction(host: Host, constantPool: ConstantPool)
     new UnsupportedCreateEmitter(),
   ];
   const updateEmitters: UpdateEmitter[] = [
+    new StyleBindingsEmitter(),
+    new ClassBindingsEmitter(),
     new UnsupportedUpdateEmitter(),
   ];
 

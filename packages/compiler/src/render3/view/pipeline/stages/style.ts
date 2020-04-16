@@ -5,11 +5,29 @@
 * Use of this source code is governed by an MIT-style license that can be
 * found in the LICENSE file at https://angular.io/license
 */
+import {BaseTemplateStage} from './base';
 import {List, Node, NodeKind, Property, StyleMap, StyleProp, Transform} from '../ir/update';
+import {HostStage, Host} from '../ir/api';
 
-import {replaceNode} from './util';
+export class StyleStage extends BaseTemplateStage<never, StyleTransform> {
+  private styleTransform = new StyleTransform();
 
+  makeCreateTransform(): null {
+    return null;
+  }
 
+  makeUpdateTransform(): StyleTransform {
+    return this.styleTransform;
+  }
+}
+
+export class StyleHostStage implements HostStage {
+  private styleTransform = new StyleTransform();
+
+  transform(host: Host): void {
+    host.update.applyTransform(this.styleTransform);
+  }
+}
 
 /**
  * Converts empty elementStart/elementEnd instructions into element instruction

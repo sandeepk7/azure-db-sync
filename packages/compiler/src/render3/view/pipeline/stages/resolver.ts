@@ -26,10 +26,13 @@ export class ResolverStage extends BaseTemplateStage<never, UpdateResolver> {
 }
 
 export class ResolverHostStage implements HostStage {
-  transform(host: Host): void { host.create.applyTransform(new CreateHostResolver()); }
+  transform(host: Host): void {
+    host.create.applyTransform(new CreateHostResolver());
+    host.update.applyTransform(new UpdateHostResolver());
+  }
 }
 
-class UpdateResolver implements uir.Transform {
+export class UpdateResolver implements uir.Transform {
   private visitor !: ExpressionResolver;
   private targetMap = new Map<Target, uir.VarId>();
 
@@ -121,6 +124,15 @@ class CreateHostResolver implements cir.Transform {
 
   visit(node: cir.Node): cir.Node {
     cir.visitAllCreateExpressions(node, this.visitor);
+    return node;
+  }
+}
+
+class UpdateHostResolver implements uir.Transform {
+  private visitor = new ExpressionResolver(
+      new HostLookupScope(), o.variable('ctx'), new Map<Target, uir.VarId>());
+  visit(node: uir.Node): uir.Node {
+    uir.visitAllExpressions(node, this.visitor);
     return node;
   }
 }

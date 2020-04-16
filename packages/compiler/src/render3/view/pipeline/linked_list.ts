@@ -28,6 +28,24 @@ export class LinkedList<T extends LinkedListNode<any>> {
       let node = this.head;
       while (node !== null) {
         node = transform.visit(node, this) as T;
+
+        // Need to ensure:
+        // - if node is at the beginning, this.head is updated
+        // - if node is at the end, this.tail is updated
+        // - node.next.prev is node
+        // - node.prev.next is node
+        if (node.prev !== null) {
+          node.prev.next = node;
+        } else {
+          this.head = node;
+        }
+
+        if (node.next !== null) {
+          node.next.prev = node;
+        } else {
+          this.tail = node;
+        }
+
         node = node.next as T;
       }
     }
@@ -48,6 +66,11 @@ export class LinkedList<T extends LinkedListNode<any>> {
     this.head.prev = list.tail;
     list.tail.next = this.head;
     this.head = list.head;
+  }
+
+  sortSubset(start: T, end: T, cmp: (a: T, b: T) => number): {start: T, end: T} {
+    // TODO: insertion sort
+    return {start, end};
   }
 
   insertBefore(before: T, insert: T): void {

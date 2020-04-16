@@ -6,11 +6,11 @@
 * found in the LICENSE file at https://angular.io/license
 */
 import {SlotAllocatorTransform} from '../../../../../src/render3/view/pipeline/stages/slot_allocator';
-import {TemplateAstGen} from '../util';
+import {TemplateCreateAstGen} from '../util';
 
 describe('stages slotAllocator transformation', () => {
   it('should populate all elementStart, element and text instructions with slot values', () => {
-    const builder = new TemplateAstGen();
+    const builder = new TemplateCreateAstGen();
     const start = builder.elementStart('div');
     builder.text('Middle');
     builder.element('span');

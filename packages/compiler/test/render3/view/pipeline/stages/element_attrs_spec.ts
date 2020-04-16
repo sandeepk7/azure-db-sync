@@ -6,15 +6,15 @@
 * found in the LICENSE file at https://angular.io/license
 */
 import {AttributeMarker} from '../../../../../src/core';
-import {Element} from '../../../../../src/render3/view/pipeline/api/cir';
+import {Element} from '../../../../../src/render3/view/pipeline/ir/create';
 import {ElementAttrsTransform} from '../../../../../src/render3/view/pipeline/stages/element_attrs';
-import {TemplateAstGen} from '../util';
+import {TemplateCreateAstGen} from '../util';
 
 describe('stages elementAttrs transformation', () => {
   it('should balance a series of key/value attributes into an ElementAttrs array', () => {
     const attrs = ['title', 'foo', 'class', 'one two three', 'style', 'width:200px; height:600px;'];
 
-    const builder = new TemplateAstGen();
+    const builder = new TemplateCreateAstGen();
     builder.element('div', attrs);
     builder.transform(new ElementAttrsTransform());
 

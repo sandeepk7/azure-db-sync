@@ -7,7 +7,7 @@ export const List: {new (): List} = list.LinkedList;
 export type Transform = list.Transform<Node>;
 
 export type Node =
-    TextInterpolate | Property | Attribute | QueryRefresh | StyleMap | StyleProp | Var | Advance;
+    TextInterpolate | Property | Attribute | QueryRefresh | StyleMap | StyleProp | ClassProp | ClassMap | Var | Advance;
 export enum NodeKind {
   TextInterpolate,
   Property,
@@ -34,14 +34,25 @@ export interface Property extends list.LinkedListNode<Node> {
   expression: o.Expression;
 }
 
+export interface StyleProp extends list.LinkedListNode<Node> {
+  kind: NodeKind.StyleProp;
+  name: string;
+  expression: o.Expression;
+}
+
 export interface StyleMap extends list.LinkedListNode<Node> {
   kind: NodeKind.StyleMap;
   expression: o.Expression;
 }
 
-export interface StyleProp extends list.LinkedListNode<Node> {
-  kind: NodeKind.StyleProp;
+export interface ClassProp extends list.LinkedListNode<Node> {
+  kind: NodeKind.ClassProp;
   name: string;
+  expression: o.Expression;
+}
+
+export interface ClassMap extends list.LinkedListNode<Node> {
+  kind: NodeKind.ClassMap;
   expression: o.Expression;
 }
 

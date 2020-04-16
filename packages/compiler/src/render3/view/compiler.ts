@@ -43,8 +43,10 @@ import {SlotAllocatorStage} from './pipeline/stages/slot_allocator';
 import {TemplateNameStage} from './pipeline/stages/template_names';
 import {VarNamesStage} from './pipeline/stages/var_names';
 import {MIN_STYLING_BINDING_SLOTS_REQUIRED, StylingBuilder, StylingInstructionCall} from './styling_builder';
-import {BindingScope, makeBindingParser, prepareEventListenerParameters, renderFlagCheckIfStmt, resolveSanitizationFn, TemplateDefinitionBuilder, ValueConverter} from './template';
-import {asLiteral, chainedInstruction, conditionallyCreateMapObjectLiteral, CONTEXT_NAME, DefinitionMap, getQueryPredicate, RENDER_FLAGS, TEMPORARY_NAME, temporaryAllocator} from './util';
+import {BindingScope, TemplateDefinitionBuilder, ValueConverter, makeBindingParser, prepareEventListenerParameters, renderFlagCheckIfStmt, resolveSanitizationFn} from './template';
+import {CONTEXT_NAME, DefinitionMap, RENDER_FLAGS, TEMPORARY_NAME, asLiteral, chainedInstruction, conditionallyCreateMapObjectLiteral, getQueryPredicate, temporaryAllocator} from './util';
+import {StyleTransform, StyleHostStage} from './pipeline/stages/style';
+import {ClassHostStage} from './pipeline/stages/class';
 
 const EMPTY_ARRAY: any[] = [];
 
@@ -78,7 +80,12 @@ function baseDirectiveFields(
   }
 
   const host = fromHostDef(meta.name, meta.host, bindingParser, meta.typeSourceSpan);
-  host.transform(new ResolverHostStage(), )
+  host.transform(
+    new ResolverHostStage(),
+    new StyleHostStage(),
+    new ClassHostStage(),
+  );
+
   definitionMap.set('hostBindings', emitHostBindingsFunction(host, constantPool));
 
   // e.g 'inputs: {a: 'a'}`

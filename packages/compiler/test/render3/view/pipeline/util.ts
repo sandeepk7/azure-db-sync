@@ -6,26 +6,31 @@
 * found in the LICENSE file at https://angular.io/license
 */
 import {IdGenerator} from '@angular/compiler/src/render3/view/pipeline/id_gen';
+import * as o from '../../../../src/output/output_ast';
 
 import {createElement, createElementEnd, createElementStart} from '../../../../src/render3/view/pipeline/element';
-import {Id, Node, Transform} from '../../../../src/render3/view/pipeline/ir/create';
+import * as cir from '../../../../src/render3/view/pipeline/ir/create';
+import * as uir from '../../../../src/render3/view/pipeline/ir/update';
 import {LinkedList} from '../../../../src/render3/view/pipeline/linked_list';
 import {createText} from '../../../../src/render3/view/pipeline/text';
+import {createProperty} from '../../../../src/render3/view/pipeline/property';
 
 export interface TestAstGen {
-  node(node: Node): void;
-  element(tag: string): Id;
-  elementStart(tag: string): Id;
-  elementEnd(id: Id): void;
-  text(value: string): Id;
-  build(): Node[];
+  node(node: cir.Node): void;
+  element(tag: string): cir.Id;
+  elementStart(tag: string): cir.Id;
+  elementEnd(id: cir.Id): void;
+  text(value: string): cir.Id;
+  property(name: string, value: string): void;
+  build(): cir.Node[];
+  buildUpdateNodes(): uir.Node[];
 }
 
-export class TemplateAstGen implements TestAstGen {
+export class TemplateCreateAstGen implements TestAstGen {
   private _gen = new IdGenerator();
-  private _list = new LinkedList<Node>();
+  private _list = new LinkedList<cir.Node>();
 
-  node(node: Node) { this._list.append(node); }
+  node(node: cir.Node) { this._list.append(node); }
 
   elementStart(tag: string, attrs?: any[]|null): Id {
     const instruction = createElementStart(this._gen.next(), tag, attrs);
@@ -50,7 +55,13 @@ export class TemplateAstGen implements TestAstGen {
     return instruction.id;
   }
 
+  property(name: string, value: string|null|o.LiteralExpr): Id {
+    const instruction = createProperty(name, value);
+    this._list.append(instruction);
+    return instruction.id;
+  }
+
   transform(transform: Transform<any>): void { this._list.applyTransform(transform); }
 
-  build(): Node[] { return this._list.toArray(); }
+  build(): cir.Node[] { return this._list.toArray(); }
 }
