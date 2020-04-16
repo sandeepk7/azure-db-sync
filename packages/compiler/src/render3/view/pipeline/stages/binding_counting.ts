@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import * as o from '../../../../output/output_ast';
 import {RootTemplate, TemplateStage} from '../ir/api';
 import * as cir from '../ir/create';
@@ -8,7 +15,9 @@ import {ExpressionTransformer} from '../util/expression_transformer';
 import {BaseTemplateStage, UpdateOnlyTemplateStage} from './base';
 
 export class BindingCountingStage extends BaseTemplateStage<never, BindingCountingTransform> {
-  makeCreateTransform(): null { return null; }
+  makeCreateTransform(): null {
+    return null;
+  }
   makeUpdateTransform(
       root: RootTemplate, prev: BindingCountingTransform|null, childTemplate: cir.Template|null) {
     const template = childTemplate !== null ? childTemplate : root;
@@ -33,7 +42,9 @@ export class BindingCountingTransform {
     return node;
   }
 
-  finalize(): void { this.template.vars = this.count + this.expressionCounter.count; }
+  finalize(): void {
+    this.template.vars = this.count + this.expressionCounter.count;
+  }
 }
 
 export class ExpressionBindingCounter extends ExpressionTransformer {

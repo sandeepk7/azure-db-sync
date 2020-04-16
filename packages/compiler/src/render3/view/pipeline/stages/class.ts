@@ -1,13 +1,14 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-class license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-class license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import {Host, HostStage} from '../ir/api';
+import {ClassMap, ClassProp, List, Node, NodeKind, Property, Transform} from '../ir/update';
+
 import {BaseTemplateStage} from './base';
-import {List, Node, NodeKind, Property, ClassMap, ClassProp, Transform} from '../ir/update';
-import {HostStage, Host} from '../ir/api';
 
 export class ClassStage extends BaseTemplateStage<never, ClassTransform> {
   private classTransform = new ClassTransform();
@@ -29,9 +30,6 @@ export class ClassHostStage implements HostStage {
   }
 }
 
-/**
- * Converts empty elementStart/elementEnd instructions into element instruction
- */
 export class ClassTransform implements Transform {
   visit(node: Node, list: List): Node {
     if (node.kind === NodeKind.Property && isClassProp(node.name)) {
@@ -61,5 +59,5 @@ function convertClassPropProperty(node: Property): ClassProp {
 }
 
 function extractClassPropName(name: string): string {
-  return name.match(/class.(\w+)/) ![1];
+  return name.match(/class.(\w+)/)![1];
 }

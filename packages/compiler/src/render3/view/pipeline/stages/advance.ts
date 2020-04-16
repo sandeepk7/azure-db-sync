@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {RootTemplate, TemplateStage} from '../ir/api';
 import * as cir from '../ir/create';
 import * as uir from '../ir/update';
@@ -13,7 +20,9 @@ export class AdvanceStage extends BaseTemplateStage<AdvanceStage, AdvanceTransfo
     return this;
   }
 
-  makeUpdateTransform(): AdvanceTransform { return new AdvanceTransform(this.slotMap); }
+  makeUpdateTransform(): AdvanceTransform {
+    return new AdvanceTransform(this.slotMap);
+  }
 
   visit(node: cir.Node): cir.Node {
     switch (node.kind) {
@@ -43,7 +52,7 @@ export class AdvanceTransform implements uir.Transform {
     if (!this.slotMap.has(id)) {
       throw new Error('Could not find slot for element: ' + id);
     }
-    return this.slotMap.get(id) !;
+    return this.slotMap.get(id)!;
   }
 
   visit(node: uir.Node, list: uir.List): uir.Node {
@@ -62,7 +71,8 @@ export class AdvanceTransform implements uir.Transform {
       list.insertBefore(node, {
         prev: null,
         next: null,
-        kind: uir.NodeKind.Advance, delta,
+        kind: uir.NodeKind.Advance,
+        delta,
       })
     } else if (delta < 0) {
       throw new Error('Cannot advance() backwards?');

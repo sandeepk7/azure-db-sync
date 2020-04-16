@@ -1,10 +1,10 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {IdGenerator} from '@angular/compiler/src/render3/view/pipeline/id_gen';
 
 import {createElement, createElementEnd, createElementStart} from '../../../../src/render3/view/pipeline/element';
@@ -16,16 +16,20 @@ export abstract class CreateAstGenBase {
   protected _gen = new IdGenerator();
   protected _list = new LinkedList<cir.Node>();
 
-  node(node: cir.Node) { this._list.append(node); }
+  node(node: cir.Node) {
+    this._list.append(node);
+  }
 
-  transform(transform: cir.Transform<any>): void { this._list.applyTransform(transform); }
+  transform(transform: cir.Transform<any>): void {
+    this._list.applyTransform(transform);
+  }
 
-  build(): cir.Node[] { return this._list.toArray(); }
+  build(): cir.Node[] {
+    return this._list.toArray();
+  }
 }
 
-export class HostCreateAstGen {
-
-}
+export class HostCreateAstGen {}
 
 export class TemplateCreateAstGen extends CreateAstGenBase {
   text(value: string|null): cir.Id {

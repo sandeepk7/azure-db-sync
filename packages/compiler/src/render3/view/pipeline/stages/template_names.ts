@@ -1,10 +1,10 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {RootTemplate} from '../ir/api';
 import * as cir from '../ir/create';
 
@@ -17,13 +17,15 @@ export class TemplateNameStage extends BaseTemplateStage<TemplateNameTransform, 
     if (parent !== null && parent.functionName !== null) {
       parentName = parent.functionName;
     } else {
-      parentName = root.name !;
+      parentName = root.name!;
     }
 
     return new TemplateNameTransform(parentName);
   }
 
-  makeUpdateTransform(): null { return null; }
+  makeUpdateTransform(): null {
+    return null;
+  }
 }
 
 export class TemplateNameTransform implements cir.Transform {

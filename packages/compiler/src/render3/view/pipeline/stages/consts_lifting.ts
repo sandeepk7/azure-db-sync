@@ -1,8 +1,15 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import * as o from '../../../../output/output_ast';
 import {RootTemplate} from '../ir/api';
 import * as cir from '../ir/create';
 
-import {BaseTemplateStage, CreateOnlyTemplateStage} from './base';
+import {BaseTemplateStage} from './base';
 
 export class ElementConstsLiftingStage extends
     BaseTemplateStage<ElementConstsLiftingTransform, never> {
@@ -15,11 +22,15 @@ export class ElementConstsLiftingStage extends
     return this.instance;
   }
 
-  protected makeUpdateTransform(): null { return null; }
+  protected makeUpdateTransform(): null {
+    return null;
+  }
 }
 
 export class ElementConstsLiftingTransform implements cir.Transform {
-  constructor(private root: RootTemplate) { root.consts = []; }
+  constructor(private root: RootTemplate) {
+    root.consts = [];
+  }
 
   visit(node: cir.Node): cir.Node {
     if (node.kind !== cir.Kind.Element && node.kind !== cir.Kind.ElementStart) {
@@ -47,8 +58,8 @@ export class ElementConstsLiftingTransform implements cir.Transform {
   }
 
   private addOrDedupConst(value: o.Expression): number {
-    for (let idx = 0; idx < this.root.consts !.length; idx++) {
-      const existingConst = this.root.consts ![idx];
+    for (let idx = 0; idx < this.root.consts!.length; idx++) {
+      const existingConst = this.root.consts![idx];
       if (existingConst.isEquivalent(value)) {
         // Another constant is equivalent to this new one, so reuse the old index instead of
         // duplicating data in the `consts` array.
@@ -56,8 +67,8 @@ export class ElementConstsLiftingTransform implements cir.Transform {
       }
     }
 
-    const idx = this.root.consts !.length;
-    this.root.consts !.push(value);
+    const idx = this.root.consts!.length;
+    this.root.consts!.push(value);
     return idx;
   }
 }

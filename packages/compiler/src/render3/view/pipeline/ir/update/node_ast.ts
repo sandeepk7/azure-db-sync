@@ -6,8 +6,8 @@ export type List = list.LinkedList<Node>;
 export const List: {new (): List} = list.LinkedList;
 export type Transform = list.Transform<Node>;
 
-export type Node =
-    TextInterpolate | Property | Attribute | QueryRefresh | StyleMap | StyleProp | ClassProp | ClassMap | Var | Advance;
+export type Node = TextInterpolate|Property|Attribute|QueryRefresh|StyleMap|StyleProp|ClassProp|
+    ClassMap|Var|Advance;
 export enum NodeKind {
   TextInterpolate,
   Property,
@@ -56,11 +56,15 @@ export interface ClassMap extends list.LinkedListNode<Node> {
   expression: o.Expression;
 }
 
-export interface Attribute extends list.LinkedListNode<Node> { kind: NodeKind.Attribute; }
+export interface Attribute extends list.LinkedListNode<Node> {
+  kind: NodeKind.Attribute;
+}
 
-export interface QueryRefresh extends list.LinkedListNode<Node> { kind: NodeKind.QueryRefresh; }
+export interface QueryRefresh extends list.LinkedListNode<Node> {
+  kind: NodeKind.QueryRefresh;
+}
 
-export type VarId = number & {__brand: 'uir.VarId'};
+export type VarId = number&{__brand: 'uir.VarId'};
 export enum VarIdentity {
   TemplateContext,
 }

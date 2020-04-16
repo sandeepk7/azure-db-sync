@@ -1,10 +1,10 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {ConstantPool} from '@angular/compiler/src/constant_pool';
 
 import * as o from '../../../../../output/output_ast';
@@ -39,7 +39,7 @@ export class TemplateEmitter implements CreateEmitter {
 
     return o.importExpr(R3Identifiers.templateCreate)
         .callFn([
-          o.literal(node.slot !), o.variable(name), o.literal(node.decls !), o.literal(node.vars !)
+          o.literal(node.slot!), o.variable(name), o.literal(node.decls!), o.literal(node.vars!)
         ])
         .toStmt();
   }

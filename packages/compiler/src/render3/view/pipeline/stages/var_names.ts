@@ -20,7 +20,9 @@ export class VarNamesStage extends UpdateOnlyTemplateStage implements uir.Transf
 }
 
 class VarNamesVisitor extends ExpressionTransformer {
-  constructor(private nameMap: Map<uir.VarId, string>) { super(); }
+  constructor(private nameMap: Map<uir.VarId, string>) {
+    super();
+  }
 
   visitEmbeddedExpression(node: uir.EmbeddedExpression, context: unknown): o.Expression {
     if (node.value.kind !== uir.ExpressionKind.Var) {
@@ -29,6 +31,6 @@ class VarNamesVisitor extends ExpressionTransformer {
     if (!this.nameMap.has(node.value.id)) {
       throw new Error(`Unnamed/unknown variable: ${node.value.id}`);
     }
-    return new o.ReadVarExpr(this.nameMap.get(node.value.id) !);
+    return new o.ReadVarExpr(this.nameMap.get(node.value.id)!);
   }
 }

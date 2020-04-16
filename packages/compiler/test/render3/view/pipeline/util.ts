@@ -1,19 +1,19 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {IdGenerator} from '@angular/compiler/src/render3/view/pipeline/id_gen';
-import * as o from '../../../../src/output/output_ast';
 
+import * as o from '../../../../src/output/output_ast';
 import {createElement, createElementEnd, createElementStart} from '../../../../src/render3/view/pipeline/element';
 import * as cir from '../../../../src/render3/view/pipeline/ir/create';
 import * as uir from '../../../../src/render3/view/pipeline/ir/update';
 import {LinkedList} from '../../../../src/render3/view/pipeline/linked_list';
-import {createText} from '../../../../src/render3/view/pipeline/text';
 import {createProperty} from '../../../../src/render3/view/pipeline/property';
+import {createText} from '../../../../src/render3/view/pipeline/text';
 
 export interface TestAstGen {
   node(node: cir.Node): void;
@@ -30,7 +30,9 @@ export class TemplateCreateAstGen implements TestAstGen {
   private _gen = new IdGenerator();
   private _list = new LinkedList<cir.Node>();
 
-  node(node: cir.Node) { this._list.append(node); }
+  node(node: cir.Node) {
+    this._list.append(node);
+  }
 
   elementStart(tag: string, attrs?: any[]|null): Id {
     const instruction = createElementStart(this._gen.next(), tag, attrs);
@@ -61,7 +63,11 @@ export class TemplateCreateAstGen implements TestAstGen {
     return instruction.id;
   }
 
-  transform(transform: Transform<any>): void { this._list.applyTransform(transform); }
+  transform(transform: Transform<any>): void {
+    this._list.applyTransform(transform);
+  }
 
-  build(): cir.Node[] { return this._list.toArray(); }
+  build(): cir.Node[] {
+    return this._list.toArray();
+  }
 }

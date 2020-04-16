@@ -11,7 +11,9 @@ interface LookupHost {
 }
 
 export class ResolverStage extends BaseTemplateStage<never, UpdateResolver> {
-  protected makeCreateTransform(): null { return null; }
+  protected makeCreateTransform(): null {
+    return null;
+  }
 
   protected makeUpdateTransform(
       root: RootTemplate, prev: UpdateResolver|null, template: cir.Template): UpdateResolver {
@@ -33,14 +35,16 @@ export class ResolverHostStage implements HostStage {
 }
 
 export class UpdateResolver implements uir.Transform {
-  private visitor !: ExpressionResolver;
+  private visitor!: ExpressionResolver;
   private targetMap = new Map<Target, uir.VarId>();
 
   private varId = 0;
 
   constructor(readonly scope: Scope) {}
 
-  private newVar(): uir.VarId { return (this.varId++ as uir.VarId); }
+  private newVar(): uir.VarId {
+    return (this.varId++ as uir.VarId);
+  }
 
   visitList(list: uir.List): void {
     let thisContext: o.Expression = new o.ReadVarExpr('ctx');
@@ -54,7 +58,8 @@ export class UpdateResolver implements uir.Transform {
         const id = this.newVar();
         init.append({
           ...FRESH_NODE,
-          kind: uir.NodeKind.Var, id,
+          kind: uir.NodeKind.Var,
+          id,
           name: null,
           value: new uir.EmbeddedExpression({
             kind: uir.ExpressionKind.NextContext,
@@ -101,7 +106,8 @@ export class UpdateResolver implements uir.Transform {
         ...FRESH_NODE,
         kind: uir.NodeKind.Var,
         id: varId,
-        name: null, value,
+        name: null,
+        value,
       });
       this.targetMap.set(target, varId);
     }
@@ -155,7 +161,7 @@ export class ExpressionResolver extends ExpressionTransformer {
           if (!this.targetVars.has(target)) {
             throw new Error('unknown reference/variable');
           }
-          const refVar = this.targetVars.get(target) !;
+          const refVar = this.targetVars.get(target)!;
           return new uir.EmbeddedExpression({
             kind: uir.ExpressionKind.Var,
             id: refVar,

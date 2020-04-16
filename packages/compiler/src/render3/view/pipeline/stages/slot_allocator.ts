@@ -1,26 +1,27 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {RootTemplate} from '../ir/api';
 import * as cir from '../ir/create';
-import * as uir from '../ir/update';
-import {visitAllExpressions} from '../ir/update';
-import {ExpressionTransformer} from '../util/expression_transformer';
 
 import {BaseTemplateStage} from './base';
 
 export class SlotAllocatorStage extends BaseTemplateStage<SlotAllocatorTransform, never> {
   private slotMap = new Map<cir.Id, cir.DataSlot>();
 
-  protected makeCreateTransform(root: RootTemplate, ): SlotAllocatorTransform {
+  protected makeCreateTransform(
+      root: RootTemplate,
+      ): SlotAllocatorTransform {
     return new SlotAllocatorTransform(root, this.slotMap);
   }
 
-  protected makeUpdateTransform(): null { return null; }
+  protected makeUpdateTransform(): null {
+    return null;
+  }
 }
 
 export class SlotAllocatorTransform implements cir.Transform {
@@ -61,5 +62,7 @@ export class SlotAllocatorTransform implements cir.Transform {
     return node;
   }
 
-  finalize(): void { this.template.decls = this.slot + 1; }
+  finalize(): void {
+    this.template.decls = this.slot + 1;
+  }
 }

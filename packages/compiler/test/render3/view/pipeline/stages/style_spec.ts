@@ -1,14 +1,15 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import {NodeKind, StyleMap, StyleProp} from '@angular/compiler/src/render3/view/pipeline/ir/update';
+
+import * as o from '../../../../../src/output/output_ast';
 import {StyleTransform} from '../../../../../src/render3/view/pipeline/stages/style';
 import {TemplateUpdateAstGen} from '../update_ast_gen';
-import * as o from '../../../../../src/output/output_ast';
-import {NodeKind, StyleProp, StyleMap} from '@angular/compiler/src/render3/view/pipeline/ir/update';
 
 describe('style transformation stage', () => {
   describe('StyleTransform', () => {

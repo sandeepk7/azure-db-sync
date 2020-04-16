@@ -1,3 +1,10 @@
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {RootTemplate, TemplateStage} from '../ir/api';
 import * as cir from '../ir/create';
 import * as uir from '../ir/update';
@@ -31,17 +38,27 @@ export abstract class BaseTemplateStage<CT extends cir.Transform, UT extends uir
     }
   }
 
-  transform(tmpl: RootTemplate): void { this.transformImpl(tmpl, tmpl, null, null); }
+  transform(tmpl: RootTemplate): void {
+    this.transformImpl(tmpl, tmpl, null, null);
+  }
 }
 
 export class CreateOnlyTemplateStage extends BaseTemplateStage<cir.Transform, never> {
-  makeCreateTransform(): cir.Transform { return this as cir.Transform; }
-  makeUpdateTransform(): null { return null; }
+  makeCreateTransform(): cir.Transform {
+    return this as cir.Transform;
+  }
+  makeUpdateTransform(): null {
+    return null;
+  }
 }
 
 export class UpdateOnlyTemplateStage extends BaseTemplateStage<never, uir.Transform> {
-  makeCreateTransform(): null { return null; }
-  makeUpdateTransform(): uir.Transform { return this as uir.Transform; }
+  makeCreateTransform(): null {
+    return null;
+  }
+  makeUpdateTransform(): uir.Transform {
+    return this as uir.Transform;
+  }
 }
 
 export class ExpressionOnlyTemplateStage extends ExpressionTransformer implements TemplateStage {

@@ -1,10 +1,10 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
 import * as o from '../../../../../output/output_ast';
 import * as list from '../../linked_list';
@@ -15,9 +15,9 @@ import {Reference} from './ref';
 
 export type Id = CirId;
 
-export type Node = ElementStart | ElementEnd | Text | Element | Chain | Template | Listener;
+export type Node = ElementStart|ElementEnd|Text|Element|Chain|Template|Listener;
 
-export type Selector = string | Array<string|number>;
+export type Selector = string|Array<string|number>;
 export type ElementAttrs = Array<string|number|Selector>;
 
 export enum Kind {
@@ -39,7 +39,9 @@ export interface ElementStart extends list.LinkedListNode<Node> {
   slot: DataSlot|null;
 }
 
-export interface Element extends Omit<ElementStart, 'kind'> { kind: Kind.Element; }
+export interface Element extends Omit<ElementStart, 'kind'> {
+  kind: Kind.Element;
+}
 
 export interface ElementEnd extends list.LinkedListNode<Node> {
   kind: Kind.ElementEnd;
@@ -71,7 +73,9 @@ export interface Template extends list.LinkedListNode<Node> {
   slot: DataSlot|null;
 }
 
-export interface IdGen { next(): Id; }
+export interface IdGen {
+  next(): Id;
+}
 
 export interface Chain<T extends Node = Node> extends list.LinkedListNode<Node> {
   kind: Kind.Chain;
@@ -112,7 +116,7 @@ export function nodeToString(node: Node): string {
   }
 }
 
-function identifierOfNode(node: {id: Id, slot: DataSlot | null}): string {
+function identifierOfNode(node: {id: Id, slot: DataSlot|null}): string {
   if (node.slot !== null) {
     return `Slot(${node.slot})`;
   } else {

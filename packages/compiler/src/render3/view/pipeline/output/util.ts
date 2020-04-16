@@ -1,10 +1,10 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import * as core from '../../../../core';
 import * as o from '../../../../output/output_ast';
 import {CONTEXT_NAME, RENDER_FLAGS} from '../../util';
@@ -26,7 +26,7 @@ export function emitNode<T extends LinkedListNode<T>>(node: T, emitters: Emitter
 }
 
 export function produceBodyStatements(
-    tpl: RootTemplate | cir.Template | Host, createEmitters: CreateEmitter[],
+    tpl: RootTemplate|cir.Template|Host, createEmitters: CreateEmitter[],
     updateEmitters: UpdateEmitter[]): o.Statement[] {
   const stmts: o.Statement[] = [];
   const creationStmts = produceInstructions<cir.Node>(tpl.create, createEmitters);

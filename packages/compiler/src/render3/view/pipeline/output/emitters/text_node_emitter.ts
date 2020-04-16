@@ -1,22 +1,22 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import * as o from '../../../../../output/output_ast';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as cir from '../../ir/create';
 import * as uir from '../../ir/update';
-import {CreateEmitter, UpdateEmitter} from '../../output/api';
+import {CreateEmitter, UpdateEmitter} from '../api';
 
-export class TextOutputEmitter implements CreateEmitter {
+export class TextNodeEmitter implements CreateEmitter {
   emit(node: cir.Node): o.Statement|null {
     switch (node.kind) {
       // ɵɵtext()
       case cir.Kind.Text:
-        const args: o.Expression[] = [slot(node.slot !)];
+        const args: o.Expression[] = [slot(node.slot!)];
         if (node.value !== null) {
           args.push(o.literal(node.value));
         }
@@ -26,7 +26,9 @@ export class TextOutputEmitter implements CreateEmitter {
     return null;
   }
 
-  emitUpdateInstruction(node: uir.Node): o.Statement|null { return null; }
+  emitUpdateInstruction(node: uir.Node): o.Statement|null {
+    return null;
+  }
 }
 
 export class TextInterpolateEmitter implements UpdateEmitter {

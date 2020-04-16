@@ -81,7 +81,7 @@ function expectOutputFunctionArgs(statement: o.ExpressionStatement) {
   return expect(args.map(a => literalToValue(a)));
 }
 
-function literalToValue(item: o.LiteralExpr | o.LiteralArrayExpr): any|any[] {
+function literalToValue(item: o.LiteralExpr|o.LiteralArrayExpr): any|any[] {
   if (item instanceof o.LiteralArrayExpr) {
     return item.entries.map(e => literalToValue(e as o.LiteralExpr | o.LiteralArrayExpr));
   }

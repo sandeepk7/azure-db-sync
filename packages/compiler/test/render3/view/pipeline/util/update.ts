@@ -6,13 +6,16 @@ export class UpdateBuilder {
   private varId: number = 0;
   private list = new uir.List();
 
-  private nextVar(): uir.VarId { return (this.varId++) as uir.VarId; }
+  private nextVar(): uir.VarId {
+    return (this.varId++) as uir.VarId;
+  }
 
   addVarNextContext(): uir.VarId {
     const id = this.nextVar();
     this.list.append({
       ...FRESH_NODE,
-      kind: uir.NodeKind.Var, id,
+      kind: uir.NodeKind.Var,
+      id,
       value: new uir.EmbeddedExpression({kind: uir.ExpressionKind.NextContext, jump: 1}),
       name: null,
     });
@@ -23,7 +26,8 @@ export class UpdateBuilder {
     const id = this.nextVar();
     this.list.append({
       ...FRESH_NODE,
-      kind: uir.NodeKind.Var, id,
+      kind: uir.NodeKind.Var,
+      id,
       value: new uir.EmbeddedExpression(
           {kind: uir.ExpressionKind.Reference, id: target as cir.Id, value: '', slot: null}),
       name: null,
@@ -35,7 +39,8 @@ export class UpdateBuilder {
     const id = this.nextVar();
     this.list.append({
       ...FRESH_NODE,
-      kind: uir.NodeKind.Var, id,
+      kind: uir.NodeKind.Var,
+      id,
       value: expr,
       name: null,
     });
@@ -57,11 +62,14 @@ export class UpdateBuilder {
       ...FRESH_NODE,
       kind: uir.NodeKind.TextInterpolate,
       id: target as cir.Id,
-      expression: expressions, text,
+      expression: expressions,
+      text,
     });
   }
 
-  build(): uir.List { return this.list; }
+  build(): uir.List {
+    return this.list;
+  }
 }
 
 const FRESH_NODE = {

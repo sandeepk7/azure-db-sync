@@ -1,17 +1,13 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {Element, ElementStart, Kind, List, Node, Transform} from '../ir/create';
 import {CreateOnlyTemplateStage} from './base';
 
-
-/**
- * Converts empty elementStart/elementEnd instructions into element instruction
- */
 export class SelfClosingElementStage extends CreateOnlyTemplateStage implements Transform {
   visit(node: Node, list: List): Node {
     if (node.kind === Kind.Template) {

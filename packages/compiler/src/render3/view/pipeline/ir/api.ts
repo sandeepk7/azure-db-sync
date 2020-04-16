@@ -1,10 +1,10 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import * as o from '../../../../output/output_ast';
 import {Identifiers as R3} from '../../../r3_identifiers';
 import * as cir from '../ir/create';
@@ -51,8 +51,12 @@ export class Host {
   }
 }
 
-export interface TemplateStage { transform(tmpl: RootTemplate): void; }
-export interface HostStage { transform(host: Host): void; }
+export interface TemplateStage {
+  transform(tmpl: RootTemplate): void;
+}
+export interface HostStage {
+  transform(host: Host): void;
+}
 
 export enum TargetKind {
   Reference,
@@ -61,7 +65,9 @@ export enum TargetKind {
   Event,
 }
 
-export interface Reference extends cir.Reference { kind: TargetKind.Reference; }
+export interface Reference extends cir.Reference {
+  kind: TargetKind.Reference;
+}
 
 export interface Variable {
   kind: TargetKind.Variable;
@@ -69,11 +75,15 @@ export interface Variable {
   value: string;
 }
 
-export interface RootContext { kind: TargetKind.RootContext; }
+export interface RootContext {
+  kind: TargetKind.RootContext;
+}
 
-export interface Event { kind: TargetKind.Event; }
+export interface Event {
+  kind: TargetKind.Event;
+}
 
-export type Target = Reference | Variable | RootContext | Event;
+export type Target = Reference|Variable|RootContext|Event;
 
 export interface Scope {
   readonly targets: IterableIterator<[string, Target]>;

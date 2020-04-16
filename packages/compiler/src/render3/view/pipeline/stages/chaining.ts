@@ -1,18 +1,14 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import * as cir from '../ir/create';
 import {LinkedList} from '../linked_list';
 import {CreateOnlyTemplateStage} from './base';
 
-
-/**
- * Transforms multiple repeated instances of a CirNode into a CirChain
- */
 export class ChainingStage extends CreateOnlyTemplateStage implements cir.Transform {
   visit(node: cir.Node, list: cir.List): cir.Node {
     const chainHead = node;

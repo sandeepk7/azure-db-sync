@@ -1,20 +1,16 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {AttributeMarker, SelectorFlags} from '../../../../core';
 import {splitNsName} from '../../../../ml_parser/tags';
 import {parse as parseStyle} from '../../style_parser';
 import * as cir from '../ir/create';
 import {CreateOnlyTemplateStage} from './base';
 
-
-/**
- * Converts empty elementStart/elementEnd instructions into element instruction
- */
 export class ElementAttrsTransform extends CreateOnlyTemplateStage {
   visit(node: cir.Node, list: cir.List): cir.Node {
     switch (node.kind) {
@@ -235,14 +231,14 @@ function populateKeyValueEntries(attrs: cir.ElementAttrs, entries: KeyValueEntry
           AttributeMarker.NamespaceURI,  // MARKER
           namespaceDef.namespace,        // ns (before :)
           namespaceDef.attr,             // prop (after :)
-          );
+      );
     }
     attrs.push(value);
   }
 }
 
 export function populateProjectAsSelectors(
-    attrs: cir.ElementAttrs, selectors: (string | SelectorFlags)[]): void {
+    attrs: cir.ElementAttrs, selectors: (string|SelectorFlags)[]): void {
   attrs.push(AttributeMarker.ProjectAs, selectors);
 }
 

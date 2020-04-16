@@ -1,13 +1,14 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
-import {BaseTemplateStage} from './base';
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+import {Host, HostStage} from '../ir/api';
 import {List, Node, NodeKind, Property, StyleMap, StyleProp, Transform} from '../ir/update';
-import {HostStage, Host} from '../ir/api';
+
+import {BaseTemplateStage} from './base';
 
 /*
 export class OrderingStage extends BaseTemplateStage<never, anyj> {
@@ -29,13 +30,7 @@ export class OrderingHostStage implements HostStage {
 }
 */
 
-/**
- * <div [foo]="x" bar="y" [baz]="z">
- *
- * prop('foo')('baz');
- * attr('bar');
- */
-export class OrderTransform implements Transform {
+export class OrderingTransform implements Transform {
   visit(node: Node, list: List): Node {
     return node;
   }

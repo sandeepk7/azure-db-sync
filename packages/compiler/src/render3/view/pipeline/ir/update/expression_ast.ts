@@ -3,7 +3,7 @@ import {Reference as CirReference} from '../create/ref';
 import {Node, NodeKind, VarId} from './node_ast';
 
 export type Expression =
-    PureFunctionExpr | PipeBindExpr | UnresolvedExpr | NextContextExpr | VarExpr | ReferenceExpr;
+    PureFunctionExpr|PipeBindExpr|UnresolvedExpr|NextContextExpr|VarExpr|ReferenceExpr;
 export enum ExpressionKind {
   PureFunction,
   PipeBind,
@@ -21,13 +21,16 @@ export interface EmbeddedExpressionVisitor<C = unknown> extends o.ExpressionVisi
 }
 
 export class EmbeddedExpression extends o.Expression {
-  constructor(readonly value: Expression) { super(/* type */ undefined); }
+  constructor(readonly value: Expression) {
+    super(/* type */ undefined);
+  }
 
   visitExpression(visitor: EmbeddedExpressionVisitor, ctx: any): any {
     if (visitor.visitEmbeddedExpression !== undefined) {
       return visitor.visitEmbeddedExpression(this, ctx);
     } else {
-      throw new Error('EmbeddedExpression cannot be used in this context: ' + ExpressionKind[this.value.kind]);
+      throw new Error(
+          'EmbeddedExpression cannot be used in this context: ' + ExpressionKind[this.value.kind]);
     }
   }
 
@@ -35,7 +38,9 @@ export class EmbeddedExpression extends o.Expression {
     throw new Error('EmbeddedExpression cannot be used in this context');
   }
 
-  isConstant(): boolean { throw new Error('EmbeddedExpression cannot be used in this context'); }
+  isConstant(): boolean {
+    throw new Error('EmbeddedExpression cannot be used in this context');
+  }
 }
 
 export interface PureFunctionExpr {
@@ -48,7 +53,9 @@ export interface PipeBindExpr {
   args: o.Expression[]|null;
 }
 
-export interface NextContextExpr { kind: ExpressionKind.NextContext, jump: number; }
+export interface NextContextExpr {
+  kind: ExpressionKind.NextContext, jump: number;
+}
 
 export interface UnresolvedExpr {
   kind: ExpressionKind.Unresolved;

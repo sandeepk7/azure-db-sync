@@ -1,16 +1,16 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import * as o from '../../../../../output/output_ast';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as cir from '../../ir/create';
 import {CreateEmitter} from '../api';
 
-export class ElementEmitter implements CreateEmitter {
+export class ElementNodeEmitter implements CreateEmitter {
   emit(node: cir.Node): o.Statement|null {
     switch (node.kind) {
       // ɵɵelement()
@@ -34,8 +34,8 @@ function slot(index: number) {
   return o.literal(index);
 }
 
-function produceElementParams(node: cir.Element | cir.ElementStart): o.Expression[] {
-  const p0 = slot(node.slot !);
+function produceElementParams(node: cir.Element|cir.ElementStart): o.Expression[] {
+  const p0 = slot(node.slot!);
   const p1 = o.literal(node.tag);
   let p2: o.Expression = o.NULL_EXPR;
   let p3: o.Expression = o.NULL_EXPR;

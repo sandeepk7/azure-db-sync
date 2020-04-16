@@ -1,30 +1,31 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {ConstantPool} from '@angular/compiler/src/constant_pool';
 
 import * as o from '../../../../output/output_ast';
 import {Host} from '../ir/api';
 import {CreateEmitter, UpdateEmitter} from '../output/api';
 
-import {ListenerOutputEmitter} from './emitters/listener_output_emitter';
+import {ClassBindingEmitter} from './emitters/class_binding_emitter';
+import {ListenerEmitter} from './emitters/listener_emitter';
+import {StyleBindingEmitter} from './emitters/style_binding_emitter';
 import {UnsupportedCreateEmitter, UnsupportedUpdateEmitter} from './emitters/unsupported_output_driver';
 import {produceBodyStatements, produceTemplateFunctionParams} from './util';
-import {StyleBindingsEmitter} from './emitters/style_bindings_emitter';
-import {ClassBindingsEmitter} from './emitters/class_bindings_emitter';
 
 export function emitHostBindingsFunction(host: Host, constantPool: ConstantPool) {
   const createEmitters: CreateEmitter[] = [
-    new ListenerOutputEmitter(host.name),
+    new ListenerEmitter(host.name),
     new UnsupportedCreateEmitter(),
   ];
+
   const updateEmitters: UpdateEmitter[] = [
-    new StyleBindingsEmitter(),
-    new ClassBindingsEmitter(),
+    new StyleBindingEmitter(),
+    new ClassBindingEmitter(),
     new UnsupportedUpdateEmitter(),
   ];
 

@@ -1,12 +1,11 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 import {Element, ElementStart, Kind, List, Node, Transform} from '../ir/create';
-
 
 /**
  * Converts various constant values into index values and populates a constant pool
@@ -27,7 +26,9 @@ export class ConstantAllocatorTransform implements Transform {
     return node;
   }
 
-  getConstants() { return this._constants; }
+  getConstants() {
+    return this._constants;
+  }
 
   /**
    * Converts the element.attrs into a constant

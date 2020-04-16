@@ -35,7 +35,7 @@ export class VariableOptimizerStage extends UpdateOnlyTemplateStage implements u
       }
 
       if (usages.has(node.id)) {
-        const usageMap = usages.get(node.id) !;
+        const usageMap = usages.get(node.id)!;
         if (usageMap.size > 0) {
           node = node.prev;
           continue;
@@ -114,14 +114,14 @@ export class VariableOptimizerStage extends UpdateOnlyTemplateStage implements u
         // to the variable declaration and validate that no hazards are passed.
         const current = node;
         let isInlineable = true;
-        for (let cursor = usage; cursor !== current && isInlineable; cursor = cursor.prev !) {
+        for (let cursor = usage; cursor !== current && isInlineable; cursor = cursor.prev!) {
           // It's never okay to inline across a hazard, and it's never okay to inline a hazard
           // across a sensitive operation.
           isInlineable = !hazards.has(cursor) && (!isHazard || !sensitive.has(cursor));
         }
 
         if (!isInlineable) {
-          node = node !.next
+          node = node!.next
           continue;
         }
       }
@@ -191,11 +191,11 @@ class VariableMapper extends ExpressionTransformer<uir.Node> {
         if (!this.usages.has(expr.value.id)) {
           this.usages.set(expr.value.id, new Map<uir.Node, number>());
         }
-        const map = this.usages.get(expr.value.id) !;
+        const map = this.usages.get(expr.value.id)!;
         if (!map.has(node)) {
           map.set(node, 1);
         } else {
-          map.set(node, map.get(node) ! + 1);
+          map.set(node, map.get(node)! + 1);
         }
         break;
     }
@@ -204,12 +204,14 @@ class VariableMapper extends ExpressionTransformer<uir.Node> {
 }
 
 class PropagateNextContext extends ExpressionTransformer {
-  constructor(private nextNextContext: Map<uir.NextContextExpr, uir.NextContextExpr>) { super(); }
+  constructor(private nextNextContext: Map<uir.NextContextExpr, uir.NextContextExpr>) {
+    super();
+  }
 
   visitEmbeddedExpression(expr: uir.EmbeddedExpression) {
     if (expr.value.kind === uir.ExpressionKind.NextContext &&
         this.nextNextContext.has(expr.value)) {
-      const nextNextContextExpr = this.nextNextContext.get(expr.value) !;
+      const nextNextContextExpr = this.nextNextContext.get(expr.value)!;
       nextNextContextExpr.jump += expr.value.jump;
     }
     return expr;
@@ -223,7 +225,7 @@ class RemoveVarUsagesFromNode extends ExpressionTransformer {
 
   visitEmbeddedExpression(expr: uir.EmbeddedExpression): uir.EmbeddedExpression {
     if (expr.value.kind === uir.ExpressionKind.Var) {
-      this.usages.get(expr.value.id) !.delete(this.node);
+      this.usages.get(expr.value.id)!.delete(this.node);
     }
     return expr;
   }
@@ -231,7 +233,9 @@ class RemoveVarUsagesFromNode extends ExpressionTransformer {
 
 class InlineOneVariable extends ExpressionTransformer {
   private inlined = false;
-  constructor(private id: uir.VarId, private inlineExpr: o.Expression) { super(); }
+  constructor(private id: uir.VarId, private inlineExpr: o.Expression) {
+    super();
+  }
 
   visitEmbeddedExpression(expr: uir.EmbeddedExpression): o.Expression {
     if (expr.value.kind !== uir.ExpressionKind.Var || expr.value.id !== this.id) {

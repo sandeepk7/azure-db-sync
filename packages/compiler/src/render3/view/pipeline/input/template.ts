@@ -1,10 +1,10 @@
 /**
-* @license
-* Copyright Google Inc. All Rights Reserved.
-*
-* Use of this source code is governed by an MIT-style license that can be
-* found in the LICENSE file at https://angular.io/license
-*/
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 
 import * as ast from '../../../../expression_parser/ast';
 import * as o from '../../../../output/output_ast';
@@ -81,10 +81,12 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
 
     const elementStart: cir.ElementStart = {
       ...FRESH_NODE,
-      kind: cir.Kind.ElementStart, id,
+      kind: cir.Kind.ElementStart,
+      id,
       slot: null,
       tag: element.name,
-      attrs: null, refs,
+      attrs: null,
+      refs,
     };
 
     this.create.append(elementStart);
@@ -106,7 +108,8 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
 
     this.create.append({
       ...FRESH_NODE,
-      kind: cir.Kind.ElementEnd, id,
+      kind: cir.Kind.ElementEnd,
+      id,
     });
   }
 
@@ -114,7 +117,8 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
     const id = this.scope.allocateId();
     this.create.append({
       ...FRESH_NODE,
-      kind: cir.Kind.Text, id,
+      kind: cir.Kind.Text,
+      id,
       value: text.value,
       slot: null,
     });
@@ -124,7 +128,8 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
     const id = this.scope.allocateId();
     this.create.append({
       ...FRESH_NODE,
-      kind: cir.Kind.Text, id,
+      kind: cir.Kind.Text,
+      id,
       value: null,
       slot: null,
     });
@@ -137,7 +142,8 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
     if (top instanceof ast.Interpolation) {
       this.update.append({
         ...FRESH_NODE,
-        kind: uir.NodeKind.TextInterpolate, id,
+        kind: uir.NodeKind.TextInterpolate,
+        id,
         text: top.strings,
         expression: top.expressions.map(e => this.preprocessor.process(e)),
       });
@@ -161,28 +167,40 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
 
     this.create.append({
       ...FRESH_NODE,
-      kind: cir.Kind.Template, id,
+      kind: cir.Kind.Template,
+      id,
       create: parsed.create,
       update: parsed.update,
       slot: null,
-      functionName: null, refs,
+      functionName: null,
+      refs,
       decls: null,
       vars: null,
       tagName: template.tagName !== '' ? template.tagName : 'ng-template',
     });
   }
 
-  visitContent(content: tmpl.Content): void { throw new Error('Method not implemented.'); }
-  visitVariable(variable: tmpl.Variable): void { throw new Error('Method not implemented.'); }
-  visitReference(reference: tmpl.Reference): void { throw new Error('Method not implemented.'); }
+  visitContent(content: tmpl.Content): void {
+    throw new Error('Method not implemented.');
+  }
+  visitVariable(variable: tmpl.Variable): void {
+    throw new Error('Method not implemented.');
+  }
+  visitReference(reference: tmpl.Reference): void {
+    throw new Error('Method not implemented.');
+  }
   visitTextAttribute(attribute: tmpl.TextAttribute): void {
     throw new Error('Method not implemented.');
   }
   visitBoundAttribute(attribute: tmpl.BoundAttribute): void {
     throw new Error('Method not implemented.');
   }
-  visitBoundEvent(attribute: tmpl.BoundEvent): void { throw new Error('Method not implemented.'); }
-  visitIcu(icu: tmpl.Icu): void { throw new Error('Method not implemented.'); }
+  visitBoundEvent(attribute: tmpl.BoundEvent): void {
+    throw new Error('Method not implemented.');
+  }
+  visitIcu(icu: tmpl.Icu): void {
+    throw new Error('Method not implemented.');
+  }
 
   finalize(): IrTemplate {
     return {
@@ -193,8 +211,12 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
   }
 
 
-  visitBinary(ast: ast.Binary, context: any) { throw new Error('Method not implemented.'); }
-  visitChain(ast: ast.Chain, context: any) { throw new Error('Method not implemented.'); }
+  visitBinary(ast: ast.Binary, context: any) {
+    throw new Error('Method not implemented.');
+  }
+  visitChain(ast: ast.Chain, context: any) {
+    throw new Error('Method not implemented.');
+  }
   visitConditional(ast: ast.Conditional, context: any) {
     throw new Error('Method not implemented.');
   }
@@ -207,18 +229,30 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
   visitInterpolation(ast: ast.Interpolation, context: any) {
     throw new Error('Method not implemented.');
   }
-  visitKeyedRead(ast: ast.KeyedRead, context: any) { throw new Error('Method not implemented.'); }
-  visitKeyedWrite(ast: ast.KeyedWrite, context: any) { throw new Error('Method not implemented.'); }
+  visitKeyedRead(ast: ast.KeyedRead, context: any) {
+    throw new Error('Method not implemented.');
+  }
+  visitKeyedWrite(ast: ast.KeyedWrite, context: any) {
+    throw new Error('Method not implemented.');
+  }
   visitLiteralArray(ast: ast.LiteralArray, context: any) {
     throw new Error('Method not implemented.');
   }
-  visitLiteralMap(ast: ast.LiteralMap, context: any) { throw new Error('Method not implemented.'); }
+  visitLiteralMap(ast: ast.LiteralMap, context: any) {
+    throw new Error('Method not implemented.');
+  }
   visitLiteralPrimitive(ast: ast.LiteralPrimitive, context: any) {
     throw new Error('Method not implemented.');
   }
-  visitMethodCall(ast: ast.MethodCall, context: any) { throw new Error('Method not implemented.'); }
-  visitPipe(ast: ast.BindingPipe, context: any) { throw new Error('Method not implemented.'); }
-  visitPrefixNot(ast: ast.PrefixNot, context: any) { throw new Error('Method not implemented.'); }
+  visitMethodCall(ast: ast.MethodCall, context: any) {
+    throw new Error('Method not implemented.');
+  }
+  visitPipe(ast: ast.BindingPipe, context: any) {
+    throw new Error('Method not implemented.');
+  }
+  visitPrefixNot(ast: ast.PrefixNot, context: any) {
+    throw new Error('Method not implemented.');
+  }
   visitNonNullAssert(ast: ast.NonNullAssert, context: any) {
     throw new Error('Method not implemented.');
   }
@@ -228,7 +262,9 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
   visitPropertyWrite(ast: ast.PropertyWrite, context: any) {
     throw new Error('Method not implemented.');
   }
-  visitQuote(ast: ast.Quote, context: any) { throw new Error('Method not implemented.'); }
+  visitQuote(ast: ast.Quote, context: any) {
+    throw new Error('Method not implemented.');
+  }
   visitSafeMethodCall(ast: ast.SafeMethodCall, context: any) {
     throw new Error('Method not implemented.');
   }

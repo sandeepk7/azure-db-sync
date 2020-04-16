@@ -2,9 +2,13 @@ import * as o from '../../../../output/output_ast'
 import * as uir from '../ir/update';
 
 export class ExpressionTransformer<C = unknown> implements uir.EmbeddedExpressionVisitor {
-  visitEmbeddedExpression(ast: uir.EmbeddedExpression, ctx: C): o.Expression { return ast; }
+  visitEmbeddedExpression(ast: uir.EmbeddedExpression, ctx: C): o.Expression {
+    return ast;
+  }
 
-  visitReadVarExpr(ast: o.ReadVarExpr, ctx: C): o.Expression { return ast; }
+  visitReadVarExpr(ast: o.ReadVarExpr, ctx: C): o.Expression {
+    return ast;
+  }
 
   visitWriteVarExpr(expr: o.WriteVarExpr, ctx: C): o.Expression {
     expr.value = expr.value.visitExpression(this, ctx);
@@ -47,7 +51,9 @@ export class ExpressionTransformer<C = unknown> implements uir.EmbeddedExpressio
     return ast;
   }
 
-  visitLiteralExpr(ast: o.LiteralExpr, ctx: C): o.Expression { return ast; }
+  visitLiteralExpr(ast: o.LiteralExpr, ctx: C): o.Expression {
+    return ast;
+  }
 
   visitLocalizedString(ast: o.LocalizedString, ctx: C): o.Expression {
     for (let i = 0; i < ast.expressions.length; i++) {
@@ -56,12 +62,14 @@ export class ExpressionTransformer<C = unknown> implements uir.EmbeddedExpressio
     return ast;
   }
 
-  visitExternalExpr(ast: o.ExternalExpr, ctx: C): o.Expression { return ast; }
+  visitExternalExpr(ast: o.ExternalExpr, ctx: C): o.Expression {
+    return ast;
+  }
 
   visitConditionalExpr(ast: o.ConditionalExpr, ctx: C): o.Expression {
     ast.condition = ast.condition.visitExpression(this, ctx);
     ast.trueCase = ast.trueCase.visitExpression(this, ctx);
-    ast.falseCase = ast.falseCase ?.visitExpression(this, ctx);
+    ast.falseCase = ast.falseCase?.visitExpression(this, ctx);
     return ast;
   }
 
@@ -121,7 +129,9 @@ export class ExpressionTransformer<C = unknown> implements uir.EmbeddedExpressio
     return ast;
   }
 
-  visitWrappedNodeExpr(ast: o.WrappedNodeExpr<any>, ctx: C): o.Expression { return ast; }
+  visitWrappedNodeExpr(ast: o.WrappedNodeExpr<any>, ctx: C): o.Expression {
+    return ast;
+  }
 
   visitTypeofExpr(ast: o.TypeofExpr, ctx: C): o.Expression {
     ast.expr = ast.expr.visitExpression(this, ctx);

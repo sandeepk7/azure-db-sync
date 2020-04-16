@@ -97,7 +97,7 @@ export class StaticAttributesBuilder implements AttributeBuilder {
    * ```
    */
   build(): (o.LiteralExpr|o.LiteralArrayExpr)[] {
-    let attrs: (o.LiteralExpr | o.LiteralArrayExpr)[] = [];
+    let attrs: (o.LiteralExpr|o.LiteralArrayExpr)[] = [];
 
     // ... 'prop', 'value', 'prop', NAMESPACE_URI, 'ns', 'prop', 'value' ...
     if (this._keyValueAttrs !== null) {
@@ -190,7 +190,7 @@ function populateKeyValueEntries(attrs: o.Expression[], entries: KeyValueEntry[]
           o.literal(AttributeMarker.NamespaceURI),  // MARKER
           o.literal(namespaceDef.namespace),        // ns (before :)
           o.literal(namespaceDef.attr),             // prop (after :)
-          );
+      );
     }
 
     if (!(value instanceof o.Expression)) {
@@ -206,12 +206,12 @@ function populateNameAttributeEntries(attrs: o.Expression[], names: any[]): void
   }
 }
 
-function toLiteralArr(values: (string | number)[]) {
+function toLiteralArr(values: (string|number)[]) {
   return o.literalArr(values.map(v => o.literal(v)));
 }
 
 export function populateProjectAsSelectors(
-    attrs: o.Expression[], selectors: (string | SelectorFlags)[]): void {
+    attrs: o.Expression[], selectors: (string|SelectorFlags)[]): void {
   attrs.push(o.literal(AttributeMarker.ProjectAs), toLiteralArr(selectors));
 }
 

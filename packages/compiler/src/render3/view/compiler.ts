@@ -34,19 +34,19 @@ import {emitHostBindingsFunction} from './pipeline/output/host_bindings_function
 import {emitTemplateFunction} from './pipeline/output/template_function';
 import {AdvanceStage} from './pipeline/stages/advance';
 import {BindingCountingStage} from './pipeline/stages/binding_counting';
+import {ClassHostStage} from './pipeline/stages/class';
 import {ElementConstsLiftingStage} from './pipeline/stages/consts_lifting';
 import {ElementAttrsTransform} from './pipeline/stages/element_attrs';
 import {ExpressionTranslatorStage} from './pipeline/stages/expressions';
 import {ResolverHostStage, ResolverStage} from './pipeline/stages/resolver';
 import {SelfClosingElementStage} from './pipeline/stages/self_close';
 import {SlotAllocatorStage} from './pipeline/stages/slot_allocator';
+import {StyleHostStage, StyleTransform} from './pipeline/stages/style';
 import {TemplateNameStage} from './pipeline/stages/template_names';
 import {VarNamesStage} from './pipeline/stages/var_names';
 import {MIN_STYLING_BINDING_SLOTS_REQUIRED, StylingBuilder, StylingInstructionCall} from './styling_builder';
-import {BindingScope, TemplateDefinitionBuilder, ValueConverter, makeBindingParser, prepareEventListenerParameters, renderFlagCheckIfStmt, resolveSanitizationFn} from './template';
-import {CONTEXT_NAME, DefinitionMap, RENDER_FLAGS, TEMPORARY_NAME, asLiteral, chainedInstruction, conditionallyCreateMapObjectLiteral, getQueryPredicate, temporaryAllocator} from './util';
-import {StyleTransform, StyleHostStage} from './pipeline/stages/style';
-import {ClassHostStage} from './pipeline/stages/class';
+import {BindingScope, makeBindingParser, prepareEventListenerParameters, renderFlagCheckIfStmt, resolveSanitizationFn, TemplateDefinitionBuilder, ValueConverter} from './template';
+import {asLiteral, chainedInstruction, conditionallyCreateMapObjectLiteral, CONTEXT_NAME, DefinitionMap, getQueryPredicate, RENDER_FLAGS, TEMPORARY_NAME, temporaryAllocator} from './util';
 
 const EMPTY_ARRAY: any[] = [];
 
@@ -81,9 +81,9 @@ function baseDirectiveFields(
 
   const host = fromHostDef(meta.name, meta.host, bindingParser, meta.typeSourceSpan);
   host.transform(
-    new ResolverHostStage(),
-    new StyleHostStage(),
-    new ClassHostStage(),
+      new ResolverHostStage(),
+      new StyleHostStage(),
+      new ClassHostStage(),
   );
 
   definitionMap.set('hostBindings', emitHostBindingsFunction(host, constantPool));
@@ -227,10 +227,10 @@ export function compileComponentFromMetadata(
   // }
 
   // e.g. `decls: 2`
-  definitionMap.set('decls', o.literal(root.decls !));
+  definitionMap.set('decls', o.literal(root.decls!));
 
   // // e.g. `vars: 2`
-  definitionMap.set('vars', o.literal(root.vars !));
+  definitionMap.set('vars', o.literal(root.vars!));
 
   // e.g. `consts: [['one', 'two'], ['three', 'four']]
   // const consts = templateBuilder.getConsts();
