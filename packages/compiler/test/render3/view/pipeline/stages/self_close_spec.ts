@@ -7,7 +7,7 @@
  */
 import {Kind} from '../../../../../src/render3/view/pipeline/ir/create';
 import {SelfClosingElementStage} from '../../../../../src/render3/view/pipeline/stages/self_close';
-import {TemplateCreateAstGen} from '../util';
+import {TemplateCreateAstGen} from '../create_ast_gen';
 
 describe('stages selfClose transformation', () => {
   it('should convert an pair of elementStart/elementEnd to an elementSelfClose instruction', () => {

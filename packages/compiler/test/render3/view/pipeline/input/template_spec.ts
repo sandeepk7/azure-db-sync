@@ -18,34 +18,36 @@ import {VariableOptimizerStage} from '../../../../../src/render3/view/pipeline/s
 import {NestedUpdateTransform} from '../../../../../src/render3/view/pipeline/util/nested';
 import {parseTemplate} from '../../../../../src/render3/view/template';
 
-describe('template parsing', () => {
-  xit('should work', () => {
-    const {nodes} = parseTemplate(
-        `<div #ref></div>
-        <ng-template let-x>
-          <div #ref2></div>
-          <ng-template let-y>
-            <ng-template><span>{{ref2}} {{x}}</span></ng-template>
-          </ng-template>
-        </ng-template>`,
-        'ng://test');
-    const tmpl = parse(nodes);
-    tmpl.transform(new ResolverStage());
-    new ResolverStage().transform(tmpl);
-    new VariableOptimizerStage().transform(tmpl);
+it('has a spec', () => {});
 
-    // tmpl.create.applyTransform(new SelfClosingElementTransform());
+// describe('template parsing', () => {
+//   xit('should work', () => {
+//     const {nodes} = parseTemplate(
+//         `<div #ref></div>
+//         <ng-template let-x>
+//           <div #ref2></div>
+//           <ng-template let-y>
+//             <ng-template><span>{{ref2}} {{x}}</span></ng-template>
+//           </ng-template>
+//         </ng-template>`,
+//         'ng://test');
+//     const tmpl = parse(nodes, 'Blah');
+//     tmpl.transform(new ResolverStage());
+//     new ResolverStage().transform(tmpl);
+//     new VariableOptimizerStage().transform(tmpl);
 
-    NestedUpdateTransform.apply(tmpl, () => new VarNamesStage());
-    const slotter = SlotAllocatorTransform.forTemplateRoot();
-    tmpl.create.applyTransform(slotter);
-    NestedUpdateTransform.apply(tmpl, slotter.expressionTransform);
-    new ExpressionTranslatorStage().transform(tmpl);
+//     // tmpl.create.applyTransform(new SelfClosingElementTransform());
 
-    console.error('create:');
-    console.error(tmpl.create.toString(cir.nodeToString));
-    console.error('update:');
-    console.error(tmpl.update.toString(uir.nodeToString));
-    fail('...');
-  });
-});
+//     NestedUpdateTransform.apply(tmpl, () => new VarNamesStage());
+//     const slotter = SlotAllocatorTransform.forTemplateRoot();
+//     tmpl.create.applyTransform(slotter);
+//     NestedUpdateTransform.apply(tmpl, slotter.expressionTransform);
+//     new ExpressionTranslatorStage().transform(tmpl);
+
+//     console.error('create:');
+//     console.error(tmpl.create.toString(cir.nodeToString));
+//     console.error('update:');
+//     console.error(tmpl.update.toString(uir.nodeToString));
+//     fail('...');
+//   });
+// });

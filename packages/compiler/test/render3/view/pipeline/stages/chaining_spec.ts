@@ -7,7 +7,7 @@
  */
 import {Chain, Element, ElementStart, Kind, Text} from '../../../../../src/render3/view/pipeline/ir/create';
 import {ChainingStage} from '../../../../../src/render3/view/pipeline/stages/chaining';
-import {TemplateCreateAstGen} from '../util';
+import {TemplateCreateAstGen} from '../create_ast_gen';
 
 describe('stages chaining transformation', () => {
   it('should chain together multiple repeated instances of an instruction', () => {

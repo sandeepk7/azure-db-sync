@@ -8,7 +8,7 @@
 import {AttributeMarker} from '../../../../../src/core';
 import {Element} from '../../../../../src/render3/view/pipeline/ir/create';
 import {ElementAttrsTransform} from '../../../../../src/render3/view/pipeline/stages/element_attrs';
-import {TemplateCreateAstGen} from '../util';
+import {TemplateCreateAstGen} from '../create_ast_gen';
 
 describe('stages elementAttrs transformation', () => {
   it('should balance a series of key/value attributes into an ElementAttrs array', () => {

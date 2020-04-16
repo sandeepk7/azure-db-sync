@@ -7,7 +7,7 @@
  */
 import {Element, ElementStart} from '../../../../../src/render3/view/pipeline/ir/create';
 import {ConstantAllocatorTransform} from '../../../../../src/render3/view/pipeline/stages/constant_allocator';
-import {TemplateCreateAstGen} from '../util';
+import {TemplateCreateAstGen} from '../create_ast_gen';
 
 describe('stages constant allocator transformation', () => {
   it('should chain together multiple repeated instances of an instruction', () => {

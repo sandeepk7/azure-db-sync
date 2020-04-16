@@ -6,12 +6,12 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import {ElementStart, Kind} from '../../../../src/render3/view/pipeline/ir/create';
-import {TemplateAstGen} from './util';
+import {TemplateCreateAstGen} from './create_ast_gen';
 
 describe('', () => {
   describe('elements', () => {
     it('should produce a series of element start/end instructions', () => {
-      const list = new TemplateAstGen();
+      const list = new TemplateCreateAstGen();
       const section = list.elementStart('section');
       const div = list.elementStart('div');
       list.elementEnd(div);

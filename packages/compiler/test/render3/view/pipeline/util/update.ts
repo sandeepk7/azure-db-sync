@@ -28,8 +28,9 @@ export class UpdateBuilder {
       ...FRESH_NODE,
       kind: uir.NodeKind.Var,
       id,
-      value: new uir.EmbeddedExpression(
-          {kind: uir.ExpressionKind.Reference, id: target as cir.Id, value: '', slot: null}),
+      value: null!,
+      //new uir.EmbeddedExpression(
+      //    {kind: uir.ExpressionKind.Reference, id: target as cir.Id, value: '', slot: null}),
       name: null,
     });
     return id;

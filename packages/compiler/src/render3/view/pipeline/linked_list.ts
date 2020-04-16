@@ -68,9 +68,77 @@ export class LinkedList<T extends LinkedListNode<any>> {
     this.head = list.head;
   }
 
+  /**
+   * Sort the nodes from `start` to `end`, using `cmp` to compare.
+   *
+   * Returns the new `start` and `end` nodes, which are guaranteed to be nodes within the original
+   * range.
+   * 
+   * The algorithm in use is an in-place insertion sort.
+   */
   sortSubset(start: T, end: T, cmp: (a: T, b: T) => number): {start: T, end: T} {
-    // TODO: insertion sort
-    return {start, end};
+    if (start === end) {
+      return {start, end};
+    }
+
+    // Track the new start/end nodes as the sort progresses.
+    let tmpStart = start;
+    let tmpEnd = start;
+
+    // Temporary assignment - will be overwritten with `start.next` as soon as the loop begins.
+    let node = start;
+    let next: T = start.next;
+
+    // The single-node special case was handled above, so there is at least one node to process (the
+    // end node).
+    //
+    // This loop body therefore always executes at least once, at which point the while condition
+    // will exit the loop if the last node processed was the ending node.
+    do {
+      // Advance the node to the next one to process, and capture its `next` pointer now since it
+      // can change as the sort progresses.
+      node = next;
+      next = node.next;
+
+      // Remove node from its current position.
+      this.remove(node);
+
+      // Look through the already sorted part of the subset (from `tmpStart` up until `next`) and
+      // check if the node belongs before any of the previously sorted nodes.
+      let inserted = false;
+      for (let pos = tmpStart; pos !== next; pos = pos.next) {
+        if (cmp(node, pos) < 0) {
+          // Yes, the node belongs before `pos`. Insert it there.
+          this.insertBefore(pos, node);
+
+          // If `pos` was the beginning, then the current node is now the new beginning.
+          if (pos === tmpStart) {
+            tmpStart = node;
+          }
+
+          inserted = true;
+          break;
+        }
+      }
+
+      // Handle the case where the node didn't fit before any prior nodes.
+      if (!inserted) {
+        // The node belongs in its original position. How it gets put back there depends on whether
+        // it was the tail end of the list or not.
+        if (next !== null) {
+          this.insertBefore(next, node);
+        } else {
+          this.append(node);
+        }
+
+        // This node is now the tail end of the "sorted" segment.
+        tmpEnd = node;
+      }
+    } while (node !== end);
+
+    // At this point, `tmpStart` and `tmpEnd` are the correct head/tail pointers of the now-sorted
+    // segment of the list.
+    return {start: tmpStart, end: tmpEnd};
   }
 
   insertBefore(before: T, insert: T): void {
