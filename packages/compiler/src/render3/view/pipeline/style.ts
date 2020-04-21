@@ -6,13 +6,13 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import * as o from '../../../../src/output/output_ast';
-
+import * as cir from './ir/create';
 import {NodeKind, StyleMap, StyleProp} from './ir/update';
 
-export function createStyleProp(name: string, expression: o.Expression): StyleProp {
-  return {next: null, prev: null, kind: NodeKind.StyleProp, name, expression};
+export function createStyleProp(id: cir.Id, name: string, expression: o.Expression): StyleProp {
+  return {next: null, prev: null, kind: NodeKind.StyleProp, id, name, expression};
 }
 
-export function createStyleMap(expression: o.Expression): StyleMap {
-  return {next: null, prev: null, kind: NodeKind.StyleMap, expression};
+export function createStyleMap(id: cir.Id, expression: o.Expression): StyleMap {
+  return {next: null, prev: null, kind: NodeKind.StyleMap, id, expression};
 }

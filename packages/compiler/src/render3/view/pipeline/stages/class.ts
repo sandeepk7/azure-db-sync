@@ -48,14 +48,14 @@ function convertClassProperty(node: Property): ClassMap|ClassProp {
 }
 
 function convertClassMapProperty(node: Property): ClassMap {
-  const {prev, next, expression} = node;
-  return {kind: NodeKind.ClassMap, expression, next, prev};
+  const {prev, next, id, expression} = node;
+  return {kind: NodeKind.ClassMap, id, expression, next, prev};
 }
 
 function convertClassPropProperty(node: Property): ClassProp {
-  const {prev, next, expression} = node;
+  const {prev, next, id, expression} = node;
   const name = extractClassPropName(node.name);
-  return {kind: NodeKind.ClassProp, name, expression, next, prev};
+  return {kind: NodeKind.ClassProp, name, id, expression, next, prev};
 }
 
 function extractClassPropName(name: string): string {

@@ -48,14 +48,14 @@ function convertStyleProperty(node: Property): StyleMap|StyleProp {
 }
 
 function convertStyleMapProperty(node: Property): StyleMap {
-  const {prev, next, expression} = node;
-  return {kind: NodeKind.StyleMap, expression, next, prev};
+  const {prev, next, id, expression} = node;
+  return {kind: NodeKind.StyleMap, id, expression, next, prev};
 }
 
 function convertStylePropProperty(node: Property): StyleProp {
-  const {prev, next, expression} = node;
+  const {prev, next, id, expression} = node;
   const name = extractStylePropName(node.name);
-  return {kind: NodeKind.StyleProp, name, expression, next, prev};
+  return {kind: NodeKind.StyleProp, id, name, expression, next, prev};
 }
 
 function extractStylePropName(name: string): string {

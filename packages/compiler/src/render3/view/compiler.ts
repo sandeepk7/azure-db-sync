@@ -47,6 +47,7 @@ import {VarNamesStage} from './pipeline/stages/var_names';
 import {MIN_STYLING_BINDING_SLOTS_REQUIRED, StylingBuilder, StylingInstructionCall} from './styling_builder';
 import {BindingScope, makeBindingParser, prepareEventListenerParameters, renderFlagCheckIfStmt, resolveSanitizationFn, TemplateDefinitionBuilder, ValueConverter} from './template';
 import {asLiteral, chainedInstruction, conditionallyCreateMapObjectLiteral, CONTEXT_NAME, DefinitionMap, getQueryPredicate, RENDER_FLAGS, TEMPORARY_NAME, temporaryAllocator} from './util';
+import {SortingHostStage} from './pipeline/stages/sorting';
 
 const EMPTY_ARRAY: any[] = [];
 
@@ -84,6 +85,7 @@ function baseDirectiveFields(
       new ResolverHostStage(),
       new StyleHostStage(),
       new ClassHostStage(),
+      new SortingHostStage(),
   );
 
   definitionMap.set('hostBindings', emitHostBindingsFunction(host, constantPool));

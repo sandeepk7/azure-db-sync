@@ -29,34 +29,40 @@ export interface TextInterpolate extends list.LinkedListNode<Node> {
 }
 
 export interface Property extends list.LinkedListNode<Node> {
+  id: CirId;
   kind: NodeKind.Property;
   name: string;
   expression: o.Expression;
 }
 
 export interface StyleProp extends list.LinkedListNode<Node> {
+  id: CirId;
   kind: NodeKind.StyleProp;
   name: string;
   expression: o.Expression;
 }
 
 export interface StyleMap extends list.LinkedListNode<Node> {
+  id: CirId;
   kind: NodeKind.StyleMap;
   expression: o.Expression;
 }
 
 export interface ClassProp extends list.LinkedListNode<Node> {
+  id: CirId;
   kind: NodeKind.ClassProp;
   name: string;
   expression: o.Expression;
 }
 
 export interface ClassMap extends list.LinkedListNode<Node> {
+  id: CirId;
   kind: NodeKind.ClassMap;
   expression: o.Expression;
 }
 
 export interface Attribute extends list.LinkedListNode<Node> {
+  id: CirId;
   kind: NodeKind.Attribute;
 }
 

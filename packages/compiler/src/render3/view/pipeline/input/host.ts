@@ -39,6 +39,7 @@ function buildAttributeInstructions(
     const instruction: uir.Node = {
       ...FRESH_NODE,
       kind: uir.NodeKind.Attribute,
+      id: 0 as cir.CirId,
     };
 
     host.update.append(instruction);
@@ -57,6 +58,7 @@ function buildPropertyInstructions(
     const instruction: uir.Node = {
       ...FRESH_NODE,
       kind: uir.NodeKind.Property,
+      id: 0 as cir.CirId,
       name: property.name,
       expression: valuePreprocessor.process(property.expression),
     };
