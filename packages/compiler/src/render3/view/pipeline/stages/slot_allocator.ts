@@ -63,6 +63,6 @@ export class SlotAllocatorTransform implements cir.Transform {
   }
 
   finalize(): void {
-    this.template.decls = this.slot + 1;
+    this.template.decls = this.slot;
   }
 }

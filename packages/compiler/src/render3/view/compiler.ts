@@ -33,7 +33,8 @@ import {parse} from './pipeline/input/template';
 import {emitHostBindingsFunction} from './pipeline/output/host_bindings_function';
 import {emitTemplateFunction} from './pipeline/output/template_function';
 import {AdvanceStage} from './pipeline/stages/advance';
-import {BindingCountingStage} from './pipeline/stages/binding_counting';
+import {BindingCountingHostStage, BindingCountingStage} from './pipeline/stages/binding_counting';
+import {ChainingHostStage} from './pipeline/stages/chaining';
 import {ClassHostStage} from './pipeline/stages/class';
 import {ElementConstsLiftingStage} from './pipeline/stages/consts_lifting';
 import {ElementAttrsTransform} from './pipeline/stages/element_attrs';
@@ -41,13 +42,13 @@ import {ExpressionTranslatorStage} from './pipeline/stages/expressions';
 import {ResolverHostStage, ResolverStage} from './pipeline/stages/resolver';
 import {SelfClosingElementStage} from './pipeline/stages/self_close';
 import {SlotAllocatorStage} from './pipeline/stages/slot_allocator';
+import {SortingHostStage} from './pipeline/stages/sorting';
 import {StyleHostStage, StyleTransform} from './pipeline/stages/style';
 import {TemplateNameStage} from './pipeline/stages/template_names';
 import {VarNamesStage} from './pipeline/stages/var_names';
 import {MIN_STYLING_BINDING_SLOTS_REQUIRED, StylingBuilder, StylingInstructionCall} from './styling_builder';
 import {BindingScope, makeBindingParser, prepareEventListenerParameters, renderFlagCheckIfStmt, resolveSanitizationFn, TemplateDefinitionBuilder, ValueConverter} from './template';
 import {asLiteral, chainedInstruction, conditionallyCreateMapObjectLiteral, CONTEXT_NAME, DefinitionMap, getQueryPredicate, RENDER_FLAGS, TEMPORARY_NAME, temporaryAllocator} from './util';
-import {SortingHostStage} from './pipeline/stages/sorting';
 
 const EMPTY_ARRAY: any[] = [];
 
@@ -86,9 +87,20 @@ function baseDirectiveFields(
       new StyleHostStage(),
       new ClassHostStage(),
       new SortingHostStage(),
+      new BindingCountingHostStage(),
+      new ChainingHostStage(),
   );
 
+  if (host.vars !== null && host.vars > 0) {
+    definitionMap.set('hostVars', o.literal(host.vars));
+  }
+
+  if (host.attrs !== null && host.attrs.length > 0) {
+    definitionMap.set('hostAttrs', o.literalArr(host.attrs));
+  }
+
   definitionMap.set('hostBindings', emitHostBindingsFunction(host, constantPool));
+
 
   // e.g 'inputs: {a: 'a'}`
   definitionMap.set('inputs', conditionallyCreateMapObjectLiteral(meta.inputs, true));

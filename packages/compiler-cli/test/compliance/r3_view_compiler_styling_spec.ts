@@ -969,7 +969,7 @@ describe('compiler compliance: styling', () => {
   });
 
   describe('@Component host styles/classes', () => {
-    fit('should generate style/class instructions for a host component creation definition', () => {
+    it('should generate style/class instructions for a host component creation definition', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -1019,18 +1019,11 @@ describe('compiler compliance: styling', () => {
           vars: 0,
           `;
 
-      const t2 = `
-              $r3$.ɵɵstyleMap(ctx.myStyle);
-              $r3$.ɵɵclassMap(ctx.myClass);
-              $r3$.ɵɵstyleProp("color", ctx.myColorProp);
-              $r3$.ɵɵclassProp("foo", ctx.myFooClass);
-          `;
-
       const result = compile(files, angularFiles);
-      expectEmit(result.source, t2, 'Incorrect template');
+      expectEmit(result.source, template, 'Incorrect template');
     });
 
-    it('should generate style/class instructions for multiple host binding definitions', () => {
+    fit('should generate style/class instructions for multiple host binding definitions', () => {
       const files = {
         app: {
           'spec.ts': `

@@ -11,6 +11,7 @@ import * as o from '../../../../output/output_ast';
 import {Host} from '../ir/api';
 import {CreateEmitter, UpdateEmitter} from '../output/api';
 
+import {ChainUpdateEmitter} from './emitters/chain_emitter';
 import {ClassBindingEmitter} from './emitters/class_binding_emitter';
 import {ListenerEmitter} from './emitters/listener_emitter';
 import {StyleBindingEmitter} from './emitters/style_binding_emitter';
@@ -23,11 +24,13 @@ export function emitHostBindingsFunction(host: Host, constantPool: ConstantPool)
     new UnsupportedCreateEmitter(),
   ];
 
-  const updateEmitters: UpdateEmitter[] = [
-    new StyleBindingEmitter(),
-    new ClassBindingEmitter(),
-    new UnsupportedUpdateEmitter(),
-  ];
+  let updateEmitters: UpdateEmitter[] = [];
+  updateEmitters.push(
+      new StyleBindingEmitter(),
+      new ClassBindingEmitter(),
+      new ChainUpdateEmitter(updateEmitters),
+      new UnsupportedUpdateEmitter(),
+  );
 
   return o.fn(
       produceTemplateFunctionParams(), produceBodyStatements(host, createEmitters, updateEmitters),

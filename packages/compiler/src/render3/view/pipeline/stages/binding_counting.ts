@@ -6,13 +6,13 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import * as o from '../../../../output/output_ast';
-import {RootTemplate, TemplateStage} from '../ir/api';
+import {Host, HostStage, RootTemplate, TemplateStage} from '../ir/api';
 import * as cir from '../ir/create';
 import * as uir from '../ir/update';
 import {visitAllExpressions} from '../ir/update';
 import {ExpressionTransformer} from '../util/expression_transformer';
 
-import {BaseTemplateStage, UpdateOnlyTemplateStage} from './base';
+import {BaseTemplateStage} from './base';
 
 export class BindingCountingStage extends BaseTemplateStage<never, BindingCountingTransform> {
   makeCreateTransform(): null {
@@ -25,17 +25,35 @@ export class BindingCountingStage extends BaseTemplateStage<never, BindingCounti
   }
 }
 
-export class BindingCountingTransform {
+export class BindingCountingHostStage implements HostStage {
+  transform(host: Host): void {
+    const transform = new BindingCountingTransform(host);
+    host.update.applyTransform(transform);
+    transform.finalize();
+  }
+}
+
+export class BindingCountingTransform implements uir.Transform {
   private count = 0;
 
   private expressionCounter = new ExpressionBindingCounter();
 
-  constructor(private template: RootTemplate|cir.Template) {}
+  constructor(private template: RootTemplate|cir.Template|Host) {}
 
   visit(node: uir.Node): uir.Node {
     switch (node.kind) {
       case uir.NodeKind.TextInterpolate:
         this.count += node.expression.length;
+        break;
+      case uir.NodeKind.Property:
+      case uir.NodeKind.Attribute:
+        this.count += 1;
+        break;
+      case uir.NodeKind.ClassMap:
+      case uir.NodeKind.ClassProp:
+      case uir.NodeKind.StyleMap:
+      case uir.NodeKind.StyleProp:
+        this.count += 2;
         break;
     }
     visitAllExpressions(node, this.expressionCounter);

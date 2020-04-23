@@ -1,5 +1,6 @@
 import * as o from '../../../../../output/output_ast';
 import {Reference as CirReference} from '../create/ref';
+
 import {Node, NodeKind, VarId} from './node_ast';
 
 export type Expression =
@@ -15,7 +16,6 @@ export enum ExpressionKind {
   // Internal type representing a variable
   Var,
 }
-
 export interface EmbeddedExpressionVisitor<C = unknown> extends o.ExpressionVisitor {
   visitEmbeddedExpression?(node: EmbeddedExpression, ctx: C): any;
 }

@@ -7,7 +7,7 @@ export const List: {new (): List} = list.LinkedList;
 export type Transform = list.Transform<Node>;
 
 export type Node = TextInterpolate|Property|Attribute|QueryRefresh|StyleMap|StyleProp|ClassProp|
-    ClassMap|Var|Advance;
+    ClassMap|Var|Advance|Chain;
 export enum NodeKind {
   TextInterpolate,
   Property,
@@ -19,6 +19,7 @@ export enum NodeKind {
   QueryRefresh,
   Var,
   Advance,
+  Chain,
 }
 
 export interface TextInterpolate extends list.LinkedListNode<Node> {
@@ -84,4 +85,9 @@ export interface Var extends list.LinkedListNode<Node> {
 export interface Advance extends list.LinkedListNode<Node> {
   kind: NodeKind.Advance;
   delta: number;
+}
+
+export interface Chain<T extends Node = Node> extends list.LinkedListNode<Node> {
+  kind: NodeKind.Chain;
+  list: list.LinkedList<T>;
 }
