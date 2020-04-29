@@ -16,8 +16,33 @@ export enum ExpressionKind {
   // Internal type representing a variable
   Var,
 }
+
 export interface EmbeddedExpressionVisitor<C = unknown> extends o.ExpressionVisitor {
   visitEmbeddedExpression?(node: EmbeddedExpression, ctx: C): any;
+}
+
+export interface InterpolationExpressionVisitor<C = unknown> extends o.ExpressionVisitor {
+  visitInterpolationExpression?(node: InterpolationExpression, ctx: C): any;
+}
+
+export class InterpolationExpression extends o.Expression {
+  constructor(public readonly expressions: o.Expression[], public readonly strings: string[]) {
+    super(/* type */ undefined);
+  }
+
+  visitExpression(visitor: InterpolationExpressionVisitor, ctx: any): any {
+    if (visitor.visitInterpolationExpression !== undefined) {
+      return visitor.visitInterpolationExpression(this, ctx);
+    }
+  }
+
+  isEquivalent(e: o.Expression): boolean {
+    throw new Error('InterpolationExpression cannot be used in this context');
+  }
+
+  isConstant(): boolean {
+    throw new Error('InterpolationExpression cannot be used in this context');
+  }
 }
 
 export class EmbeddedExpression extends o.Expression {
@@ -69,17 +94,20 @@ export interface VarExpr {
 
 export interface ReferenceExpr {
   kind: ExpressionKind.Reference;
-  ref: CirReference,
+  ref: CirReference;
 }
 
 export function visitAllExpressions<C = unknown>(
     node: Node, visitor: EmbeddedExpressionVisitor<C>, context?: C): void {
+      debugger;
   switch (node.kind) {
     case NodeKind.Property:
     case NodeKind.ClassMap:
-    case NodeKind.ClassProp:
     case NodeKind.StyleMap:
+      node.expression = node.expression.visitExpression(visitor, context);
+      break;
     case NodeKind.StyleProp:
+    case NodeKind.ClassProp:
       node.expression = node.expression.visitExpression(visitor, context);
       break;
     case NodeKind.TextInterpolate:

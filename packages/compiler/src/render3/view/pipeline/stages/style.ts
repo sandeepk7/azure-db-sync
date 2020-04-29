@@ -39,8 +39,8 @@ export class StyleTransform implements Transform {
   }
 }
 
-function isStyleProp(name: string) {
-  return name.substring(0, 5) === 'style';
+function isStyleProp(name: string): boolean {
+  return name === 'style' || name.substring(0, 6) === 'style.';
 }
 
 function convertStyleProperty(node: Property): StyleMap|StyleProp {
@@ -54,10 +54,17 @@ function convertStyleMapProperty(node: Property): StyleMap {
 
 function convertStylePropProperty(node: Property): StyleProp {
   const {prev, next, id, expression} = node;
-  const name = extractStylePropName(node.name);
-  return {kind: NodeKind.StyleProp, id, name, expression, next, prev};
+  const {suffix, prop} = extractStylePropName(node.name);
+  return {kind: NodeKind.StyleProp, id, name: prop, expression, suffix, next, prev};
 }
 
-function extractStylePropName(name: string): string {
-  return name.match(/style.(\w+)/)![1];
+function extractStylePropName(name: string): {prop: string, suffix: string|null} {
+  const captures = name.match(/style.(\w+)(?:\.([a-zA-Z]+))?/);
+  if (captures === null) {
+    throw new Error(`Invalid [style.prop] binding syntax`);
+  }
+
+  const prop = captures[1];
+  const suffix = captures[2] !== undefined ? captures[2] : null;
+  return {prop, suffix};
 }

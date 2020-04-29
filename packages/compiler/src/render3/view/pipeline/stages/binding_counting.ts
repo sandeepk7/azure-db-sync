@@ -50,10 +50,16 @@ export class BindingCountingTransform implements uir.Transform {
         this.count += 1;
         break;
       case uir.NodeKind.ClassMap:
-      case uir.NodeKind.ClassProp:
       case uir.NodeKind.StyleMap:
-      case uir.NodeKind.StyleProp:
         this.count += 2;
+        break;
+      case uir.NodeKind.ClassProp:
+      case uir.NodeKind.StyleProp:
+        if (node.expression instanceof uir.InterpolationExpression) {
+          this.count += 1 + node.expression.expressions.length;
+        } else {
+          this.count += 2;
+        }
         break;
     }
     visitAllExpressions(node, this.expressionCounter);

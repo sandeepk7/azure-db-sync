@@ -1,8 +1,15 @@
 import * as o from '../../../../output/output_ast'
 import * as uir from '../ir/update';
 
-export class ExpressionTransformer<C = unknown> implements uir.EmbeddedExpressionVisitor {
+export class ExpressionTransformer<C = unknown> implements uir.EmbeddedExpressionVisitor, uir.InterpolationExpressionVisitor {
   visitEmbeddedExpression(ast: uir.EmbeddedExpression, ctx: C): o.Expression {
+    return ast;
+  }
+
+  visitInterpolationExpression(ast: uir.InterpolationExpression, ctx: C): o.Expression {
+    for (let i = 0; i < ast.expressions.length; i++) {
+      ast.expressions[i] = ast.expressions[i].visitExpression(this, ctx);
+    }
     return ast;
   }
 

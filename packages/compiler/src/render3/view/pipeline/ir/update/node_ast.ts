@@ -41,7 +41,13 @@ export interface StyleProp extends list.LinkedListNode<Node> {
   kind: NodeKind.StyleProp;
   name: string;
   expression: o.Expression;
+  suffix: string|null;
 }
+
+// property="{{ foo }}"
+// [property]="foo"
+// style.background="{{ url }}"
+// [style.background]="url"
 
 export interface StyleMap extends list.LinkedListNode<Node> {
   id: CirId;

@@ -10,7 +10,7 @@ import {ClassMap, ClassProp, List, Node, NodeKind, Property, Transform} from '..
 
 import {BaseTemplateStage} from './base';
 
-export class ClassStage extends BaseTemplateStage<never, ClassTransform> {
+export class ClassTemplateStage extends BaseTemplateStage<never, ClassTransform> {
   private classTransform = new ClassTransform();
 
   makeCreateTransform(): null {

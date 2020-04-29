@@ -35,7 +35,7 @@ import {emitTemplateFunction} from './pipeline/output/template_function';
 import {AdvanceStage} from './pipeline/stages/advance';
 import {BindingCountingHostStage, BindingCountingStage} from './pipeline/stages/binding_counting';
 import {ChainingHostStage} from './pipeline/stages/chaining';
-import {ClassHostStage} from './pipeline/stages/class';
+import {ClassHostStage, ClassTemplateStage} from './pipeline/stages/class';
 import {ElementConstsLiftingStage} from './pipeline/stages/consts_lifting';
 import {ElementAttrsTransform} from './pipeline/stages/element_attrs';
 import {ExpressionTranslatorStage} from './pipeline/stages/expressions';
@@ -43,7 +43,7 @@ import {ResolverHostStage, ResolverStage} from './pipeline/stages/resolver';
 import {SelfClosingElementStage} from './pipeline/stages/self_close';
 import {SlotAllocatorStage} from './pipeline/stages/slot_allocator';
 import {SortingHostStage} from './pipeline/stages/sorting';
-import {StyleHostStage, StyleTransform} from './pipeline/stages/style';
+import {StyleHostStage, StyleTemplateStage} from './pipeline/stages/style';
 import {TemplateNameStage} from './pipeline/stages/template_names';
 import {VarNamesStage} from './pipeline/stages/var_names';
 import {MIN_STYLING_BINDING_SLOTS_REQUIRED, StylingBuilder, StylingInstructionCall} from './styling_builder';
@@ -214,6 +214,8 @@ export function compileComponentFromMetadata(
   // clang-format off
   root.transform(
     new ResolverStage(),
+    new StyleTemplateStage(),
+    new ClassTemplateStage(),
     new SlotAllocatorStage(),
     new ElementAttrsTransform(),
     new ElementConstsLiftingStage(),

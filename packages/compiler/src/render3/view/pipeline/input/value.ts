@@ -60,7 +60,7 @@ export class ValuePreprocessor implements ast.AstVisitor {
     throw new Error('Should have been handled before this point.');
   }
   visitInterpolation(node: ast.Interpolation) {
-    throw new Error('Method not implemented.');
+    return new uir.InterpolationExpression(node.expressions, node.strings);
   }
   visitKeyedRead(node: ast.KeyedRead) {
     throw new Error('Method not implemented.');
