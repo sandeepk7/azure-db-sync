@@ -1283,8 +1283,7 @@ describe('compiler compliance: styling', () => {
             `;
 
       const result = compile(files, angularFiles);
-      console.info(result);
-      //expectEmit(result.source, template, 'Incorrect template');
+      expectEmit(result.source, template, 'Incorrect template');
     });
 
     it('should generate styling instructions for multiple directives that contain host binding definitions',
@@ -1366,7 +1365,7 @@ describe('compiler compliance: styling', () => {
   });
 
   describe('interpolations', () => {
-    it('should generate the proper update instructions for interpolated classes', () => {
+    fit('should generate the proper update instructions for interpolated classes', () => {
       const files = {
         app: {
           'spec.ts': `

@@ -9,7 +9,39 @@ import * as o from '../../../../../output/output_ast';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as uir from '../../ir/update';
 import {UpdateEmitter} from '../api';
-import {emitInterpolationExpr} from './util';
+import {emitInterpolationExpr, InterpolationConfig} from './util';
+
+const STYLE_MAP_INTERPOLATION_CONFIG: InterpolationConfig = {
+  name: 'styleMapInterpolate',
+  expressionCountSpecificInstruction: [
+    null,
+    R3.styleMapInterpolate1,
+    R3.styleMapInterpolate2,
+    R3.styleMapInterpolate3,
+    R3.styleMapInterpolate4,
+    R3.styleMapInterpolate5,
+    R3.styleMapInterpolate6,
+    R3.styleMapInterpolate7,
+    R3.styleMapInterpolate8,
+  ],
+  varExpressionCountInstruction: R3.styleMapInterpolateV,
+};
+
+const STYLE_PROP_INTERPOLATION_CONFIG: InterpolationConfig = {
+  name: 'stylePropInterpolate',
+  expressionCountSpecificInstruction: [
+    null,
+    R3.stylePropInterpolate1,
+    R3.stylePropInterpolate2,
+    R3.stylePropInterpolate3,
+    R3.stylePropInterpolate4,
+    R3.stylePropInterpolate5,
+    R3.stylePropInterpolate6,
+    R3.stylePropInterpolate7,
+    R3.stylePropInterpolate8,
+  ],
+  varExpressionCountInstruction: R3.stylePropInterpolateV,
+};
 
 export class StyleBindingEmitter implements UpdateEmitter {
   emit(node: uir.Node): o.Statement|null {
@@ -17,7 +49,7 @@ export class StyleBindingEmitter implements UpdateEmitter {
       case uir.NodeKind.StyleProp:
         // ɵɵstylePropInterpolateN()
         if (node.expression instanceof uir.InterpolationExpression) {
-          return emitInterpolationExpr(getStylePropInstructionRef, node.expression);
+          return emitInterpolationExpr(node.expression, STYLE_PROP_INTERPOLATION_CONFIG);
         }
 
         const params: o.Expression[] = [
@@ -30,14 +62,12 @@ export class StyleBindingEmitter implements UpdateEmitter {
         }
 
         // ɵɵstyleProp()
-        return o.importExpr(R3.styleProp)
-            .callFn(params)
-            .toStmt();
+        return o.importExpr(R3.styleProp).callFn(params).toStmt();
 
       case uir.NodeKind.StyleMap:
         // ɵɵstyleMapInterpolateN()
         if (node.expression instanceof uir.InterpolationExpression) {
-          return emitInterpolationExpr(getStyleMapInstructionRef, node.expression);
+          return emitInterpolationExpr(node.expression, STYLE_MAP_INTERPOLATION_CONFIG);
         }
 
         // ɵɵstyleMap()
@@ -49,55 +79,5 @@ export class StyleBindingEmitter implements UpdateEmitter {
     }
 
     return null;
-  }
-}
-
-function getStyleMapInstructionRef(length: number) {
-  switch (length) {
-    case 1:
-      return R3.styleMap;
-    case 3:
-      return R3.styleMapInterpolate1;
-    case 5:
-      return R3.styleMapInterpolate2;
-    case 7:
-      return R3.styleMapInterpolate3;
-    case 9:
-      return R3.styleMapInterpolate4;
-    case 11:
-      return R3.styleMapInterpolate5;
-    case 13:
-      return R3.styleMapInterpolate6;
-    case 15:
-      return R3.styleMapInterpolate7;
-    case 17:
-      return R3.styleMapInterpolate8;
-    default:
-      return R3.styleMapInterpolateV;
-  }
-}
-
-function getStylePropInstructionRef(length: number) {
-  switch (length) {
-    case 1:
-      return R3.styleProp;
-    case 3:
-      return R3.stylePropInterpolate1;
-    case 5:
-      return R3.stylePropInterpolate2;
-    case 7:
-      return R3.stylePropInterpolate3;
-    case 9:
-      return R3.stylePropInterpolate4;
-    case 11:
-      return R3.stylePropInterpolate5;
-    case 13:
-      return R3.stylePropInterpolate6;
-    case 15:
-      return R3.stylePropInterpolate7;
-    case 17:
-      return R3.stylePropInterpolate8;
-    default:
-      return R3.stylePropInterpolateV;
   }
 }

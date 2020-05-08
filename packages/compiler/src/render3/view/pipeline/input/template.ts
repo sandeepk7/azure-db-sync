@@ -101,6 +101,15 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
       for (const input of element.inputs) {
         elementStart.attrs.push(input.name);
         elementStart.attrs.push('');
+
+        const property: uir.Property = {
+          ...FRESH_NODE,
+          kind: uir.NodeKind.Property,
+          id,
+          name: input.name,
+          expression: this.preprocessor.process(input.value),
+        };
+        this.update.append(property);
       }
     }
 

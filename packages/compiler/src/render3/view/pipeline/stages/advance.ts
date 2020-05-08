@@ -39,7 +39,7 @@ export class AdvanceStage extends BaseTemplateStage<AdvanceStage, AdvanceTransfo
   }
 }
 
-type UirNodeWithId = uir.TextInterpolate;
+type UirNodeWithId = uir.Node&{id: cir.Id};
 
 export class AdvanceSlotTracker implements cir.Transform {}
 
@@ -58,7 +58,12 @@ export class AdvanceTransform implements uir.Transform {
   visit(node: uir.Node, list: uir.List): uir.Node {
     switch (node.kind) {
       case uir.NodeKind.TextInterpolate:
-        const slot = this.maybePrependAdvance(node, list);
+      case uir.NodeKind.Property:
+      case uir.NodeKind.ClassMap:
+      case uir.NodeKind.ClassProp:
+      case uir.NodeKind.StyleMap:
+      case uir.NodeKind.StyleProp:
+        this.maybePrependAdvance(node, list);
         break;
     }
     return node;
@@ -73,7 +78,8 @@ export class AdvanceTransform implements uir.Transform {
         next: null,
         kind: uir.NodeKind.Advance,
         delta,
-      })
+      });
+      this.slotPointer = slot;
     } else if (delta < 0) {
       throw new Error('Cannot advance() backwards?');
     }

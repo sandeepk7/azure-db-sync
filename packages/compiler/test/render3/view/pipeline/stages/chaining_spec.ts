@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 import {Chain, Element, ElementStart, Kind, Text} from '../../../../../src/render3/view/pipeline/ir/create';
-import {ChainingStage} from '../../../../../src/render3/view/pipeline/stages/chaining';
+import {ChainingCreateTransform} from '../../../../../src/render3/view/pipeline/stages/chaining';
 import {TemplateCreateAstGen} from '../create_ast_gen';
 
 describe('stages chaining transformation', () => {
@@ -16,7 +16,7 @@ describe('stages chaining transformation', () => {
     builder.text('two');
     builder.text('three');
 
-    builder.transform(new ChainingStage());
+    builder.transform(new ChainingCreateTransform());
 
     const instructions = builder.build();
     expect(instructions.length).toBe(1);
@@ -48,7 +48,7 @@ describe('stages chaining transformation', () => {
     builder.text('six');
     builder.text('seven');
 
-    builder.transform(new ChainingStage());
+    builder.transform(new ChainingCreateTransform());
 
     const instructions = builder.build();
     expect(instructions.length).toBe(5);

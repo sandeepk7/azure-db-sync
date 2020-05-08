@@ -33,6 +33,8 @@ export class InterpolationExpression extends o.Expression {
   visitExpression(visitor: InterpolationExpressionVisitor, ctx: any): any {
     if (visitor.visitInterpolationExpression !== undefined) {
       return visitor.visitInterpolationExpression(this, ctx);
+    } else {
+      throw new Error('InterpolationExpression cannot be used in this context');
     }
   }
 
@@ -99,7 +101,6 @@ export interface ReferenceExpr {
 
 export function visitAllExpressions<C = unknown>(
     node: Node, visitor: EmbeddedExpressionVisitor<C>, context?: C): void {
-      debugger;
   switch (node.kind) {
     case NodeKind.Property:
     case NodeKind.ClassMap:
