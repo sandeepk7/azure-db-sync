@@ -60,8 +60,11 @@ export class ValuePreprocessor implements ast.AstVisitor {
     throw new Error('Should have been handled before this point.');
   }
   visitInterpolation(node: ast.Interpolation) {
-    return new uir.InterpolationExpression(
-        node.expressions.map(expr => expr.visit(this)), node.strings);
+    return new uir.EmbeddedExpression({
+      kind: uir.ExpressionKind.Interpolation,
+      expressions: node.expressions.map(expr => expr.visit(this)),
+      strings: node.strings,
+    });
   }
   visitKeyedRead(node: ast.KeyedRead) {
     throw new Error('Method not implemented.');
@@ -70,13 +73,20 @@ export class ValuePreprocessor implements ast.AstVisitor {
     throw new Error('Method not implemented.');
   }
   visitLiteralArray(node: ast.LiteralArray) {
-    throw new Error('Method not implemented.');
+    return new o.LiteralArrayExpr(node.expressions.map(expr => expr.visit(this)));
   }
-  visitLiteralMap(node: ast.LiteralMap) {
-    throw new Error('Method not implemented.');
+  visitLiteralMap(node: ast.LiteralMap): o.Expression {
+    return new o.LiteralMapExpr(node.values.map(
+        (value, i) =>
+            new o.LiteralMapEntry(node.keys[i].key, value.visit(this), node.keys[i].quoted)));
   }
   visitLiteralPrimitive(node: ast.LiteralPrimitive) {
-    throw new Error('Method not implemented.');
+    if (node.value == null || typeof node.value === 'string' || typeof node.value === 'boolean' ||
+        typeof node.value === 'number') {
+      return o.literal(node.value);
+    } else {
+      throw new Error(`visitLiteralPrimitive not implemented for ${node.value}`);
+    }
   }
   visitMethodCall(node: ast.MethodCall): o.Expression {
     const args = node.args.map(arg => arg.visit(this));

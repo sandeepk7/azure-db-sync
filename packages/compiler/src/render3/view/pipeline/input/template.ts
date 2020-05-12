@@ -6,6 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import {AttributeMarker} from '@angular/compiler/src/core';
+
 import * as ast from '../../../../expression_parser/ast';
 import * as o from '../../../../output/output_ast';
 import * as tmpl from '../../../r3_ast';
@@ -98,9 +100,12 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
         elementStart.attrs.push(attr.value);
       }
 
+      if (element.inputs.length > 0) {
+        elementStart.attrs.push(AttributeMarker.Bindings);
+      }
+
       for (const input of element.inputs) {
         elementStart.attrs.push(input.name);
-        elementStart.attrs.push('');
 
         const property: uir.Property = {
           ...FRESH_NODE,
@@ -112,6 +117,7 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
         this.update.append(property);
       }
     }
+
 
     tmpl.visitAll(this, element.children);
 
@@ -157,7 +163,6 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
         expression: top.expressions.map(e => this.preprocessor.process(e)),
       });
     } else {
-      console.error(top);
       throw new Error('??');
     }
   }

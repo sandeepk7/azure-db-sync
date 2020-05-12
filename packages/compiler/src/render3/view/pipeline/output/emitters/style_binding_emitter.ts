@@ -48,8 +48,9 @@ export class StyleBindingEmitter implements UpdateEmitter {
     switch (node.kind) {
       case uir.NodeKind.StyleProp:
         // ɵɵstylePropInterpolateN()
-        if (node.expression instanceof uir.InterpolationExpression) {
-          return emitInterpolationExpr(node.expression, STYLE_PROP_INTERPOLATION_CONFIG);
+        if (node.expression instanceof uir.EmbeddedExpression &&
+            node.expression.value.kind === uir.ExpressionKind.Interpolation) {
+          return emitInterpolationExpr(node.expression.value, STYLE_PROP_INTERPOLATION_CONFIG);
         }
 
         const params: o.Expression[] = [
@@ -66,8 +67,9 @@ export class StyleBindingEmitter implements UpdateEmitter {
 
       case uir.NodeKind.StyleMap:
         // ɵɵstyleMapInterpolateN()
-        if (node.expression instanceof uir.InterpolationExpression) {
-          return emitInterpolationExpr(node.expression, STYLE_MAP_INTERPOLATION_CONFIG);
+        if (node.expression instanceof uir.EmbeddedExpression &&
+            node.expression.value.kind === uir.ExpressionKind.Interpolation) {
+          return emitInterpolationExpr(node.expression.value, STYLE_MAP_INTERPOLATION_CONFIG);
         }
 
         // ɵɵstyleMap()

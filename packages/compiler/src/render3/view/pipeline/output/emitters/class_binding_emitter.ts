@@ -41,8 +41,9 @@ export class ClassBindingEmitter implements UpdateEmitter {
 
       // ɵɵclassMap()
       case uir.NodeKind.ClassMap:
-        if (node.expression instanceof uir.InterpolationExpression) {
-          return emitInterpolationExpr(node.expression, CLASS_MAP_INTERPOLATION_CONFIG);
+        if (node.expression instanceof uir.EmbeddedExpression &&
+            node.expression.value.kind === uir.ExpressionKind.Interpolation) {
+          return emitInterpolationExpr(node.expression.value, CLASS_MAP_INTERPOLATION_CONFIG);
         } else {
           return o.importExpr(R3.classMap)
               .callFn([

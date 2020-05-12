@@ -14,31 +14,43 @@ import {ExpressionTransformer} from '../util/expression_transformer';
 
 import {BaseTemplateStage} from './base';
 
-export class BindingCountingStage extends BaseTemplateStage<never, BindingCountingTransform> {
-  makeCreateTransform(): null {
-    return null;
+export class BindingCountingStage implements TemplateStage {
+  transform(tmpl: RootTemplate): void {
+    this.transformTemplate(tmpl);
   }
-  makeUpdateTransform(
-      root: RootTemplate, prev: BindingCountingTransform|null, childTemplate: cir.Template|null) {
-    const template = childTemplate !== null ? childTemplate : root;
-    return new BindingCountingTransform(template);
+
+  private transformTemplate(tmpl: RootTemplate|cir.Template): void {
+    for (let node = tmpl.create.head; node !== null; node = node.next) {
+      if (node.kind === cir.Kind.Template) {
+        this.transformTemplate(node);
+      }
+    }
+
+    // Count bindings.
+    const bindingTransform = new BindingCountingTransform();
+    tmpl.update.applyTransform(bindingTransform);
+
+    const expressionTransform = new ExpressionSlotTransform(bindingTransform.count);
+    tmpl.update.applyTransform(expressionTransform);
+
+    tmpl.vars = bindingTransform.count + expressionTransform.count;
   }
 }
 
 export class BindingCountingHostStage implements HostStage {
   transform(host: Host): void {
-    const transform = new BindingCountingTransform(host);
-    host.update.applyTransform(transform);
-    transform.finalize();
+    const bindingTransform = new BindingCountingTransform();
+    host.update.applyTransform(bindingTransform);
+
+    const expressionTransform = new ExpressionSlotTransform(bindingTransform.count);
+    host.update.applyTransform(expressionTransform);
+
+    host.vars = bindingTransform.count + expressionTransform.count;
   }
 }
 
 export class BindingCountingTransform implements uir.Transform {
-  private count = 0;
-
-  private expressionCounter = new ExpressionBindingCounter();
-
-  constructor(private template: RootTemplate|cir.Template|Host) {}
+  count = 0;
 
   visit(node: uir.Node): uir.Node {
     switch (node.kind) {
@@ -55,33 +67,42 @@ export class BindingCountingTransform implements uir.Transform {
         break;
       case uir.NodeKind.ClassProp:
       case uir.NodeKind.StyleProp:
-        if (node.expression instanceof uir.InterpolationExpression) {
-          this.count += 1 + node.expression.expressions.length;
+        if (node.expression instanceof uir.EmbeddedExpression &&
+            node.expression.value.kind === uir.ExpressionKind.Interpolation) {
+          this.count += 1 + node.expression.value.expressions.length;
         } else {
           this.count += 2;
         }
         break;
     }
-    visitAllExpressions(node, this.expressionCounter);
     return node;
-  }
-
-  finalize(): void {
-    this.template.vars = this.count + this.expressionCounter.count;
   }
 }
 
-export class ExpressionBindingCounter extends ExpressionTransformer {
+export class ExpressionSlotTransform extends ExpressionTransformer implements uir.Transform {
   count: number = 0;
 
+  constructor(private bindingOffset: number) {
+    super();
+  }
+
   visitEmbeddedExpression(expr: uir.EmbeddedExpression): o.Expression {
+    super.visitEmbeddedExpression(expr, /* ctx */ undefined);
     switch (expr.value.kind) {
       case uir.ExpressionKind.PipeBind:
+      case uir.ExpressionKind.PureFunction:
+        expr.value.slotOffset = this.bindingOffset + this.count;
         this.count += 1;
         if (expr.value.args !== null) {
           this.count += expr.value.args.length;
         }
+        break;
     }
     return expr;
+  }
+
+  visit(node: uir.Node): uir.Node {
+    uir.visitAllExpressions(node, this);
+    return node;
   }
 }

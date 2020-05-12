@@ -58,6 +58,17 @@ export function expressionToString(node: Expression): string {
       return `NextContext(${node.jump})`;
     case ExpressionKind.Reference:
       return `Reference(${node.ref.value})`;
+    case ExpressionKind.Interpolation:
+      const strs: string[] = [];
+      for (let i = 0; i < node.expressions.length; i++) {
+        strs.push(`'${node.strings[i]}'`);
+        strs.push(astToString(node.expressions[i]));
+      }
+      if (node.strings.length === node.expressions.length + 1) {
+        strs.push(`'${node.strings[node.expressions.length]}'`);
+      }
+
+      return `Interpolation(${strs.join(', ')})`;
     default:
       throw new Error(`Not handled: ${ExpressionKind[node.kind]}`);
   }

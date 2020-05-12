@@ -49,6 +49,10 @@ export class Host {
       stage.transform(this);
     }
   }
+
+  isEmpty(): boolean {
+    return this.update.head === null && this.create.head === null;
+  }
 }
 
 export interface TemplateStage {

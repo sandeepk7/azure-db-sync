@@ -1216,7 +1216,7 @@ describe('compiler compliance: styling', () => {
       expectEmit(result.source, template, 'Incorrect template');
     });
 
-    fit('should support style interpolation', () => {
+    it('should support style interpolation', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -1365,7 +1365,7 @@ describe('compiler compliance: styling', () => {
   });
 
   describe('interpolations', () => {
-    fit('should generate the proper update instructions for interpolated classes', () => {
+    it('should generate the proper update instructions for interpolated classes', () => {
       const files = {
         app: {
           'spec.ts': `

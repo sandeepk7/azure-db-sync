@@ -12,8 +12,10 @@ import {RootTemplate} from '../ir/api';
 import {CreateEmitter, UpdateEmitter} from '../output/api';
 
 import {AdvanceEmitter} from './emitters/advance_emitter';
+import {ChainUpdateEmitter} from './emitters/chain_emitter';
 import {ClassBindingEmitter} from './emitters/class_binding_emitter';
 import {ElementNodeEmitter} from './emitters/element_node_emitter';
+import {PropertyBindingEmitter} from './emitters/property_binding_emitter';
 import {StyleBindingEmitter} from './emitters/style_binding_emitter';
 import {TemplateEmitter} from './emitters/template_emitter';
 import {TextInterpolateEmitter, TextNodeEmitter} from './emitters/text_node_emitter';
@@ -27,7 +29,8 @@ export function emitTemplateFunction(tpl: RootTemplate, constantPool: ConstantPo
 
   updateEmitters.push(
       new VarEmitter(), new TextInterpolateEmitter(), new AdvanceEmitter(),
-      new ClassBindingEmitter(), new StyleBindingEmitter(), new UnsupportedUpdateEmitter());
+      new ClassBindingEmitter(), new StyleBindingEmitter(), new PropertyBindingEmitter(),
+      new ChainUpdateEmitter(updateEmitters), new UnsupportedUpdateEmitter());
 
   createEmitters.push(
       new ElementNodeEmitter(), new TextNodeEmitter(),

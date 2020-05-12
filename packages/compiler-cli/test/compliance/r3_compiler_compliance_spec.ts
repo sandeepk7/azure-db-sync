@@ -3041,7 +3041,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, expectedOutput, 'Invalid directive definition');
     });
 
-    it('should generate a pure function for constant object literals', () => {
+    fit('should generate a pure function for constant object literals', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -3082,7 +3082,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, MyAppDeclaration, 'Invalid component definition');
     });
 
-    it('should generate a pure function for constant array literals', () => {
+    fit('should generate a pure function for constant array literals', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -3123,7 +3123,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, MyAppDeclaration, 'Invalid component definition');
     });
 
-    it('should not share pure functions between null and object literals', () => {
+    fit('should not share pure functions between null and object literals', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -3173,7 +3173,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, MyAppDeclaration, 'Invalid component definition');
     });
 
-    it('should not share pure functions between null and array literals', () => {
+    fit('should not share pure functions between null and array literals', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -3223,7 +3223,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, MyAppDeclaration, 'Invalid component definition');
     });
 
-    it('should not share pure functions between null and function calls', () => {
+    fit('should not share pure functions between null and function calls', () => {
       const files = {
         app: {
           'spec.ts': `

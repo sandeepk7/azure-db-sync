@@ -9,7 +9,7 @@ import * as o from '../../../../../output/output_ast';
 import * as uir from '../../ir/update';
 
 export function emitInterpolationExpr(
-    expr: uir.InterpolationExpression, config: InterpolationConfig) {
+    expr: uir.InterpolationExpr, config: InterpolationConfig, initialArgs: o.Expression[] = []) {
   if (expr.expressions.length === 1 && expr.strings.length === 2 && expr.strings[0] === '' &&
       expr.strings[1] === '' && config.expressionCountSpecificInstruction.length > 0 &&
       config.expressionCountSpecificInstruction[0] !== null) {
@@ -31,12 +31,12 @@ export function emitInterpolationExpr(
       throw new Error(`AssertionError: unsupported expression count of ${
           expressionCount} for interpolation instruction ${config.name}`);
     }
-    return o.importExpr(instruction).callFn(params).toStmt();
+    return o.importExpr(instruction).callFn([...initialArgs, ...params]).toStmt();
   } else {
     // No specific instruction exists for this number of expressions, so use the variable length
     // variant.
     return o.importExpr(config.varExpressionCountInstruction)
-        .callFn([o.literalArr(params)])
+        .callFn([...initialArgs, o.literalArr(params)])
         .toStmt()
   }
 }

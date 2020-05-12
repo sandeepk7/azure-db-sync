@@ -1,14 +1,27 @@
 import * as o from '../../../../output/output_ast'
 import * as uir from '../ir/update';
 
-export class ExpressionTransformer<C = unknown> implements uir.EmbeddedExpressionVisitor, uir.InterpolationExpressionVisitor {
+export class ExpressionTransformer<C = unknown> implements uir.EmbeddedExpressionVisitor {
   visitEmbeddedExpression(ast: uir.EmbeddedExpression, ctx: C): o.Expression {
-    return ast;
-  }
-
-  visitInterpolationExpression(ast: uir.InterpolationExpression, ctx: C): o.Expression {
-    for (let i = 0; i < ast.expressions.length; i++) {
-      ast.expressions[i] = ast.expressions[i].visitExpression(this, ctx);
+    const expr = ast.value;
+    switch (expr.kind) {
+      case uir.ExpressionKind.Interpolation:
+        for (let i = 0; i < expr.expressions.length; i++) {
+          expr.expressions[i] = expr.expressions[i].visitExpression(this, ctx);
+        }
+        break;
+      case uir.ExpressionKind.PipeBind:
+        if (expr.args !== null) {
+          for (let i = 0; i < expr.args.length; i++) {
+            expr.args[i] = expr.args[i].visitExpression(this, ctx);
+          }
+        }
+        break;
+      case uir.ExpressionKind.PureFunction:
+        for (let i = 0; i < expr.args.length; i++) {
+          expr.args[i] = expr.args[i].visitExpression(this, ctx);
+        }
+        break;
     }
     return ast;
   }

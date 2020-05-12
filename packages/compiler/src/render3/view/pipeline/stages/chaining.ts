@@ -31,7 +31,7 @@ export class ChainingHostStage implements HostStage {
 
 export class ChainingCreateTransform implements cir.Transform {
   static VALID_TO_CHAIN = new Set<cir.Kind>([
-    cir.Kind.Element,
+    // cir.Kind.Element,
   ]);
 
   visit(node: cir.Node, list: cir.List): cir.Node {

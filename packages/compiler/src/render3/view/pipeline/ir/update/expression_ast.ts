@@ -3,13 +3,15 @@ import {Reference as CirReference} from '../create/ref';
 
 import {Node, NodeKind, VarId} from './node_ast';
 
-export type Expression =
-    PureFunctionExpr|PipeBindExpr|UnresolvedExpr|NextContextExpr|VarExpr|ReferenceExpr;
+export type Expression = PureFunctionExpr|PipeBindExpr|UnresolvedExpr|NextContextExpr|VarExpr|
+    ReferenceExpr|InterpolationExpr;
 export enum ExpressionKind {
   PureFunction,
   PipeBind,
   NextContext,
   Reference,
+
+  Interpolation,
 
   // Internal type representing an unresolved reference
   Unresolved,
@@ -21,30 +23,10 @@ export interface EmbeddedExpressionVisitor<C = unknown> extends o.ExpressionVisi
   visitEmbeddedExpression?(node: EmbeddedExpression, ctx: C): any;
 }
 
-export interface InterpolationExpressionVisitor<C = unknown> extends o.ExpressionVisitor {
-  visitInterpolationExpression?(node: InterpolationExpression, ctx: C): any;
-}
-
-export class InterpolationExpression extends o.Expression {
-  constructor(public readonly expressions: o.Expression[], public readonly strings: string[]) {
-    super(/* type */ undefined);
-  }
-
-  visitExpression(visitor: InterpolationExpressionVisitor, ctx: any): any {
-    if (visitor.visitInterpolationExpression !== undefined) {
-      return visitor.visitInterpolationExpression(this, ctx);
-    } else {
-      throw new Error('InterpolationExpression cannot be used in this context');
-    }
-  }
-
-  isEquivalent(e: o.Expression): boolean {
-    throw new Error('InterpolationExpression cannot be used in this context');
-  }
-
-  isConstant(): boolean {
-    throw new Error('InterpolationExpression cannot be used in this context');
-  }
+export interface InterpolationExpr {
+  kind: ExpressionKind.Interpolation;
+  expressions: o.Expression[];
+  strings: string[];
 }
 
 export class EmbeddedExpression extends o.Expression {
@@ -66,17 +48,25 @@ export class EmbeddedExpression extends o.Expression {
   }
 
   isConstant(): boolean {
-    throw new Error('EmbeddedExpression cannot be used in this context');
+    return false;
   }
 }
 
-export interface PureFunctionExpr {
-  kind: ExpressionKind.PureFunction;
-  inputs: o.Expression[];
+export class PureFunctionExpr {
+  readonly kind = ExpressionKind.PureFunction;
+
+  slotOffset: number|null = null;
+
+  constructor(public fn: o.Expression, public args: o.Expression[]) {}
+
+  isConstant(): boolean {
+    return this.args.every(arg => arg.isConstant());
+  }
 }
 
 export interface PipeBindExpr {
   kind: ExpressionKind.PipeBind;
+  slotOffset: number|null;
   args: o.Expression[]|null;
 }
 

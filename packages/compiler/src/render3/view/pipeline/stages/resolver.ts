@@ -172,7 +172,7 @@ export class ExpressionResolver extends ExpressionTransformer {
           throw new Error('unsupported');
       }
     }
-    return expr;
+    return super.visitEmbeddedExpression(expr, /* ctx */ undefined);
   }
 }
 

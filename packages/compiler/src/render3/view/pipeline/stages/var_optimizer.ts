@@ -173,7 +173,7 @@ class VariableMapper extends ExpressionTransformer<uir.Node> {
    */
   private prevNextContext: uir.NextContextExpr|null = null;
 
-  visitEmbeddedExpression(expr: uir.EmbeddedExpression, node: uir.Node): uir.EmbeddedExpression {
+  visitEmbeddedExpression(expr: uir.EmbeddedExpression, node: uir.Node): o.Expression {
     switch (expr.value.kind) {
       case uir.ExpressionKind.NextContext:
         this.hazards.add(node);
@@ -199,7 +199,7 @@ class VariableMapper extends ExpressionTransformer<uir.Node> {
         }
         break;
     }
-    return expr;
+    return super.visitEmbeddedExpression(expr, node);
   }
 }
 
@@ -214,7 +214,7 @@ class PropagateNextContext extends ExpressionTransformer {
       const nextNextContextExpr = this.nextNextContext.get(expr.value)!;
       nextNextContextExpr.jump += expr.value.jump;
     }
-    return expr;
+    return super.visitEmbeddedExpression(expr, /* ctx */ undefined);
   }
 }
 
@@ -223,11 +223,11 @@ class RemoveVarUsagesFromNode extends ExpressionTransformer {
     super();
   }
 
-  visitEmbeddedExpression(expr: uir.EmbeddedExpression): uir.EmbeddedExpression {
+  visitEmbeddedExpression(expr: uir.EmbeddedExpression): o.Expression {
     if (expr.value.kind === uir.ExpressionKind.Var) {
       this.usages.get(expr.value.id)!.delete(this.node);
     }
-    return expr;
+    return super.visitEmbeddedExpression(expr, /* ctx */ undefined);
   }
 }
 
@@ -239,7 +239,7 @@ class InlineOneVariable extends ExpressionTransformer {
 
   visitEmbeddedExpression(expr: uir.EmbeddedExpression): o.Expression {
     if (expr.value.kind !== uir.ExpressionKind.Var || expr.value.id !== this.id) {
-      return expr;
+      return super.visitEmbeddedExpression(expr, /* ctx */ undefined);
     }
 
     if (this.inlined === true) {

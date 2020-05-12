@@ -28,8 +28,16 @@ export class ElementAttrsTransform extends CreateOnlyTemplateStage {
 function transformAttrs(attrs: cir.ElementAttrs) {
   const builder = new StaticAttributesBuilder();
 
+  let nextSectionIndex: number|null = null;
   for (let i = 0; i < attrs.length; i += 2) {
-    const prop = attrs[i] as string;
+    const prop = attrs[i];
+    if (typeof prop === 'number') {
+      nextSectionIndex = i;
+      break;
+    } else if (typeof prop !== 'string') {
+      throw new Error('Unexpected array in attributes');
+    }
+
     const value = attrs[i + 1];
     switch (prop) {
       case 'class':
@@ -47,6 +55,16 @@ function transformAttrs(attrs: cir.ElementAttrs) {
           builder.setAttribute(prop, value);
         }
         break;
+    }
+  }
+
+  if (nextSectionIndex !== null && attrs[nextSectionIndex] === AttributeMarker.Bindings) {
+    for (let i = nextSectionIndex + 1; i < attrs.length; i++) {
+      const prop = attrs[i];
+      if (typeof prop !== 'string') {
+        throw new Error(`Unexpected non-string value in binding names: ${prop}`);
+      }
+      builder.registerBindingName(prop);
     }
   }
 

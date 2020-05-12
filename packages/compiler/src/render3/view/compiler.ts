@@ -34,11 +34,12 @@ import {emitHostBindingsFunction} from './pipeline/output/host_bindings_function
 import {emitTemplateFunction} from './pipeline/output/template_function';
 import {AdvanceStage} from './pipeline/stages/advance';
 import {BindingCountingHostStage, BindingCountingStage} from './pipeline/stages/binding_counting';
-import {ChainingHostStage} from './pipeline/stages/chaining';
+import {ChainingHostStage, ChainingStage} from './pipeline/stages/chaining';
 import {ClassHostStage, ClassTemplateStage} from './pipeline/stages/class';
 import {ElementConstsLiftingStage} from './pipeline/stages/consts_lifting';
 import {ElementAttrsTransform} from './pipeline/stages/element_attrs';
 import {ExpressionTranslatorStage} from './pipeline/stages/expressions';
+import {PureFunctionStage} from './pipeline/stages/pure_function';
 import {ResolverHostStage, ResolverStage} from './pipeline/stages/resolver';
 import {SelfClosingElementStage} from './pipeline/stages/self_close';
 import {SlotAllocatorStage} from './pipeline/stages/slot_allocator';
@@ -91,16 +92,17 @@ function baseDirectiveFields(
       new ChainingHostStage(),
   );
 
-  if (host.vars !== null && host.vars > 0) {
-    definitionMap.set('hostVars', o.literal(host.vars));
+  if (!host.isEmpty()) {
+    if (host.vars !== null && host.vars > 0) {
+      definitionMap.set('hostVars', o.literal(host.vars));
+    }
+
+    if (host.attrs !== null && host.attrs.length > 0) {
+      definitionMap.set('hostAttrs', o.literalArr(host.attrs));
+    }
+
+    definitionMap.set('hostBindings', emitHostBindingsFunction(host, constantPool));
   }
-
-  if (host.attrs !== null && host.attrs.length > 0) {
-    definitionMap.set('hostAttrs', o.literalArr(host.attrs));
-  }
-
-  definitionMap.set('hostBindings', emitHostBindingsFunction(host, constantPool));
-
 
   // e.g 'inputs: {a: 'a'}`
   definitionMap.set('inputs', conditionallyCreateMapObjectLiteral(meta.inputs, true));
@@ -214,6 +216,7 @@ export function compileComponentFromMetadata(
   // clang-format off
   root.transform(
     new ResolverStage(),
+    new PureFunctionStage(constantPool),
     new StyleTemplateStage(),
     new ClassTemplateStage(),
     new SlotAllocatorStage(),
@@ -225,6 +228,7 @@ export function compileComponentFromMetadata(
     new BindingCountingStage(),
     new ExpressionTranslatorStage(),
     new AdvanceStage(),
+    new ChainingStage(),
   );
   // clang-format on
 

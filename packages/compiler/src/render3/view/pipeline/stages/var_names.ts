@@ -26,7 +26,7 @@ class VarNamesVisitor extends ExpressionTransformer {
 
   visitEmbeddedExpression(node: uir.EmbeddedExpression, context: unknown): o.Expression {
     if (node.value.kind !== uir.ExpressionKind.Var) {
-      return node;
+      return super.visitEmbeddedExpression(node, context);
     }
     if (!this.nameMap.has(node.value.id)) {
       throw new Error(`Unnamed/unknown variable: ${node.value.id}`);
