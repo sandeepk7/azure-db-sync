@@ -8,58 +8,59 @@
 import * as core from '../../../../core';
 import * as o from '../../../../output/output_ast';
 import {CONTEXT_NAME, RENDER_FLAGS} from '../../util';
-import {Host, RootTemplate} from '../ir/api';
-import * as cir from '../ir/create';
-import * as uir from '../ir/update';
-import {LinkedList, LinkedListNode} from '../linked_list';
-import {CreateEmitter, Emitter, UpdateEmitter} from '../output/api';
-
-export function emitNode<T extends LinkedListNode<T>>(node: T, emitters: Emitter<T>[]): o.Statement|
-    null {
-  for (let i = 0; i < emitters.length; i++) {
-    const result = emitters[i].emit(node);
-    if (result) {
-      return result;
-    }
-  }
-  return null;
-}
+import {Template} from '../features/embedded_views/node';
+import * as ir from '../ir';
+import {ChainingStatementList} from './chaining';
 
 export function produceBodyStatements(
-    tpl: RootTemplate|cir.Template|Host, createEmitters: CreateEmitter[],
-    updateEmitters: UpdateEmitter[]): o.Statement[] {
+    tpl: ir.RootTemplate|Template|ir.Host, createEmitters: ir.CreateEmitter[],
+    updateEmitters: ir.UpdateEmitter[]): o.Statement[] {
   const stmts: o.Statement[] = [];
-  const creationStmts = produceInstructions<cir.Node>(tpl.create, createEmitters);
-  if (creationStmts.length) {
+
+  const creationBlock = new ChainingStatementList();
+  for (let node = tpl.create.head; node !== null; node = node.next) {
+    creationBlock.append(emitCreateNode(node, createEmitters));
+  }
+  if (creationBlock.statements.length > 0) {
     // if (rf & CREATE) { ... }
-    stmts.push(ifRenderStmt(true, creationStmts));
+    stmts.push(ifModeStatement(core.RenderFlags.Create, creationBlock.statements));
   }
 
-  const updateStmts = produceInstructions<uir.Node>(tpl.update, updateEmitters);
-  if (updateStmts.length) {
+  const updateBlock = new ChainingStatementList();
+  for (let node = tpl.update.head; node !== null; node = node.next) {
+    updateBlock.append(emitUpdateNode(node, updateEmitters));
+  }
+  if (updateBlock.statements.length > 0) {
     // if (rf & UPDATE) { ... }
-    stmts.push(ifRenderStmt(false, updateStmts));
+    stmts.push(ifModeStatement(core.RenderFlags.Update, updateBlock.statements));
   }
 
   return stmts;
 }
 
-export function ifRenderStmt(creationMode: boolean, thenStmts: o.Statement[]) {
-  const renderFlag = creationMode ? core.RenderFlags.Create : core.RenderFlags.Update;
-  const precondition = o.variable(RENDER_FLAGS).bitwiseAnd(o.literal(renderFlag));
+export function ifModeStatement(mode: core.RenderFlags, thenStmts: o.Statement[]) {
+  const precondition = o.variable(RENDER_FLAGS).bitwiseAnd(o.literal(mode));
   return o.ifStmt(precondition, thenStmts);
 }
 
-export function produceInstructions<T extends LinkedListNode<T>>(
-    list: LinkedList<T>, emitters: Emitter<T>[]): o.Statement[] {
-  const stmts: o.Statement[] = [];
-  list.forEach(node => {
-    const result = emitNode(node, emitters);
-    if (result) {
-      stmts.push(result);
+function emitCreateNode(node: ir.CreateNode, emitters: ir.CreateEmitter[]): o.Statement {
+  for (const emitter of emitters) {
+    const res = emitter.emit(node);
+    if (res !== null) {
+      return res;
     }
-  });
-  return stmts;
+  }
+  throw new Error(`Unsupported create node: ${node.constructor.name}`);
+}
+
+function emitUpdateNode(node: ir.UpdateNode, emitters: ir.UpdateEmitter[]): o.Statement {
+  for (const emitter of emitters) {
+    const res = emitter.emit(node);
+    if (res !== null) {
+      return res;
+    }
+  }
+  throw new Error(`Unsupported update node: ${node.constructor.name}`);
 }
 
 export function produceTemplateFunctionParams(): o.FnParam[] {

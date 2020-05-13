@@ -8,8 +8,8 @@
 import * as o from '../../../../src/output/output_ast';
 import {createClassMap, createClassProp} from '../../../../src/render3/view/pipeline/class';
 import * as cir from '../../../../src/render3/view/pipeline/ir/create';
+import {LinkedList} from '../../../../src/render3/view/pipeline/ir/linked_list';
 import * as uir from '../../../../src/render3/view/pipeline/ir/update';
-import {LinkedList} from '../../../../src/render3/view/pipeline/linked_list';
 import {createProperty} from '../../../../src/render3/view/pipeline/property';
 import {createStyleMap, createStyleProp} from '../../../../src/render3/view/pipeline/style';
 

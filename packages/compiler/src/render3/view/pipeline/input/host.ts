@@ -11,15 +11,14 @@ import {CompileDirectiveSummary} from '../../../../compile_metadata';
 import * as o from '../../../../output/output_ast';
 import {BindingParser} from '../../../../template_parser/binding_parser';
 import {R3HostMetadata} from '../../api';
-import {Host} from '../ir/api';
-import * as cir from '../ir/create';
-import * as uir from '../ir/update';
+import {Listener, Property} from '../features/binding';
+import * as ir from '../ir';
 
 import {ValuePreprocessor} from './value';
 
 export function fromHostDef(
-    name: string, meta: R3HostMetadata, parser: BindingParser, span: ParseSourceSpan): Host {
-  const host = new Host(name);
+    name: string, meta: R3HostMetadata, parser: BindingParser, span: ParseSourceSpan): ir.Host {
+  const host = new ir.Host(name);
   const summary = makeHostSummary(meta);
   const valuePreprocessor = new ValuePreprocessor();
   buildAttributeInstructions(host, meta.attributes, span);
@@ -34,20 +33,12 @@ const FRESH_NODE = {
 };
 
 function buildAttributeInstructions(
-    host: Host, attrs: {[key: string]: o.Expression}, span: ParseSourceSpan) {
-  for (const prop of Object.keys(attrs)) {
-    const instruction: uir.Node = {
-      ...FRESH_NODE,
-      kind: uir.NodeKind.Attribute,
-      id: 0 as cir.CirId,
-    };
-
-    host.update.append(instruction);
-  }
+    host: ir.Host, attrs: {[key: string]: o.Expression}, span: ParseSourceSpan): void {
+  // TODO(alxhub): implement!
 }
 
 function buildPropertyInstructions(
-    host: Host, valuePreprocessor: ValuePreprocessor, parser: BindingParser,
+    host: ir.Host, valuePreprocessor: ValuePreprocessor, parser: BindingParser,
     summary: CompileDirectiveSummary, span: ParseSourceSpan): void {
   const properties = parser.createBoundHostProperties(summary, span);
   if (properties === null) {
@@ -55,33 +46,24 @@ function buildPropertyInstructions(
   }
 
   for (let property of properties) {
-    const instruction: uir.Node = {
-      ...FRESH_NODE,
-      kind: uir.NodeKind.Property,
-      id: 0 as cir.CirId,
-      name: property.name,
-      expression: valuePreprocessor.process(property.expression),
-    };
+    const instruction: ir.UpdateNode =
+        new Property(0 as ir.Id, property.name, valuePreprocessor.process(property.expression));
 
     host.update.append(instruction);
   }
 }
 
 function buildListenerInstructions(
-    host: Host, valuePreprocessor: ValuePreprocessor, parser: BindingParser,
-    summary: CompileDirectiveSummary, span: ParseSourceSpan) {
+    host: ir.Host, valuePreprocessor: ValuePreprocessor, parser: BindingParser,
+    summary: CompileDirectiveSummary, span: ParseSourceSpan): void {
   const listeners = parser.createDirectiveHostEventAsts(summary, span);
   if (listeners === null) {
     return;
   }
 
   for (let listener of listeners) {
-    const instruction: cir.Node = {
-      ...FRESH_NODE,
-      kind: cir.Kind.Listener,
-      eventName: listener.name,
-      handler: valuePreprocessor.process(listener.handler),
-    };
+    const instruction: ir.CreateNode =
+        new Listener(listener.name, valuePreprocessor.process(listener.handler));
 
     host.create.append(instruction);
   }

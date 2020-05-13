@@ -8,31 +8,27 @@
 import {ConstantPool} from '@angular/compiler/src/constant_pool';
 
 import * as o from '../../../../output/output_ast';
-import {Host} from '../ir/api';
-import {CreateEmitter, UpdateEmitter} from '../output/api';
+import {ListenerEmitter} from '../features/binding';
+import {ClassEmitter, StyleEmitter} from '../features/styling';
+import * as ir from '../ir';
 
-import {ChainUpdateEmitter} from './emitters/chain_emitter';
-import {ClassBindingEmitter} from './emitters/class_binding_emitter';
-import {ListenerEmitter} from './emitters/listener_emitter';
-import {StyleBindingEmitter} from './emitters/style_binding_emitter';
-import {UnsupportedCreateEmitter, UnsupportedUpdateEmitter} from './emitters/unsupported_output_driver';
 import {produceBodyStatements, produceTemplateFunctionParams} from './util';
 
-export function emitHostBindingsFunction(host: Host, constantPool: ConstantPool) {
-  const createEmitters: CreateEmitter[] = [
+export function emitHostBindingsFunction(
+    host: ir.Host, constantPool: ConstantPool): o.FunctionExpr {
+  const createEmitters: ir.CreateEmitter[] = [
     new ListenerEmitter(host.name),
-    new UnsupportedCreateEmitter(),
+  ];
+  const updateEmitters: ir.UpdateEmitter[] = [
+    new StyleEmitter(),
+    new ClassEmitter(),
   ];
 
-  let updateEmitters: UpdateEmitter[] = [];
-  updateEmitters.push(
-      new StyleBindingEmitter(),
-      new ClassBindingEmitter(),
-      new ChainUpdateEmitter(updateEmitters),
-      new UnsupportedUpdateEmitter(),
-  );
-
   return o.fn(
-      produceTemplateFunctionParams(), produceBodyStatements(host, createEmitters, updateEmitters),
-      undefined, undefined, `${host.name}_HostBindings`);
+      produceTemplateFunctionParams(),
+      produceBodyStatements(host, createEmitters, updateEmitters),
+      /* type */ undefined,
+      /* sourceSpan */ undefined,
+      `${host.name}_HostBindings`,
+  );
 }

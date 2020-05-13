@@ -8,7 +8,8 @@
 
 import * as ast from '../../../../expression_parser/ast';
 import * as o from '../../../../output/output_ast';
-import * as uir from '../ir/update';
+import {InterpolationExpr} from '../features/binding/interpolation';
+import {UnresolvedExpr} from '../features/expressions';
 
 export enum ReadResultKind {
   Receiver,
@@ -34,10 +35,7 @@ export class ValuePreprocessor implements ast.AstVisitor {
     if (node.receiver instanceof ast.ImplicitReceiver) {
       // This is a top-level read of a property. There's no way to know what this points to in
       // isolation.
-      return new uir.EmbeddedExpression({
-        kind: uir.ExpressionKind.Unresolved,
-        name: node.name,
-      });
+      return new UnresolvedExpr(node.name);
     } else {
       const receiver = node.receiver.visit(this);
       return new o.ReadPropExpr(receiver, node.name);
@@ -60,11 +58,7 @@ export class ValuePreprocessor implements ast.AstVisitor {
     throw new Error('Should have been handled before this point.');
   }
   visitInterpolation(node: ast.Interpolation) {
-    return new uir.EmbeddedExpression({
-      kind: uir.ExpressionKind.Interpolation,
-      expressions: node.expressions.map(expr => expr.visit(this)),
-      strings: node.strings,
-    });
+    return new InterpolationExpr(node.expressions.map(expr => expr.visit(this)), node.strings);
   }
   visitKeyedRead(node: ast.KeyedRead) {
     throw new Error('Method not implemented.');
@@ -91,10 +85,7 @@ export class ValuePreprocessor implements ast.AstVisitor {
   visitMethodCall(node: ast.MethodCall): o.Expression {
     const args = node.args.map(arg => arg.visit(this));
     if (node.receiver instanceof ast.ImplicitReceiver) {
-      const target = new uir.EmbeddedExpression({
-        kind: uir.ExpressionKind.Unresolved,
-        name: node.name,
-      });
+      const target = new UnresolvedExpr(node.name);
       return new o.InvokeFunctionExpr(target, args);
     } else {
       return new o.InvokeMethodExpr(node.receiver.visit(this), node.name, args);

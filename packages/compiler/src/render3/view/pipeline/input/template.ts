@@ -9,30 +9,32 @@
 import {AttributeMarker} from '@angular/compiler/src/core';
 
 import * as ast from '../../../../expression_parser/ast';
-import * as o from '../../../../output/output_ast';
 import * as tmpl from '../../../r3_ast';
-import {RootTemplate} from '../ir/api';
-import * as cir from '../ir/create';
-import * as uir from '../ir/update';
+import {Property} from '../features/binding';
+import {InterpolationExpr} from '../features/binding/interpolation';
+import {ElementEnd, ElementStart} from '../features/element';
+import {Template} from '../features/embedded_views';
+import {Text, TextInterpolate} from '../features/text';
+import * as ir from '../ir';
 
 import {Scope} from './scope';
-import {ReadResult, ReadResultKind, ValuePreprocessor} from './value';
+import {ValuePreprocessor} from './value';
 
 export interface IrTemplate {
-  create: cir.List;
-  update: uir.List;
+  create: ir.CreateList;
+  update: ir.UpdateList;
   scope: Scope;
 }
 
-export function parse(input: tmpl.Node[], name: string): RootTemplate {
+export function parse(input: tmpl.Node[], name: string): ir.RootTemplate {
   const root = TemplateToIrConverter.parseRoot(input);
   root.name = name;
   return root;
 }
 
 class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
-  private create = new cir.List();
-  private update = new uir.List();
+  private create = new ir.CreateList();
+  private update = new ir.UpdateList();
 
   private preprocessor = new ValuePreprocessor();
 
@@ -41,20 +43,20 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
   /**
    * Parse a template beginning from its top-level, including all sub-templates.
    */
-  static parseRoot(input: tmpl.Node[]): RootTemplate {
+  static parseRoot(input: tmpl.Node[]): ir.RootTemplate {
     const parser = new TemplateToIrConverter(Scope.root());
     for (const node of input) {
       node.visit(parser);
     }
 
     const {create, update, scope} = parser.finalize();
-    return new RootTemplate(create, update, scope);
+    return new ir.RootTemplate(create, update, scope);
   }
 
   /**
    * Parse a child template of a higher-level template, including all sub-templates.
    */
-  private parseChild(id: cir.Id, input: tmpl.Template): IrTemplate {
+  private parseChild(id: ir.Id, input: tmpl.Template): IrTemplate {
     const childScope = this.scope.child(id);
     const parser = new TemplateToIrConverter(childScope);
 
@@ -73,7 +75,7 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
     // Allocate an id.
     const id = this.scope.allocateId();
 
-    let refs: cir.Reference[]|null = null;
+    let refs: ir.Reference[]|null = null;
     if (element.references.length > 0) {
       refs = [];
       for (const ref of element.references) {
@@ -81,15 +83,8 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
       }
     }
 
-    const elementStart: cir.ElementStart = {
-      ...FRESH_NODE,
-      kind: cir.Kind.ElementStart,
-      id,
-      slot: null,
-      tag: element.name,
-      attrs: null,
-      refs,
-    };
+    const elementStart = new ElementStart(id, element.name);
+    elementStart.refs = refs;
 
     this.create.append(elementStart);
 
@@ -107,13 +102,7 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
       for (const input of element.inputs) {
         elementStart.attrs.push(input.name);
 
-        const property: uir.Property = {
-          ...FRESH_NODE,
-          kind: uir.NodeKind.Property,
-          id,
-          name: input.name,
-          expression: this.preprocessor.process(input.value),
-        };
+        const property = new Property(id, input.name, this.preprocessor.process(input.value));
         this.update.append(property);
       }
     }
@@ -121,33 +110,17 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
 
     tmpl.visitAll(this, element.children);
 
-    this.create.append({
-      ...FRESH_NODE,
-      kind: cir.Kind.ElementEnd,
-      id,
-    });
+    this.create.append(new ElementEnd(id));
   }
 
   visitText(text: tmpl.Text): void {
     const id = this.scope.allocateId();
-    this.create.append({
-      ...FRESH_NODE,
-      kind: cir.Kind.Text,
-      id,
-      value: text.value,
-      slot: null,
-    });
+    this.create.append(new Text(id, text.value));
   }
 
   visitBoundText(text: tmpl.BoundText): void {
     const id = this.scope.allocateId();
-    this.create.append({
-      ...FRESH_NODE,
-      kind: cir.Kind.Text,
-      id,
-      value: null,
-      slot: null,
-    });
+    this.create.append(new Text(id));
 
     let top = text.value;
     if (top instanceof ast.ASTWithSource) {
@@ -155,15 +128,12 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
     }
 
     if (top instanceof ast.Interpolation) {
-      this.update.append({
-        ...FRESH_NODE,
-        kind: uir.NodeKind.TextInterpolate,
-        id,
-        text: top.strings,
-        expression: top.expressions.map(e => this.preprocessor.process(e)),
-      });
+      this.update.append(new TextInterpolate(
+          id,
+          new InterpolationExpr(
+              top.expressions.map(e => this.preprocessor.process(e)), top.strings)));
     } else {
-      throw new Error('??');
+      throw new Error('BoundText is not an interpolation expression?');
     }
   }
 
@@ -171,7 +141,7 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
     const id = this.scope.allocateId();
     const parsed = this.parseChild(id, template);
 
-    let refs: cir.Reference[]|null = null;
+    let refs: ir.Reference[]|null = null;
     if (template.references.length > 0) {
       refs = [];
       for (const ref of template.references) {
@@ -179,19 +149,11 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
       }
     }
 
-    this.create.append({
-      ...FRESH_NODE,
-      kind: cir.Kind.Template,
-      id,
-      create: parsed.create,
-      update: parsed.update,
-      slot: null,
-      functionName: null,
-      refs,
-      decls: null,
-      vars: null,
-      tagName: template.tagName !== '' ? template.tagName : 'ng-template',
-    });
+    const view = new Template(id, template.tagName !== '' ? template.tagName : 'ng-template');
+    this.create.append(view);
+    view.create = parsed.create;
+    view.update = parsed.update;
+    view.refs = refs;
   }
 
   visitContent(content: tmpl.Content): void {

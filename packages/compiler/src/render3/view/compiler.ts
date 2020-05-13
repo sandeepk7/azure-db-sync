@@ -28,25 +28,21 @@ import {Render3ParseResult} from '../r3_template_transform';
 import {prepareSyntheticListenerFunctionName, prepareSyntheticPropertyName, typeWithParameters} from '../util';
 
 import {R3ComponentDef, R3ComponentMetadata, R3DirectiveDef, R3DirectiveMetadata, R3HostMetadata, R3QueryMetadata} from './api';
+import {AdvanceStage} from './pipeline/features/advance';
+import {BindingCountingHostStage, BindingCountingStage, SlotAllocatorStage} from './pipeline/features/decls_vars';
+import {ElementAttrsTransform} from './pipeline/features/element/attrs_stage';
+import {ElementConstsLiftingStage} from './pipeline/features/element/constant_stage';
+import {SelfClosingElementStage} from './pipeline/features/element/self_close_stage';
+import {TemplateNameStage} from './pipeline/features/embedded_views';
+import {ExpressionTranslatorStage} from './pipeline/features/expressions';
+import {SortingHostStage} from './pipeline/features/ordering';
+import {PureFunctionStage} from './pipeline/features/pure_functions';
+import {ClassHostStage, ClassTemplateStage, StyleHostStage, StyleTemplateStage} from './pipeline/features/styling';
+import {ResolverHostStage, ResolverStage, VarNamesStage} from './pipeline/features/tmp_variables';
 import {fromHostDef} from './pipeline/input/host';
 import {parse} from './pipeline/input/template';
 import {emitHostBindingsFunction} from './pipeline/output/host_bindings_function';
 import {emitTemplateFunction} from './pipeline/output/template_function';
-import {AdvanceStage} from './pipeline/stages/advance';
-import {BindingCountingHostStage, BindingCountingStage} from './pipeline/stages/binding_counting';
-import {ChainingHostStage, ChainingStage} from './pipeline/stages/chaining';
-import {ClassHostStage, ClassTemplateStage} from './pipeline/stages/class';
-import {ElementConstsLiftingStage} from './pipeline/stages/consts_lifting';
-import {ElementAttrsTransform} from './pipeline/stages/element_attrs';
-import {ExpressionTranslatorStage} from './pipeline/stages/expressions';
-import {PureFunctionStage} from './pipeline/stages/pure_function';
-import {ResolverHostStage, ResolverStage} from './pipeline/stages/resolver';
-import {SelfClosingElementStage} from './pipeline/stages/self_close';
-import {SlotAllocatorStage} from './pipeline/stages/slot_allocator';
-import {SortingHostStage} from './pipeline/stages/sorting';
-import {StyleHostStage, StyleTemplateStage} from './pipeline/stages/style';
-import {TemplateNameStage} from './pipeline/stages/template_names';
-import {VarNamesStage} from './pipeline/stages/var_names';
 import {MIN_STYLING_BINDING_SLOTS_REQUIRED, StylingBuilder, StylingInstructionCall} from './styling_builder';
 import {BindingScope, makeBindingParser, prepareEventListenerParameters, renderFlagCheckIfStmt, resolveSanitizationFn, TemplateDefinitionBuilder, ValueConverter} from './template';
 import {asLiteral, chainedInstruction, conditionallyCreateMapObjectLiteral, CONTEXT_NAME, DefinitionMap, getQueryPredicate, RENDER_FLAGS, TEMPORARY_NAME, temporaryAllocator} from './util';
@@ -89,7 +85,6 @@ function baseDirectiveFields(
       new ClassHostStage(),
       new SortingHostStage(),
       new BindingCountingHostStage(),
-      new ChainingHostStage(),
   );
 
   if (!host.isEmpty()) {
@@ -228,7 +223,6 @@ export function compileComponentFromMetadata(
     new BindingCountingStage(),
     new ExpressionTranslatorStage(),
     new AdvanceStage(),
-    new ChainingStage(),
   );
   // clang-format on
 

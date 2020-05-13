@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {LinkedList, LinkedListNode} from '../../../../src/render3/view/pipeline/linked_list';
+import {LinkedList, LinkedListNode} from '../../../../src/render3/view/pipeline/ir/linked_list';
 
 export interface TestNode extends LinkedListNode<TestNode> {
   value: number;

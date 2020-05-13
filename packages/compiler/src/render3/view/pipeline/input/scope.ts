@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import * as cir from '../ir/create';
+import * as ir from '../ir';
 
 export enum TargetKind {
   Reference,
@@ -14,14 +14,14 @@ export enum TargetKind {
   RootContext,
 }
 
-export interface Reference extends cir.Reference {
+export interface Reference extends ir.Reference {
   kind: TargetKind.Reference;
-  element: cir.Id;
+  element: ir.Id;
 }
 
 export interface Variable {
   kind: TargetKind.Variable;
-  template: cir.Id;
+  template: ir.Id;
   value: string;
 }
 
@@ -35,17 +35,17 @@ const ROOT_CONTEXT: RootContext = {
 export type Target = Reference|Variable|RootContext;
 
 
-export class Scope {
+export class Scope implements ir.Scope {
   private _targets = new Map<string, Target>();
-  private children = new Map<cir.Id, Scope>();
+  private children = new Map<ir.Id, Scope>();
 
   constructor(private idGen: IdGenerator, readonly parent: Scope|null) {}
 
-  allocateId(): cir.Id {
+  allocateId(): ir.Id {
     return this.idGen.next();
   }
 
-  recordReference(name: string, toElementId: cir.Id, value: string): Reference {
+  recordReference(name: string, toElementId: ir.Id, value: string): Reference {
     const ref: Reference = {
       kind: TargetKind.Reference,
       slot: null,
@@ -58,7 +58,7 @@ export class Scope {
     return ref;
   }
 
-  recordVariable(name: string, templateId: cir.Id, value: string): void {
+  recordVariable(name: string, templateId: ir.Id, value: string): void {
     this._targets.set(name, {
       kind: TargetKind.Variable,
       template: templateId,
@@ -84,13 +84,13 @@ export class Scope {
     return new Scope(new IdGenerator(), /* parent */ null);
   }
 
-  child(id: cir.Id): Scope {
+  child(id: ir.Id): Scope {
     const childScope = new Scope(this.idGen, this);
     this.children.set(id, childScope);
     return childScope;
   }
 
-  getChild(id: cir.Id): Scope {
+  getChild(id: ir.Id): Scope {
     if (!this.children.has(id)) {
       throw new Error(`AssertionError: unknown child scope for CirId(${id})`);
     }
@@ -101,7 +101,7 @@ export class Scope {
 class IdGenerator {
   private id = 0;
 
-  next(): cir.Id {
-    return this.id++ as cir.Id;
+  next(): ir.Id {
+    return this.id++ as ir.Id;
   }
 }

@@ -9,7 +9,7 @@ import {IdGenerator} from '@angular/compiler/src/render3/view/pipeline/id_gen';
 
 import {createElement, createElementEnd, createElementStart} from '../../../../src/render3/view/pipeline/element';
 import * as cir from '../../../../src/render3/view/pipeline/ir/create';
-import {LinkedList} from '../../../../src/render3/view/pipeline/linked_list';
+import {LinkedList} from '../../../../src/render3/view/pipeline/ir/linked_list';
 import {createText} from '../../../../src/render3/view/pipeline/text';
 
 export abstract class CreateAstGenBase {
