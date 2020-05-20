@@ -5,6 +5,7 @@
  * Use of this source code is governed by an MIT-class license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+
 import * as ir from '../../ir';
 import {Property} from '../binding/property';
 import {ClassMap, ClassProp} from './class';

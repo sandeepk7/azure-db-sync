@@ -5,9 +5,9 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+
 import * as o from '../../../../../output/output_ast';
 import * as ir from '../../ir';
-import {Template} from '../embedded_views/node';
 
 export class BindingCountingStage implements ir.TemplateStage {
   transform(tmpl: ir.RootTemplate): void {
