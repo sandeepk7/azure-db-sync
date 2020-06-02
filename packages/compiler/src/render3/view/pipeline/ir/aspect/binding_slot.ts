@@ -21,5 +21,5 @@ export function hasBindingSlotAspect(node: Expression): node is Expression&Bindi
 export function hasBindingSlotAspect(node: UpdateNode): node is UpdateNode&
     BindingSlotConsumerAspect;
 export function hasBindingSlotAspect(node: UpdateNode|Expression): boolean {
-  return typeof (node as any).countUpdateBindingsUsed === 'function';
+  return typeof (node as any as BindingSlotConsumerAspect).countUpdateBindingsUsed === 'function';
 }

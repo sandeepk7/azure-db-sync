@@ -12,6 +12,7 @@ import {AdvanceEmitter} from '../features/advance';
 import {PropertyEmitter} from '../features/binding';
 import {ElementEmitter} from '../features/element';
 import {TemplateEmitter} from '../features/embedded_views';
+import {PipeEmitter} from '../features/pipes';
 import {ClassEmitter, StyleEmitter} from '../features/styling';
 import {TextCreateEmitter, TextUpdateEmitter} from '../features/text';
 import {VarEmitter} from '../features/tmp_variables';
@@ -28,7 +29,7 @@ export function emitTemplateFunction(tpl: ir.RootTemplate, constantPool: Constan
       new StyleEmitter(), new PropertyEmitter());
 
   createEmitters.push(
-      new ElementEmitter(), new TextCreateEmitter(),
+      new ElementEmitter(), new TextCreateEmitter(), new PipeEmitter(),
       new TemplateEmitter(createEmitters, updateEmitters, constantPool));
 
   return o.fn(

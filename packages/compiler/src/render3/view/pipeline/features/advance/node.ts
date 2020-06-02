@@ -24,10 +24,10 @@ export class AdvanceEmitter implements ir.UpdateEmitter {
       return null;
     }
 
-    if (node.delta === 1) {
-      return o.importExpr(R3.advance).callFn([]).toStmt();
-    } else {
-      return o.importExpr(R3.advance).callFn([o.literal(node.delta)]).toStmt();
-    }
+    // if (node.delta === 1) {
+    // return o.importExpr(R3.advance).callFn([]).toStmt();
+    // } else {
+    return o.importExpr(R3.advance).callFn([o.literal(node.delta)]).toStmt();
+    // }
   }
 }

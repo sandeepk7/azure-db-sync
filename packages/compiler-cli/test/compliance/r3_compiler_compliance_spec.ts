@@ -326,7 +326,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, template, 'Incorrect template');
     });
 
-    it('should reserve slots for pure functions', () => {
+    fit('should reserve slots for pure functions', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -2145,7 +2145,7 @@ describe('compiler compliance', () => {
         expectEmit(source, MyAppDefinition, 'Invalid MyApp definition');
       });
 
-      it('should use appropriate function for a given no of pipe arguments', () => {
+      fit('should use appropriate function for a given no of pipe arguments', () => {
         const files = {
           app: {
             'spec.ts': `

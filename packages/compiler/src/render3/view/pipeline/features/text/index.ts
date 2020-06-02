@@ -21,9 +21,13 @@ export class Text extends ir.CreateNode implements ir.CreateSlotAspect {
   allocateExtraSlots(): void {}
 }
 
-export class TextInterpolate extends ir.UpdateNode {
+export class TextInterpolate extends ir.UpdateNode implements ir.BindingSlotConsumerAspect {
   constructor(readonly id: ir.Id, public expression: InterpolationExpr) {
     super();
+  }
+
+  countUpdateBindingsUsed(): number {
+    return this.expression.expressions.length;
   }
 
   visitExpressions(visitor: o.ExpressionVisitor, ctx: any): void {

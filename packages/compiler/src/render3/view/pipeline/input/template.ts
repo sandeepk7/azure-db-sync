@@ -36,7 +36,7 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
   private create = new ir.CreateList();
   private update = new ir.UpdateList();
 
-  private preprocessor = new ValuePreprocessor();
+  private preprocessor = new ValuePreprocessor(this.scope);
 
   constructor(private scope: Scope) {}
 

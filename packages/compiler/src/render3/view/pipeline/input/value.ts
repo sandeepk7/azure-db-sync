@@ -10,6 +10,17 @@ import * as ast from '../../../../expression_parser/ast';
 import * as o from '../../../../output/output_ast';
 import {InterpolationExpr} from '../features/binding/interpolation';
 import {UnresolvedExpr} from '../features/expressions';
+import {PipeBindExpr} from '../features/pipes/expression';
+import * as ir from '../ir';
+
+const BINARY_OPERATORS = new Map<string, o.BinaryOperator>([
+  ['&&', o.BinaryOperator.And],
+  ['||', o.BinaryOperator.Or],
+  ['==', o.BinaryOperator.Equals],
+  ['!=', o.BinaryOperator.NotEquals],
+  ['===', o.BinaryOperator.Identical],
+  ['!==', o.BinaryOperator.NotIdentical],
+]);
 
 export enum ReadResultKind {
   Receiver,
@@ -23,6 +34,8 @@ export interface ReadResult {
 export interface Context {}
 
 export class ValuePreprocessor implements ast.AstVisitor {
+  constructor(private scope: {allocateId(): ir.Id}) {}
+
   process(value: ast.AST): o.Expression {
     return value.visit(this);
   }
@@ -41,15 +54,19 @@ export class ValuePreprocessor implements ast.AstVisitor {
       return new o.ReadPropExpr(receiver, node.name);
     }
   }
-
-  visitBinary(node: ast.Binary) {
-    throw new Error('Method not implemented.');
+  visitBinary(node: ast.Binary): o.BinaryOperatorExpr {
+    if (!BINARY_OPERATORS.has(node.operation)) {
+      throw new Error('Operation not implemented.');
+    }
+    const op = BINARY_OPERATORS.get(node.operation)!;
+    return new o.BinaryOperatorExpr(op, node.left.visit(this), node.right.visit(this));
   }
   visitChain(node: ast.Chain) {
     throw new Error('Method not implemented.');
   }
-  visitConditional(node: ast.Conditional) {
-    throw new Error('Method not implemented.');
+  visitConditional(node: ast.Conditional): o.ConditionalExpr {
+    return new o.ConditionalExpr(
+        node.condition.visit(this), node.trueExp.visit(this), node.falseExp.visit(this));
   }
   visitFunctionCall(node: ast.FunctionCall) {
     throw new Error('Method not implemented.');
@@ -91,8 +108,10 @@ export class ValuePreprocessor implements ast.AstVisitor {
       return new o.InvokeMethodExpr(node.receiver.visit(this), node.name, args);
     }
   }
-  visitPipe(node: ast.BindingPipe) {
-    throw new Error('Method not implemented.');
+  visitPipe(node: ast.BindingPipe): o.Expression {
+    return new PipeBindExpr(
+        this.scope.allocateId(), node.name, node.exp.visit(this),
+        node.args.map(arg => arg.visit(this)));
   }
   visitPrefixNot(node: ast.PrefixNot) {
     throw new Error('Method not implemented.');

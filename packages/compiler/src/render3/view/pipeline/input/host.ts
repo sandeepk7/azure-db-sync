@@ -21,7 +21,12 @@ export function fromHostDef(
     name: string, meta: R3HostMetadata, parser: BindingParser, span: ParseSourceSpan): ir.Host {
   const host = new ir.Host(name);
   const summary = makeHostSummary(meta);
-  const valuePreprocessor = new ValuePreprocessor();
+  const allocator = {
+    allocateId: () => {
+      return 0 as ir.Id;
+    }
+  };
+  const valuePreprocessor = new ValuePreprocessor(allocator);
   buildAttributeInstructions(host, meta.attributes, span);
   buildPropertyInstructions(host, valuePreprocessor, parser, summary, span);
   buildListenerInstructions(host, valuePreprocessor, parser, summary, span);

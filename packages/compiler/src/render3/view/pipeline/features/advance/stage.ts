@@ -10,42 +10,20 @@ import * as ir from '../../ir';
 
 import {Advance} from './node';
 
-export class AdvanceStage extends ir.BaseTemplateStage<AdvanceStage, AdvanceTransform> implements
-    ir.CreateTransform {
-  private slotMap = new Map<ir.Id, ir.DataSlot>();
-
-  makeCreateTransform(): AdvanceStage {
-    this.slotMap.clear();
-    return this;
+export class AdvanceStage extends ir.BaseTemplateStage<never, AdvanceTransform> {
+  makeCreateTransform(): null {
+    return null;
   }
 
   makeUpdateTransform(): AdvanceTransform {
-    return new AdvanceTransform(this.slotMap);
-  }
-
-  visit(node: ir.CreateNode): ir.CreateNode {
-    if (ir.hasSlotAspect(node) && node.slot !== null) {
-      this.slotMap.set(node.id, node.slot);
-    }
-    return node;
+    return new AdvanceTransform();
   }
 }
-
-type UpdateNodeWithId = ir.UpdateNode&{id: ir.Id};
-
-export class AdvanceSlotTracker implements ir.CreateTransform {}
 
 export class AdvanceTransform implements ir.UpdateTransform {
   private slotPointer: ir.DataSlot = (0 as ir.DataSlot);
 
-  constructor(private slotMap: Map<ir.Id, ir.DataSlot>) {}
-
-  private getSlot(id: ir.Id): ir.DataSlot {
-    if (!this.slotMap.has(id)) {
-      throw new Error('Could not find slot for element: ' + id);
-    }
-    return this.slotMap.get(id)!;
-  }
+  constructor() {}
 
   visit(node: ir.UpdateNode, list: ir.UpdateList): ir.UpdateNode {
     if (ir.hasSlotAspect(node)) {
@@ -54,8 +32,11 @@ export class AdvanceTransform implements ir.UpdateTransform {
     return node;
   }
 
-  private maybePrependAdvance(node: UpdateNodeWithId, list: ir.UpdateList): void {
-    const slot = this.getSlot(node.id);
+  private maybePrependAdvance(node: ir.UpdateNode&ir.UpdateSlotAspect, list: ir.UpdateList): void {
+    const slot = node.slot;
+    if (slot === null) {
+      throw new Error(`AssertionError: node ${node.id} has unknown slot`);
+    }
     const delta = slot - this.slotPointer;
     if (delta > 0) {
       list.insertBefore(node, new Advance(delta));

@@ -73,7 +73,7 @@ export class LinkedList<T extends LinkedListNode<any>> {
    *
    * Returns the new `start` and `end` nodes, which are guaranteed to be nodes within the original
    * range.
-   * 
+   *
    * The algorithm in use is an in-place insertion sort.
    */
   sortSubset(start: T, end: T, cmp: (a: T, b: T) => number): {start: T, end: T} {
@@ -153,6 +153,20 @@ export class LinkedList<T extends LinkedListNode<any>> {
       before.prev.next = insert;
     }
     before.prev = insert;
+  }
+
+  insertAfter(after: T, insert: T): void {
+    if (this.tail === after) {
+      this.tail = insert;
+    }
+
+    insert.prev = after;
+    insert.next = after.next;
+
+    if (after.next !== null) {
+      after.next.prev = insert;
+    }
+    after.next = insert;
   }
 
   append(node: T): void {

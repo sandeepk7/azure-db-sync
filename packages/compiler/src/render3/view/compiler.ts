@@ -36,6 +36,7 @@ import {SelfClosingElementStage} from './pipeline/features/element/self_close_st
 import {TemplateNameStage} from './pipeline/features/embedded_views';
 import {ExpressionTranslatorStage} from './pipeline/features/expressions';
 import {SortingHostStage} from './pipeline/features/ordering';
+import {InvertPipeBindVBindingOffsetOrderStage, PipeStage} from './pipeline/features/pipes';
 import {PureFunctionStage} from './pipeline/features/pure_functions';
 import {ClassHostStage, ClassTemplateStage, StyleHostStage, StyleTemplateStage} from './pipeline/features/styling';
 import {ResolverHostStage, ResolverStage, VarNamesStage} from './pipeline/features/tmp_variables';
@@ -211,6 +212,7 @@ export function compileComponentFromMetadata(
   // clang-format off
   root.transform(
     new ResolverStage(),
+    new PipeStage(),
     new PureFunctionStage(constantPool),
     new StyleTemplateStage(),
     new ClassTemplateStage(),
@@ -221,8 +223,9 @@ export function compileComponentFromMetadata(
     new VarNamesStage(),
     new TemplateNameStage(),
     new BindingCountingStage(),
-    new ExpressionTranslatorStage(),
+    new InvertPipeBindVBindingOffsetOrderStage(),
     new AdvanceStage(),
+    new ExpressionTranslatorStage(),
   );
   // clang-format on
 
@@ -255,17 +258,17 @@ export function compileComponentFromMetadata(
   definitionMap.set('template', emitTemplateFunction(root, constantPool));
 
   // e.g. `directives: [MyDirective]`
-  if (directivesUsed.size) {
-    let directivesExpr: o.Expression = o.literalArr(Array.from(directivesUsed));
+  if (meta.directives.length > 0) {
+    let directivesExpr: o.Expression = o.literalArr(meta.directives.map(dir => dir.expression));
     if (meta.wrapDirectivesAndPipesInClosure) {
       directivesExpr = o.fn([], [new o.ReturnStatement(directivesExpr)]);
     }
-    definitionMap.set('directives', directivesExpr);
+    // definitionMap.set('directives', directivesExpr);
   }
 
   // e.g. `pipes: [MyPipe]`
-  if (pipesUsed.size) {
-    let pipesExpr: o.Expression = o.literalArr(Array.from(pipesUsed));
+  if (meta.pipes.size > 0) {
+    let pipesExpr: o.Expression = o.literalArr(Array.from(meta.pipes.values()));
     if (meta.wrapDirectivesAndPipesInClosure) {
       pipesExpr = o.fn([], [new o.ReturnStatement(pipesExpr)]);
     }
