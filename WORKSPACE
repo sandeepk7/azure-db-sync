@@ -22,11 +22,11 @@ check_rules_nodejs_version(minimum_version_string = "1.6.0")
 # Setup the Node.js toolchain
 node_repositories(
     node_repositories = {
-        "12.14.1-darwin_amd64": ("node-v12.14.1-darwin-x64.tar.gz", "node-v12.14.1-darwin-x64", "0be10a28737527a1e5e3784d3ad844d742fe8b0718acd701fd48f718fd3af78f"),
-        "12.14.1-linux_amd64": ("node-v12.14.1-linux-x64.tar.xz", "node-v12.14.1-linux-x64", "07cfcaa0aa9d0fcb6e99725408d9e0b07be03b844701588e3ab5dbc395b98e1b"),
-        "12.14.1-windows_amd64": ("node-v12.14.1-win-x64.zip", "node-v12.14.1-win-x64", "1f96ccce3ba045ecea3f458e189500adb90b8bc1a34de5d82fc10a5bf66ce7e3"),
+        "12.18.0-darwin_amd64": ("node-v12.18.0-darwin-x64.tar.gz", "node-v12.18.0-darwin-x64", "11fe50e670315d2d3c46317d23f7a019f46a3d08b534fbadee9a1bc3d4f81852"),
+        "12.18.0-linux_amd64": ("node-v12.18.0-linux-x64.tar.xz", "node-v12.18.0-linux-x64", "2febc2506c298048bfddf896056be6191c1f08716876d960a4990bd63a7fe05a"),
+        "12.18.0-windows_amd64": ("node-v12.18.0-win-x64.zip", "node-v12.18.0-win-x64", "ca73a989eba5e863971cb600e5520cb4c5edf9c600fe8f76d9e4771ad03b5d08"),
     },
-    node_version = "12.14.1",
+    node_version = "12.18.0",
     package_json = ["//:package.json"],
 )
 

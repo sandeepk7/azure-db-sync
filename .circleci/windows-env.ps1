@@ -41,7 +41,7 @@ copy .circleci\bazel.windows.rc ${Env:USERPROFILE}\.bazelrc
 ####################################################################################################
 # Install specific version of node.
 ####################################################################################################
-choco install nodejs --version 12.14.1 --no-progress
+choco install nodejs --version 12.18.0 --no-progress
 
 # These Bazel prereqs aren't needed because the CircleCI image already includes them.
 # choco install yarn --version 1.16.0 --no-progress
