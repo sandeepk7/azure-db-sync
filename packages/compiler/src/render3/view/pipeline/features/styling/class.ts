@@ -12,12 +12,13 @@ import * as ir from '../../ir';
 import {emitInterpolationExpr, InterpolationConfig, InterpolationExpr} from '../binding/interpolation';
 
 import {countBindings} from './util';
+import {ParseSourceSpan} from '../../../../../parse_util';
 
 export class ClassProp extends ir.UpdateNode implements ir.BindingSlotConsumerAspect,
                                                         ir.UpdateSlotAspect {
   slot: ir.DataSlot|null = null;
 
-  constructor(readonly id: ir.Id, public name: string, public expression: o.Expression) {
+  constructor(readonly id: ir.Id, public name: string, public expression: o.Expression, public readonly sourceSpan: ParseSourceSpan|null) {
     super();
   }
 
@@ -26,7 +27,7 @@ export class ClassProp extends ir.UpdateNode implements ir.BindingSlotConsumerAs
   }
 
   countUpdateBindingsUsed(): number {
-    return 2;
+    return countBindings(this.expression);
   }
 }
 
@@ -34,7 +35,7 @@ export class ClassMap extends ir.UpdateNode implements ir.BindingSlotConsumerAsp
                                                        ir.UpdateSlotAspect {
   slot: ir.DataSlot|null = null;
 
-  constructor(readonly id: ir.Id, public expression: o.Expression) {
+  constructor(readonly id: ir.Id, public expression: o.Expression, public readonly sourceSpan: ParseSourceSpan|null) {
     super();
   }
 
@@ -55,18 +56,18 @@ export class ClassEmitter implements ir.UpdateEmitter {
           .callFn([
             o.literal(node.name),
             node.expression,
-          ])
+          ], node.sourceSpan)
           .toStmt();
 
     } else if (node instanceof ClassMap) {
       // ɵɵclassMap()
       if (node.expression instanceof InterpolationExpr) {
-        return emitInterpolationExpr(node.expression, CLASS_MAP_INTERPOLATION_CONFIG);
+        return emitInterpolationExpr(node.expression, CLASS_MAP_INTERPOLATION_CONFIG, [], node.sourceSpan);
       } else {
         return o.importExpr(R3.classMap)
             .callFn([
               node.expression,
-            ])
+            ], node.sourceSpan)
             .toStmt();
       }
     }

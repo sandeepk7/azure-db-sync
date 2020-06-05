@@ -83,7 +83,7 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
       }
     }
 
-    const elementStart = new ElementStart(id, element.name);
+    const elementStart = new ElementStart(id, element.name, element.sourceSpan);
     elementStart.refs = refs;
 
     this.create.append(elementStart);
@@ -102,7 +102,7 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
       for (const input of element.inputs) {
         const name = normalizeBindingName(input.type, input.name);
         elementStart.attrs.push(name);
-        const property = new Property(id, name, this.preprocessor.process(input.value));
+        const property = new Property(id, name, this.preprocessor.process(input.value), input.sourceSpan);
         this.update.append(property);
       }
     }
@@ -115,12 +115,12 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
 
   visitText(text: tmpl.Text): void {
     const id = this.scope.allocateId();
-    this.create.append(new Text(id, text.value));
+    this.create.append(new Text(id, text.value, text.sourceSpan));
   }
 
   visitBoundText(text: tmpl.BoundText): void {
     const id = this.scope.allocateId();
-    this.create.append(new Text(id));
+    this.create.append(new Text(id, null, text.sourceSpan));
 
     let top = text.value;
     if (top instanceof ast.ASTWithSource) {
@@ -128,10 +128,10 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
     }
 
     if (top instanceof ast.Interpolation) {
-      this.update.append(new TextInterpolate(
-          id,
-          new InterpolationExpr(
-              top.expressions.map(e => this.preprocessor.process(e)), top.strings)));
+      const sourceSpan = text.sourceSpan;
+      const interpolationExpr = new InterpolationExpr(top.expressions.map(e => this.preprocessor.process(e)), top.strings);
+      const textInterpolate = new TextInterpolate(id, interpolationExpr, sourceSpan);
+      this.update.append(textInterpolate);
     } else {
       throw new Error('BoundText is not an interpolation expression?');
     }
@@ -259,6 +259,10 @@ function normalizeBindingName(type: ast.BindingType, name: string) {
     case ast.BindingType.Style:
       // this will convert [width] => [style.width]
       return name !== 'style' ? `style.${name}` : name;
+
+    case ast.BindingType.Class:
+      // this will convert [foo] => [class.foo]
+      return name !== 'class' ? `class.${name}` : name;
 
     default:
       return name;

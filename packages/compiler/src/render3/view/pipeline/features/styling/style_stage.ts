@@ -74,7 +74,7 @@ function convertStyleProperty(node: Property): StyleMap|StyleProp {
 
 function convertStyleMapProperty(node: Property): StyleMap {
   const {prev, next, id, expression, slot} = node;
-  const newNode = new StyleMap(id, expression).withPrevAndNext(prev, next);
+  const newNode = new StyleMap(id, expression, node.sourceSpan).withPrevAndNext(prev, next);
   newNode.slot = slot;
   return newNode;
 }
@@ -82,7 +82,7 @@ function convertStyleMapProperty(node: Property): StyleMap {
 function convertStylePropProperty(node: Property): StyleProp {
   const {prev, next, id, expression, slot} = node;
   const {suffix, prop} = extractStylePropName(node.name);
-  const newNode = new StyleProp(id, prop, suffix, expression).withPrevAndNext(prev, next);
+  const newNode = new StyleProp(id, prop, suffix, expression, node.sourceSpan).withPrevAndNext(prev, next);
   newNode.slot = slot;
   return newNode;
 }

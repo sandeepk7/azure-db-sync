@@ -11,6 +11,7 @@ import {Identifiers as R3} from '../../../../../../src/render3/r3_identifiers';
 import {AssertionCursor, Cursor, EmptyCursor, Predicate, TestableInstruction} from '../../helpers/cursor';
 import {TestableTemplateFn} from '../../helpers/template';
 import {SlotCursor} from '../advance/helpers';
+import {ParseSourceSpan} from '../../../../../../src/parse_util';
 
 export function element(tag: string):
     Predicate<TestableInstruction, TestableElement, TestableTemplateFn> {
@@ -40,7 +41,7 @@ class ElementPredicate implements
     }
 
     return new TestableElement(
-        slotArg.value, tagArg.value, inst.instruction === R3.element, cursor.clone(), templateFn);
+        slotArg.value, tagArg.value, inst.instruction === R3.element, cursor.clone(), templateFn, inst.sourceSpan);
   }
 
   toString(): string {
@@ -58,6 +59,7 @@ export class TestableElement {
       readonly selfClose: boolean,
       private postElementCursor: Cursor<TestableInstruction>,
       private templateFn: TestableTemplateFn,
+      readonly sourceSpan: ParseSourceSpan|null,
   ) {}
 
   get children(): AssertionCursor<TestableInstruction, TestableTemplateFn> {

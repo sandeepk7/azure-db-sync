@@ -9,6 +9,7 @@
 import * as o from '../../../../../output/output_ast';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as ir from '../../ir';
+import {ParseSourceSpan} from '../../../../../parse_util';
 
 
 export type Selector = string|Array<string|number>;
@@ -19,7 +20,7 @@ export class ElementBase extends ir.CreateNode implements ir.CreateSlotAspect {
   attrs: ElementAttrs|number|null = null;
   slot: ir.DataSlot|null = null;
 
-  constructor(readonly id: ir.Id, public tag: string) {
+  constructor(readonly id: ir.Id, public tag: string, public readonly sourceSpan: ParseSourceSpan|null) {
     super();
   }
 
@@ -34,7 +35,7 @@ export class ElementBase extends ir.CreateNode implements ir.CreateSlotAspect {
 
 export class ElementStart extends ElementBase {
   toSelfClosingElement(): Element {
-    const element = new Element(this.id, this.tag);
+    const element = new Element(this.id, this.tag, this.sourceSpan);
     element.refs = this.refs;
     element.attrs = this.attrs;
     element.slot = this.slot;
@@ -54,7 +55,7 @@ export class ElementEmitter implements ir.CreateEmitter {
   emit(node: ir.CreateNode): o.Statement|null {
     if (node instanceof ElementStart || node instanceof Element) {
       const instruction = node instanceof Element ? R3.element : R3.elementStart;
-      return o.importExpr(instruction).callFn(produceElementParams(node)).toStmt();
+      return o.importExpr(instruction).callFn(produceElementParams(node), node.sourceSpan).toStmt();
     } else if (node instanceof ElementEnd) {
       return o.importExpr(R3.elementEnd).callFn([]).toStmt();
     } else {

@@ -48,16 +48,16 @@ function convertClassProperty(node: Property): ClassMap|ClassProp {
 }
 
 function convertClassMapProperty(node: Property): ClassMap {
-  const {prev, next, id, expression, slot} = node;
-  const newNode = new ClassMap(id, expression).withPrevAndNext(prev, next);
+  const {prev, next, id, expression, slot, sourceSpan} = node;
+  const newNode = new ClassMap(id, expression, sourceSpan).withPrevAndNext(prev, next);
   newNode.slot = slot;
   return newNode;
 }
 
 function convertClassPropProperty(node: Property): ClassProp {
-  const {prev, next, id, expression, slot} = node;
+  const {prev, next, id, expression, slot, sourceSpan} = node;
   const name = extractClassPropName(node.name);
-  const newNode = new ClassProp(id, name, expression).withPrevAndNext(prev, next);
+  const newNode = new ClassProp(id, name, expression, sourceSpan).withPrevAndNext(prev, next);
   newNode.slot = slot;
   return newNode;
 }

@@ -10,11 +10,12 @@ import * as o from '../../../../../output/output_ast';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as ir from '../../ir';
 import {emitInterpolationExpr, InterpolationConfig, InterpolationExpr} from '../binding/interpolation';
+import {ParseSourceSpan} from '../../../../../parse_util';
 
 export class Text extends ir.CreateNode implements ir.CreateSlotAspect {
   slot: ir.DataSlot|null = null;
 
-  constructor(readonly id: ir.Id, public value: string|null = null) {
+  constructor(readonly id: ir.Id, public value: string|null = null, public readonly sourceSpan: ParseSourceSpan) {
     super();
   }
 
@@ -22,7 +23,7 @@ export class Text extends ir.CreateNode implements ir.CreateSlotAspect {
 }
 
 export class TextInterpolate extends ir.UpdateNode implements ir.BindingSlotConsumerAspect {
-  constructor(readonly id: ir.Id, public expression: InterpolationExpr) {
+  constructor(readonly id: ir.Id, public expression: InterpolationExpr, public readonly sourceSpan: ParseSourceSpan) {
     super();
   }
 
@@ -44,7 +45,7 @@ export class TextCreateEmitter implements ir.CreateEmitter {
     if (node.value !== null) {
       args.push(o.literal(node.value));
     }
-    return o.importExpr(R3.text).callFn(args).toStmt();
+    return o.importExpr(R3.text).callFn(args, node.sourceSpan).toStmt();
   }
 }
 
@@ -53,8 +54,7 @@ export class TextUpdateEmitter implements ir.UpdateEmitter {
     if (!(node instanceof TextInterpolate)) {
       return null;
     }
-
-    return emitInterpolationExpr(node.expression, TEXT_INTERPOLATE_CONFIG);
+    return emitInterpolationExpr(node.expression, TEXT_INTERPOLATE_CONFIG, [], node.sourceSpan);
   }
 }
 

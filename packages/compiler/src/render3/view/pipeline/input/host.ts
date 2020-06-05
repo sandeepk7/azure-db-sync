@@ -53,7 +53,7 @@ function buildPropertyInstructions(
 
   for (let property of properties) {
     const instruction: ir.UpdateNode =
-        new Property(0 as ir.Id, property.name, valuePreprocessor.process(property.expression));
+        new Property(0 as ir.Id, property.name, valuePreprocessor.process(property.expression), property.sourceSpan);
 
     host.update.append(instruction);
   }

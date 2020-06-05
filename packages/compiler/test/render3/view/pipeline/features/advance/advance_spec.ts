@@ -18,7 +18,7 @@ import {advance} from './helpers';
 
 describe('advance() instructions', () => {
   let testPipeline!: TestPipeline;
-  beforeAll(() => {
+  beforeEach(() => {
     testPipeline = TestPipeline.setup(
         [new SlotAllocatorStage(), new AdvanceStage()],
         [new ElementEmitter()],

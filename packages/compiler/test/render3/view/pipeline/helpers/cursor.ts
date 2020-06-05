@@ -7,6 +7,7 @@
  */
 
 import * as o from '../../../../../src/output/output_ast';
+import {ParseSourceSpan} from '../../../../../src/parse_util';
 
 export interface Cursor<T> {
   next(): T|null;
@@ -79,7 +80,7 @@ export class InstructionCursor implements Cursor<TestableInstruction> {
       throw new Error(`Unknown format chained call: o.${expr.constructor.name}`);
     }
 
-    this.chain.push(new TestableInstruction(instruction, expr.args, chained));
+    this.chain.push(new TestableInstruction(instruction, expr.args, chained, expr.sourceSpan));
 
     return instruction;
   }
@@ -94,7 +95,7 @@ export class InstructionCursor implements Cursor<TestableInstruction> {
 export class TestableInstruction {
   constructor(
       readonly instruction: o.ExternalReference, readonly args: o.Expression[],
-      readonly chained: boolean) {}
+      readonly chained: boolean, readonly sourceSpan: ParseSourceSpan|null) {}
 
   toString(): string {
     const args = this.args.map(arg => {
