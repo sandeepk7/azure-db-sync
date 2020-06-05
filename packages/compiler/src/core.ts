@@ -414,6 +414,13 @@ export const enum RenderFlags {
  */
 export const enum AttributeMarker {
   /**
+   * Default marker for key/value attrs.
+   *
+   * Note that this marker is not set in the attrs array, it is set implicitly.
+   */
+  DefaultKeyValue = -1,
+
+  /**
    * Marker indicates that the following 3 values in the attributes array are:
    * namespaceUri, attributeName, attributeValue
    * in that order.

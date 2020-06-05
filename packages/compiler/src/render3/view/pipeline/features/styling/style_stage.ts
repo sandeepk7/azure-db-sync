@@ -10,34 +10,58 @@ import * as ir from '../../ir';
 
 import {Property} from '../binding/property';
 import {StyleMap, StyleProp} from './style';
+import {ElementBase, ElementAttrs, Selector} from '../element';
+import {filterAttrs} from '../element/util';
+import {AttributeMarker} from '../../../../../core';
 
-export class StyleTemplateStage extends ir.BaseTemplateStage<never, StyleTransform> {
-  private styleTransform = new StyleTransform();
+export class StyleTemplateStage extends ir.BaseTemplateStage<StyleAttrsTransform, StyleBindingsTransform> {
+  private styleBindingsTransform = new StyleBindingsTransform();
+  private styleAttrsTransform = new StyleAttrsTransform();
 
-  makeCreateTransform(): null {
-    return null;
+  makeCreateTransform(): StyleAttrsTransform {
+    return this.styleAttrsTransform;
   }
 
-  makeUpdateTransform(): StyleTransform {
-    return this.styleTransform;
+  makeUpdateTransform(): StyleBindingsTransform {
+    return this.styleBindingsTransform;
   }
 }
 
 export class StyleHostStage implements ir.HostStage {
-  private styleTransform = new StyleTransform();
+  private styleTransform = new StyleBindingsTransform();
 
   transform(host: ir.Host): void {
     host.update.applyTransform(this.styleTransform);
   }
 }
 
-export class StyleTransform implements ir.UpdateTransform {
+export class StyleAttrsTransform implements ir.CreateTransform {
+  visit(node: ir.CreateNode): ir.CreateNode {
+    if (node instanceof ElementBase && Array.isArray(node.attrs)) {
+      node.attrs = deleteStyleAttributes(node.attrs);
+    }
+    return node;
+  }
+}
+
+export class StyleBindingsTransform implements ir.UpdateTransform {
   visit(node: ir.UpdateNode): ir.UpdateNode {
     if (node instanceof Property && isStyleProp(node.name)) {
       node = convertStyleProperty(node);
     }
     return node;
   }
+}
+
+function deleteStyleAttributes(attrs: ElementAttrs) {
+  attrs = filterAttrs(attrs, (marker: AttributeMarker, binding: string|number|Selector) => {
+    return marker !== AttributeMarker.Bindings || !isStyleProp(binding as string);
+  });
+
+  // the reason why we return `null` is because if the array is
+  // fully empty then there are no constants to assign to the
+  // element creation.
+  return attrs.length === 0 ? null : attrs;
 }
 
 function isStyleProp(name: string): boolean {

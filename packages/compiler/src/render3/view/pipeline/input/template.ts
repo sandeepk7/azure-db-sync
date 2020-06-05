@@ -100,9 +100,9 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
       }
 
       for (const input of element.inputs) {
-        elementStart.attrs.push(input.name);
-
-        const property = new Property(id, input.name, this.preprocessor.process(input.value));
+        const name = normalizeBindingName(input.type, input.name);
+        elementStart.attrs.push(name);
+        const property = new Property(id, name, this.preprocessor.process(input.value));
         this.update.append(property);
       }
     }
@@ -253,3 +253,14 @@ const FRESH_NODE = {
   next: null,
   prev: null,
 };
+
+function normalizeBindingName(type: ast.BindingType, name: string) {
+  switch (type) {
+    case ast.BindingType.Style:
+      // this will convert [width] => [style.width]
+      return name !== 'style' ? `style.${name}` : name;
+
+    default:
+      return name;
+  }
+}

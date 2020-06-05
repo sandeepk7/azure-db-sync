@@ -326,7 +326,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, template, 'Incorrect template');
     });
 
-    fit('should reserve slots for pure functions', () => {
+    it('should reserve slots for pure functions', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -2145,7 +2145,7 @@ describe('compiler compliance', () => {
         expectEmit(source, MyAppDefinition, 'Invalid MyApp definition');
       });
 
-      fit('should use appropriate function for a given no of pipe arguments', () => {
+      it('should use appropriate function for a given no of pipe arguments', () => {
         const files = {
           app: {
             'spec.ts': `
@@ -3041,7 +3041,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, expectedOutput, 'Invalid directive definition');
     });
 
-    fit('should generate a pure function for constant object literals', () => {
+    it('should generate a pure function for constant object literals', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -3082,7 +3082,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, MyAppDeclaration, 'Invalid component definition');
     });
 
-    fit('should generate a pure function for constant array literals', () => {
+    it('should generate a pure function for constant array literals', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -3123,7 +3123,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, MyAppDeclaration, 'Invalid component definition');
     });
 
-    fit('should not share pure functions between null and object literals', () => {
+    it('should not share pure functions between null and object literals', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -3173,7 +3173,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, MyAppDeclaration, 'Invalid component definition');
     });
 
-    fit('should not share pure functions between null and array literals', () => {
+    it('should not share pure functions between null and array literals', () => {
       const files = {
         app: {
           'spec.ts': `
@@ -3223,7 +3223,7 @@ describe('compiler compliance', () => {
       expectEmit(result.source, MyAppDeclaration, 'Invalid component definition');
     });
 
-    fit('should not share pure functions between null and function calls', () => {
+    it('should not share pure functions between null and function calls', () => {
       const files = {
         app: {
           'spec.ts': `
