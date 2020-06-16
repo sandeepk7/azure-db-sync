@@ -258,12 +258,12 @@ export function compileComponentFromMetadata(
   definitionMap.set('template', emitTemplateFunction(root, constantPool));
 
   // e.g. `directives: [MyDirective]`
-  if (meta.directives.length > 0) {
+  if (meta.directives.length !== 0) {
     let directivesExpr: o.Expression = o.literalArr(meta.directives.map(dir => dir.expression));
     if (meta.wrapDirectivesAndPipesInClosure) {
       directivesExpr = o.fn([], [new o.ReturnStatement(directivesExpr)]);
     }
-    // definitionMap.set('directives', directivesExpr);
+    definitionMap.set('directives', directivesExpr);
   }
 
   // e.g. `pipes: [MyPipe]`

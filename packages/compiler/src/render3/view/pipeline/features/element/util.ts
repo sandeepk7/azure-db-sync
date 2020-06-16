@@ -13,9 +13,9 @@ export function filterAttrs(attrs: ElementAttrs, filterFn: (marker: AttributeMar
   let i = 0;
   let lastMarkerIndex = -1;
   while (i < attrs.length) {
-    const item = attrs[i++];
+    const item = attrs[i];
     const marker = typeof item === 'number' ? item : AttributeMarker.DefaultKeyValue;
-    if (marker !== AttributeMarker.DefaultKeyValue) {
+    if (marker != AttributeMarker.DefaultKeyValue) {
       // this means that a marker was set in the new array,
       // but no items were added for that marker. If and when
       // this happens let's just replace the old marker with
@@ -26,6 +26,9 @@ export function filterAttrs(attrs: ElementAttrs, filterFn: (marker: AttributeMar
         newAttrs.push(marker);
         lastMarkerIndex = newAttrs.length - 1;
       }
+
+      // skip the marker since the values will now start at this index
+      i++;
     }
 
     switch (marker) {

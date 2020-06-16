@@ -351,7 +351,7 @@ describe('compiler compliance: styling', () => {
   });
 
   describe('[style] and [style.prop]', () => {
-    fit('should create style instructions on the element', () => {
+    it('should create style instructions on the element', () => {
       const files = {
         app: {
           'spec.ts': `
