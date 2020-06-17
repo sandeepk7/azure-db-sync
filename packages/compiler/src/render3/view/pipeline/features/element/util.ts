@@ -5,10 +5,58 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import {ElementAttrs, Selector} from "./node";
 import {AttributeMarker} from '../../../../../core';
 
-export function filterAttrs(attrs: ElementAttrs, filterFn: (marker: AttributeMarker, value: string | number | Selector, key?: string, ns?: string) => any): ElementAttrs {
+import {ElementAttrs, Selector} from './node';
+
+/**
+ * The definition of the `filterFn` passed into the `filterAttrs` utility function.
+ */
+export interface FilterAttrsPredicate {
+  (marker: AttributeMarker, value: string|number|Selector, key?: string, ns?: string): any;
+}
+
+/**
+ * A utility function used to pluck out entries within a `ElementAttrs` collection.
+ *
+ * This function iterates on each of the entries within the provided `attrs` array
+ * and will return a new `ElementAttrs` array once all the `attrs` entries have been
+ * processed.
+ *
+ * Each time an entry is iterated over, the provided `filterFn` is called to determine
+ * whether or not the value is to be included into the final `ElementAttrs` array. The
+ * `filterFn` function is called using the `FilterAttrsPredicate` signature and will
+ * expect a truthy or falsy value to be returned. If the return value is truthy then
+ * the current `attrs` array entry will be included into the final `ElementAttrs` return
+ * value, otherwise, when falsy, it will not be included.
+ *
+ * @returns a new `ElementAttrs` array with the filtered values included in it.
+ * @example
+ *
+ * Here are some examples of the usage of this function:
+ *
+ * ```ts
+ * // #1 remove all styles except for the width
+ * const a1 = [AttributeMarker.Styles, 'width', '100px', 'height, '200px'];
+ * const a1Filtered = filterAttrs(a1, (marker: AttributeMarker, value: string, key: string) => {
+ *   return key === 'width'; // only include the width
+ * });
+ * console.log(a1Filtered); // [AttributeMarker.Styles, 'width', '100px'];
+ *
+ * // #2 remove all classes from the attrs
+ * const a2 = [
+ *   'prop',
+ *   'value',
+ *   AttributeMarker.Classes, 'active', 'hover',
+ *   AttributeMarker.Bindings, 'myBinding',
+ * ];
+ * const a2Filtered = filterAttrs(a1, (marker: AttributeMarker, value: string, key: string) => {
+ *   return marker !== AttributeMarker.Classes;
+ * });
+ * console.log(a2Filtered); // ['prop', 'value', AttributeMarker.Bindings, 'myBinding'];
+ * ```
+ */
+export function filterAttrs(attrs: ElementAttrs, filterFn: FilterAttrsPredicate): ElementAttrs {
   const newAttrs: ElementAttrs = [];
   let i = 0;
   let lastMarkerIndex = -1;
@@ -80,26 +128,31 @@ export function filterAttrs(attrs: ElementAttrs, filterFn: (marker: AttributeMar
   return newAttrs;
 }
 
-function forEachKeyValue(attrs: ElementAttrs, index: number, marker: AttributeMarker, fn: (key: string, value: any) => any): number {
+function forEachKeyValue(
+    attrs: ElementAttrs, index: number, marker: AttributeMarker,
+    fn: (key: string, value: any) => any): number {
   while (index < attrs.length) {
-    const entry = attrs[index++];
+    const entry = attrs[index];
     if (typeof entry === 'number') {
       break;
     }
-    const value = attrs[index++];
+    const value = attrs[++index];
     const key = entry as string;
     fn(key, value);
+    index++;
   }
   return index;
 }
 
-function forEachValue(attrs: ElementAttrs, index: number, marker: AttributeMarker, fn: (value: any) => any): number {
+function forEachValue(
+    attrs: ElementAttrs, index: number, marker: AttributeMarker, fn: (value: any) => any): number {
   while (index < attrs.length) {
-    const entry = attrs[index++];
+    const entry = attrs[index];
     if (typeof entry === 'number') {
       break;
     }
     fn(entry);
+    index++;
   }
   return index;
 }
