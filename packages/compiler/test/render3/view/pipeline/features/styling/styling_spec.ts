@@ -5,14 +5,15 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+import {Identifiers as R3} from '../../../../../../src/render3/r3_identifiers';
 import {PropertyEmitter} from '../../../../../../src/render3/view/pipeline/features/binding';
 import {SlotAllocatorStage} from '../../../../../../src/render3/view/pipeline/features/decls_vars';
 import {ElementEmitter} from '../../../../../../src/render3/view/pipeline/features/element';
-import {StyleEmitter, StyleTemplateStage, ClassTemplateStage, ClassEmitter} from '../../../../../../src/render3/view/pipeline/features/styling';
+import {ClassEmitter, ClassTemplateStage, StyleEmitter, StyleTemplateStage} from '../../../../../../src/render3/view/pipeline/features/styling';
 import {TestPipeline} from '../../helpers/template';
 import {element} from '../element/helpers';
-import {styleMapProperty as boundStyleMap, stylePropProperty as boundStyleProp, classMapProperty as boundClassMap, classPropProperty as boundClassProperty} from './helpers';
-import {Identifiers as R3} from '../../../../../../src/render3/r3_identifiers';
+
+import {classMapProperty as boundClassMap, classPropProperty as boundClassProperty, styleMapProperty as boundStyleMap, stylePropProperty as boundStyleProp} from './helpers';
 
 describe('styling bindings', () => {
   let testPipeline!: TestPipeline;

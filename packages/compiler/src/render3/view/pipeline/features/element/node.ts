@@ -7,9 +7,9 @@
  */
 
 import * as o from '../../../../../output/output_ast';
+import {ParseSourceSpan} from '../../../../../parse_util';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as ir from '../../ir';
-import {ParseSourceSpan} from '../../../../../parse_util';
 
 
 export type Selector = string|Array<string|number>;
@@ -20,7 +20,8 @@ export class ElementBase extends ir.CreateNode implements ir.CreateSlotAspect {
   attrs: ElementAttrs|number|null = null;
   slot: ir.DataSlot|null = null;
 
-  constructor(readonly id: ir.Id, public tag: string, public readonly sourceSpan: ParseSourceSpan|null) {
+  constructor(
+      readonly id: ir.Id, public tag: string, public readonly sourceSpan: ParseSourceSpan|null) {
     super();
   }
 

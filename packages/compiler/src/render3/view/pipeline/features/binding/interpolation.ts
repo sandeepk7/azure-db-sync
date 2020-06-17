@@ -7,8 +7,8 @@
  */
 
 import * as o from '../../../../../output/output_ast';
-import * as ir from '../../ir';
 import {ParseSourceSpan} from '../../../../../parse_util';
+import * as ir from '../../ir';
 
 export class InterpolationExpr extends ir.Expression {
   readonly kind = 'InterpolateExpr';
@@ -36,7 +36,8 @@ export interface InterpolationConfig {
 }
 
 export function emitInterpolationExpr(
-    expr: InterpolationExpr, config: InterpolationConfig, initialArgs: o.Expression[] = [], sourceSpan: ParseSourceSpan|null) {
+    expr: InterpolationExpr, config: InterpolationConfig, initialArgs: o.Expression[] = [],
+    sourceSpan: ParseSourceSpan|null) {
   if (expr.expressions.length === 1 && expr.strings.length === 2 && expr.strings[0] === '' &&
       expr.strings[1] === '' && config.expressionCountSpecificInstruction.length > 0 &&
       config.expressionCountSpecificInstruction[0] !== null) {

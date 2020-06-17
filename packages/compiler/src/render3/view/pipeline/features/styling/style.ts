@@ -7,10 +7,10 @@
  */
 
 import * as o from '../../../../../output/output_ast';
+import {ParseSourceSpan} from '../../../../../parse_util';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as ir from '../../ir';
 import {emitInterpolationExpr, InterpolationConfig, InterpolationExpr} from '../binding/interpolation';
-import {ParseSourceSpan} from '../../../../../parse_util';
 
 import {countBindings} from './util';
 
@@ -37,7 +37,9 @@ export class StyleMap extends ir.UpdateNode implements ir.BindingSlotConsumerAsp
                                                        ir.UpdateSlotAspect {
   slot: ir.DataSlot|null = null;
 
-  constructor(readonly id: ir.Id, public expression: o.Expression, public readonly sourceSpan: ParseSourceSpan|null) {
+  constructor(
+      readonly id: ir.Id, public expression: o.Expression,
+      public readonly sourceSpan: ParseSourceSpan|null) {
     super();
   }
 
@@ -55,7 +57,8 @@ export class StyleEmitter implements ir.UpdateEmitter {
     if (node instanceof StyleProp) {
       // ɵɵstylePropInterpolateN()
       if (node.expression instanceof InterpolationExpr) {
-        return emitInterpolationExpr(node.expression, STYLE_PROP_INTERPOLATION_CONFIG, [], node.sourceSpan);
+        return emitInterpolationExpr(
+            node.expression, STYLE_PROP_INTERPOLATION_CONFIG, [], node.sourceSpan);
       }
 
       const params: o.Expression[] = [
@@ -72,14 +75,17 @@ export class StyleEmitter implements ir.UpdateEmitter {
     } else if (node instanceof StyleMap) {
       // ɵɵstyleMapInterpolateN()
       if (node.expression instanceof InterpolationExpr) {
-        return emitInterpolationExpr(node.expression, STYLE_MAP_INTERPOLATION_CONFIG, [], node.sourceSpan);
+        return emitInterpolationExpr(
+            node.expression, STYLE_MAP_INTERPOLATION_CONFIG, [], node.sourceSpan);
       }
 
       // ɵɵstyleMap()
       return o.importExpr(R3.styleMap)
-          .callFn([
-            node.expression,
-          ], node.sourceSpan)
+          .callFn(
+              [
+                node.expression,
+              ],
+              node.sourceSpan)
           .toStmt();
     } else {
       return null;

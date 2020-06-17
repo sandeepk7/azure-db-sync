@@ -6,15 +6,16 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import * as ir from '../../ir';
-
-import {Property} from '../binding/property';
-import {StyleMap, StyleProp} from './style';
-import {ElementBase, ElementAttrs, Selector} from '../element';
-import {filterAttrs} from '../element/util';
 import {AttributeMarker} from '../../../../../core';
+import * as ir from '../../ir';
+import {Property} from '../binding/property';
+import {ElementAttrs, ElementBase, Selector} from '../element';
+import {filterAttrs} from '../element/util';
 
-export class StyleTemplateStage extends ir.BaseTemplateStage<StyleAttrsTransform, StyleBindingsTransform> {
+import {StyleMap, StyleProp} from './style';
+
+export class StyleTemplateStage extends
+    ir.BaseTemplateStage<StyleAttrsTransform, StyleBindingsTransform> {
   private styleBindingsTransform = new StyleBindingsTransform();
   private styleAttrsTransform = new StyleAttrsTransform();
 
@@ -82,7 +83,8 @@ function convertStyleMapProperty(node: Property): StyleMap {
 function convertStylePropProperty(node: Property): StyleProp {
   const {prev, next, id, expression, slot} = node;
   const {suffix, prop} = extractStylePropName(node.name);
-  const newNode = new StyleProp(id, prop, suffix, expression, node.sourceSpan).withPrevAndNext(prev, next);
+  const newNode =
+      new StyleProp(id, prop, suffix, expression, node.sourceSpan).withPrevAndNext(prev, next);
   newNode.slot = slot;
   return newNode;
 }

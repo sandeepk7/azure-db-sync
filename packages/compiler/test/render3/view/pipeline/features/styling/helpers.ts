@@ -7,10 +7,10 @@
  */
 
 import * as o from '../../../../../../src/output/output_ast';
+import {ParseSourceSpan} from '../../../../../../src/parse_util';
 import {Identifiers as R3} from '../../../../../../src/render3/r3_identifiers';
 import {Predicate, TestableInstruction} from '../../helpers/cursor';
 import {TestableTemplateFn} from '../../helpers/template';
-import {ParseSourceSpan} from '../../../../../../src/parse_util';
 
 export function styleMapProperty():
     Predicate<TestableInstruction, TestableStylingProperty, TestableTemplateFn> {
@@ -40,11 +40,10 @@ export interface TestableStylingProperty {
   chained: boolean;
 }
 
-abstract class StylingPredicateBase implements Predicate<TestableInstruction, TestableStylingProperty, TestableTemplateFn> {
+abstract class StylingPredicateBase implements
+    Predicate<TestableInstruction, TestableStylingProperty, TestableTemplateFn> {
   apply(inst: TestableInstruction): TestableStylingProperty|null {
-    return this.isInstructionPermitted(inst)
-      ? this.getTestableProperty(inst)
-      : null;
+    return this.isInstructionPermitted(inst) ? this.getTestableProperty(inst) : null;
   }
 
   abstract isInstructionPermitted(inst: TestableInstruction): boolean;

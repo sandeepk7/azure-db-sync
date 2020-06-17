@@ -7,15 +7,17 @@
  */
 
 import * as o from '../../../../../output/output_ast';
+import {ParseSourceSpan} from '../../../../../parse_util';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as ir from '../../ir';
 import {emitInterpolationExpr, InterpolationConfig, InterpolationExpr} from '../binding/interpolation';
-import {ParseSourceSpan} from '../../../../../parse_util';
 
 export class Text extends ir.CreateNode implements ir.CreateSlotAspect {
   slot: ir.DataSlot|null = null;
 
-  constructor(readonly id: ir.Id, public value: string|null = null, public readonly sourceSpan: ParseSourceSpan) {
+  constructor(
+      readonly id: ir.Id, public value: string|null = null,
+      public readonly sourceSpan: ParseSourceSpan) {
     super();
   }
 
@@ -23,7 +25,9 @@ export class Text extends ir.CreateNode implements ir.CreateSlotAspect {
 }
 
 export class TextInterpolate extends ir.UpdateNode implements ir.BindingSlotConsumerAspect {
-  constructor(readonly id: ir.Id, public expression: InterpolationExpr, public readonly sourceSpan: ParseSourceSpan) {
+  constructor(
+      readonly id: ir.Id, public expression: InterpolationExpr,
+      public readonly sourceSpan: ParseSourceSpan) {
     super();
   }
 

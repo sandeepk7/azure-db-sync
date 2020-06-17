@@ -102,7 +102,8 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
       for (const input of element.inputs) {
         const name = normalizeBindingName(input.type, input.name);
         elementStart.attrs.push(name);
-        const property = new Property(id, name, this.preprocessor.process(input.value), input.sourceSpan);
+        const property =
+            new Property(id, name, this.preprocessor.process(input.value), input.sourceSpan);
         this.update.append(property);
       }
     }
@@ -129,7 +130,8 @@ class TemplateToIrConverter implements tmpl.Visitor<void>, ast.AstVisitor {
 
     if (top instanceof ast.Interpolation) {
       const sourceSpan = text.sourceSpan;
-      const interpolationExpr = new InterpolationExpr(top.expressions.map(e => this.preprocessor.process(e)), top.strings);
+      const interpolationExpr = new InterpolationExpr(
+          top.expressions.map(e => this.preprocessor.process(e)), top.strings);
       const textInterpolate = new TextInterpolate(id, interpolationExpr, sourceSpan);
       this.update.append(textInterpolate);
     } else {

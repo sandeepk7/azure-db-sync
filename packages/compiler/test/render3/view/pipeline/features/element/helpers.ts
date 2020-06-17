@@ -7,11 +7,11 @@
  */
 
 import * as o from '../../../../../../src/output/output_ast';
+import {ParseSourceSpan} from '../../../../../../src/parse_util';
 import {Identifiers as R3} from '../../../../../../src/render3/r3_identifiers';
 import {AssertionCursor, Cursor, EmptyCursor, Predicate, TestableInstruction} from '../../helpers/cursor';
 import {TestableTemplateFn} from '../../helpers/template';
 import {SlotCursor} from '../advance/helpers';
-import {ParseSourceSpan} from '../../../../../../src/parse_util';
 
 export function element(tag: string):
     Predicate<TestableInstruction, TestableElement, TestableTemplateFn> {
@@ -41,7 +41,8 @@ class ElementPredicate implements
     }
 
     return new TestableElement(
-        slotArg.value, tagArg.value, inst.instruction === R3.element, cursor.clone(), templateFn, inst.sourceSpan);
+        slotArg.value, tagArg.value, inst.instruction === R3.element, cursor.clone(), templateFn,
+        inst.sourceSpan);
   }
 
   toString(): string {

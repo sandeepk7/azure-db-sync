@@ -7,9 +7,9 @@
  */
 
 import * as o from '../../../../../output/output_ast';
+import {ParseSourceSpan} from '../../../../../parse_util';
 import {Identifiers as R3} from '../../../../r3_identifiers';
 import * as ir from '../../ir';
-import {ParseSourceSpan} from '../../../../../parse_util';
 
 import {emitInterpolationExpr, InterpolationConfig, InterpolationExpr} from './interpolation';
 
@@ -17,7 +17,9 @@ export class Property extends ir.UpdateNode implements ir.BindingSlotConsumerAsp
                                                        ir.UpdateSlotAspect {
   slot: ir.DataSlot|null = null;
 
-  constructor(readonly id: ir.Id, public name: string, public expression: o.Expression, public sourceSpan: ParseSourceSpan|null) {
+  constructor(
+      readonly id: ir.Id, public name: string, public expression: o.Expression,
+      public sourceSpan: ParseSourceSpan|null) {
     super();
   }
 
@@ -41,7 +43,8 @@ export class PropertyEmitter implements ir.UpdateEmitter {
     }
     const name = o.literal(node.name);
     if (node.expression instanceof InterpolationExpr) {
-      return emitInterpolationExpr(node.expression, PROPERTY_INTERPOLATION_CONFIG, [name], node.sourceSpan);
+      return emitInterpolationExpr(
+          node.expression, PROPERTY_INTERPOLATION_CONFIG, [name], node.sourceSpan);
     } else {
       return o.importExpr(R3.property).callFn([name, node.expression], node.sourceSpan).toStmt();
     }
